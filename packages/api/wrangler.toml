@@ -1,0 +1,14 @@
+name = "api"
+main = "dist/index.mjs"
+compatibility_date = "2022-06-10"
+
+[build]
+command = "npm run build"
+
+[durable_objects]
+bindings = [{ name = "NAME_ROOM", class_name = "NameRoom0" }]
+
+[miniflare]
+kv_persist = true
+cache_persist = true
+durable_objects_persist = true
