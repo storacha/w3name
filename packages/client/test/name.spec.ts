@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
 import { base36 } from 'multiformats/bases/base36'
@@ -7,16 +6,14 @@ import { identity } from 'multiformats/hashes/identity'
 import { keys } from 'libp2p-crypto'
 import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
-import { W3NameService } from '@/service'
-import * as Name from '@/name'
-
+import { W3NameService } from '../src/service.js'
+import * as Name from '../src/name.js'
 
 const libp2pKeyCode = 0x72
 
 describe('name', () => {
   const { API_PORT } = process.env
-  // const token = AUTH_TOKEN || 'good'
-  const endpoint = new URL(API_PORT ? `http://localhost:${API_PORT}` : '')
+  const endpoint = new URL(API_PORT ? `http://localhost:${API_PORT}` : 'http://localhost:8787')
   const service = new W3NameService(endpoint)
 
   it('creates a new name', async () => {
@@ -132,7 +129,6 @@ describe('name', () => {
       await Name.resolve(service, name)
       assert.unreachable()
     } catch (err: any) {
-      // @ts-ignore
       assert.equal(err.message, 'throw an error for the tests')
     }
   })
@@ -145,7 +141,6 @@ describe('name', () => {
       await Name.resolve(service, name)
       assert.unreachable()
     } catch (err: any) {
-      // @ts-ignore
       assert.equal(err.message, 'unexpected status: 500')
     }
   })
@@ -160,7 +155,6 @@ describe('name', () => {
       await Name.publish(service, revision, name.key)
       assert.unreachable()
     } catch (err: any) {
-      // @ts-ignore
       assert.equal(err.message, 'missing token')
     }
   })

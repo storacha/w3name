@@ -29,7 +29,7 @@
  * which are configured from the initial env values.
  * @param {Request} req
  * @param {Env} env
- * @param {import('./index.js').Ctx} ctx
+ * @param {ExecutionContext} ctx
  */
 export function envAll (req, env, ctx) {
 }

@@ -1,5 +1,3 @@
-import Response from '@web-std/fetch/dist/src/response.js'
-
 /**
  * A client library for the w3name - IPNS over HTTP API. It provides a
  * convenient interface for creating names, making revisions to name records,
@@ -29,8 +27,6 @@ import Response from '@web-std/fetch/dist/src/response.js'
  * @module
  */
 
-// @ts-ignore
-
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import * as ipns from 'ipns'
@@ -40,33 +36,15 @@ import { base36 } from 'multiformats/bases/base36'
 import { CID } from 'multiformats/cid'
 import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
 import * as cbor from 'cborg'
-import { fetch } from './platform.js'
-import { PublicService, W3NameService } from './service.js'
+// import { fetch } from './platform.js'
+import type { PublicService, W3NameService } from './service.js'
+import fetch from '@web-std/fetch'
 
 const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
 const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
 
-/**
- * @typedef {{
- *   bytes: Uint8Array,
- *   verify (data: Uint8Array, signature: Uint8Array): Promise<boolean>
- * }} PublicKey
- *
- * @typedef {{
- *   sign (data: Uint8Array): Promise<Uint8Array>
- * }} SigningKey
- *
- * @typedef {{
- *   public: PublicKey,
- *   bytes: Uint8Array
- * } & SigningKey} PrivateKey
- */
-
-type SigningKey = {
-  sign (data: Uint8Array): Promise<Uint8Array>
-}
 
 /**
  * Name is an IPNS key ID.
@@ -272,10 +250,9 @@ export class Revision {
  * @param {Revision} revision Revision of record to publish.
  * @param {SigningKey} key Private key to sign the record with.
  */
-export async function publish (service: W3NameService, revision: Revision, key: SigningKey) {
+export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
   const url = new URL(`name/${revision.name}`, service.endpoint)
   const entry = await ipns.create(
-    // @ts-expect-error TODO is it SigningKey or PeerId
     key,
     uint8ArrayFromString(revision.value),
     revision.sequence,
@@ -298,13 +275,12 @@ export async function publish (service: W3NameService, revision: Revision, key: 
  */
 export async function resolve (service: PublicService, name: Name): Promise<Revision> {
   const url = new URL(`name/${name}`, service.endpoint)
-  const res = await maybeHandleError(fetch(url.toString()))
+  const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
   const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
   const keyCid = CID.decode(name.bytes)
   const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
 
-  // @ts-expect-error TODO validate does not exist
   await ipns.validate(pubKey, entry)
 
   return new Revision(
@@ -319,7 +295,7 @@ export async function resolve (service: PublicService, name: Name): Promise<Revi
  * @param {Promise<Response>} resPromise
  * @returns {Promise<Response>}
  */
-async function maybeHandleError (resPromise: Promise<Response>): Promise<Response> {
+async function maybeHandleError (resPromise: Promise<globalThis.Response>): Promise<globalThis.Response> {
   const res = await resPromise
   if (res.ok) return res
   const err = new Error(`unexpected status: ${res.status}`)

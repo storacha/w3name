@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "type": "module",
   "description": "The JavaScript API client w3name",
-  "main": "index.js",
+  "main": "dist/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha --require ts-node/register --extensions ts,tsx --experimental-vm-modules --async-stack-traces --full-trace test/**/*.ts",
-    "lint": "npx ts-standard"
+    "build": "aegir build",
+    "test": "aegir test",
+    "lint": "aegir lint"
   },
   "repository": {
     "type": "git",
@@ -18,20 +19,8 @@
   "author": "",
   "license": "(Apache-2.0 OR MIT)",
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
-    "@types/node": "^18.0.0",
-    "mocha": "^10.0.0",
-    "ts-node": "^10.8.1"
-  },
-  "dependencies": {
-    "@web-std/fetch": "^4.1.0",
     "aegir": "^37.3.0",
-    "cborg": "^1.9.4",
-    "ipfs-car": "^0.7.0",
-    "ipns": "^1.0.2",
-    "libp2p-crypto": "^0.21.2",
-    "multiformats": "^9.6.5",
-    "throttled-queue": "^2.1.4"
+    "@types/mocha": "^9.1.1"
   },
   "files": [
     "src",
@@ -39,5 +28,17 @@
   ],
   "aegir": {
     "tsRepo": true
+  },
+  "ts-standard": {
+    "ignore": [
+      "/dist/"
+    ]
+  },
+  "dependencies": {
+    "@web-std/fetch": "^4.1.0",
+    "cborg": "^1.9.4",
+    "ipns": "^0.16.0",
+    "libp2p-crypto": "^0.21.2",
+    "throttled-queue": "^2.1.4"
   }
 }

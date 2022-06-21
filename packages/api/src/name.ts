@@ -1,5 +1,4 @@
 /* eslint-env serviceworker */
-/* global WebSocketPair */
 
 import { base36 } from 'multiformats/bases/base36'
 import { CID } from 'multiformats/cid'
@@ -7,15 +6,15 @@ import { CID } from 'multiformats/cid'
 // import { PreciseDate } from '@google-cloud/precise-date'
 import { HTTPError } from './errors'
 // import { Request } from 'itty-router'
-import { Env } from '.'
+import type { Env } from '.'
 import { NameRoom, BroadcastData } from './broadcast'
-
-// import { JSONResponse } from './utils/json-response'
+// import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+// import * as ipns from 'ipns'
 
 const libp2pKeyCode = 0x72
 
 export async function nameGet (request: Request, env: Env): Promise<Response> {
-  // @ts-ignore, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
+  // @ts-expect-error, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
   const key = request.params?.key
 
   if (key !== undefined) {
@@ -27,7 +26,6 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
     throw new HTTPError(`missing key, expected: ${libp2pKeyCode} codec code`, 400)
   }
 
-  // TODO
   // const rawRecord = await env.db.resolveNameRecord(key)
   // if (!rawRecord) {
   //   throw new HTTPError(`record not found for key: ${key}. Only keys published using the Web3.Storage API may be resolved here.`, 404)
@@ -42,7 +40,7 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
 }
 
 export async function namePost (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    // @ts-ignore, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
+  // @ts-expect-error, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
   const key = request.params?.key
 
   if (key === undefined) {
@@ -55,7 +53,6 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     throw new HTTPError(`invalid key code: ${keyCid.code}`, 400)
   }
 
-  // TODO
   // const record = await request.text()
   // const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
   // const pubKey = ed25519.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
@@ -83,7 +80,6 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
   //   await NameRoom.broadcast(request, env.NAME_ROOM, '*', data)
   // })())
 
-
   const data: BroadcastData = {
     value: '',
     record: 'hello'
@@ -98,11 +94,11 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 }
 
 export async function nameWatchGet (request: Request, env: Env): Promise<Response> {
-  // @ts-ignore, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
+  // @ts-expect-error, TODO: figure out if we can make an union of itty-router Request and Cloudflare Request
   const key = request.params?.key
 
   if (key === undefined) {
-    throw new HTTPError(`missing key code`, 400)
+    throw new HTTPError('missing key code', 400)
   }
 
   if (key === '*') {

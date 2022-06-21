@@ -5,6 +5,11 @@ compatibility_date = "2022-06-10"
 [build]
 command = "npm run build"
 
+[build.upload]
+dir = "dist"
+main = "index.mjs"
+format = "modules"
+
 [durable_objects]
 bindings = [{ name = "NAME_ROOM", class_name = "NameRoom0" }]
 

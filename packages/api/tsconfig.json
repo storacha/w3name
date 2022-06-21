@@ -1,17 +1,12 @@
 {
+  "extends": "aegir/src/config/tsconfig.aegir.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "lib": ["esnext"],
-    "types": ["@cloudflare/workers-types"],
-    "moduleResolution": "node",
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "types": ["@cloudflare/workers-types", "mocha"],
+    "outDir": "dist",
+    "esModuleInterop": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": [
+    "src",
+    "test"
+  ]
 }

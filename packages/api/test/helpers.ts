@@ -10,7 +10,7 @@ import { peerIdFromKeys } from '@libp2p/peer-id'
 const libp2pKeyCode = 0x72
 const lifetime = 1000 * 60 * 60
 
-interface NameKeyPair {
+export interface NameKeyPair {
   id: string
   privateKey: Uint8Array
 }
@@ -26,10 +26,10 @@ export async function createNameKeypair (): Promise<NameKeyPair> {
 }
 
 /**
-   * @param {Uint8Array} privKey Private key
-   * @param {string} value IPFS path
-   * @param {bigint} seqno Sequence number
-   */
+ * @param {Uint8Array} privKey - Private key
+ * @param {string} value - IPFS path
+ * @param {bigint} seqno - Sequence number
+ */
 export async function createNameRecord (privKey: Uint8Array, value: string, seqno = 0n): Promise<Uint8Array> {
   const privKeyObj = await keys.unmarshalPrivateKey(privKey)
   // const peerId = await PeerId.createFromPrivKey(privKey)
@@ -39,10 +39,10 @@ export async function createNameRecord (privKey: Uint8Array, value: string, seqn
 }
 
 /**
-   * @param {Uint8Array} privKey Private key
-   * @param {Uint8Array} existingRecord Current IPNS record
-   * @param {string} newValue IPFS path
-   */
+ * @param {Uint8Array} privKey - Private key
+ * @param {Uint8Array} existingRecord - Current IPNS record
+ * @param {string} newValue - IPFS path
+ */
 export async function updateNameRecord (privKey: Uint8Array, existingRecord: Uint8Array, newValue: string): Promise<Uint8Array> {
   const privKeyObj = await keys.unmarshalPrivateKey(privKey)
   const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)

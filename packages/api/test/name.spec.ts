@@ -1,19 +1,15 @@
-// @ts-nocheck
-
 import assert from 'assert/strict'
 import pDefer from 'p-defer'
 import { Miniflare, Request } from 'miniflare'
-import { createNameKeypair, createNameRecord, updateNameRecord, NameKeyPair } from './helpers.ts'
+import { createNameKeypair, createNameRecord, updateNameRecord, NameKeyPair } from './helpers.js'
 import * as uint8arrays from 'uint8arrays'
-
-// import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 
 interface GetKeyResponse {
   value: string
   record: string
 }
 
-let mf
+let mf: Miniflare
 const endpoint = 'http://127.0.0.1:8787'
 
 before((done) => {
@@ -36,7 +32,7 @@ describe('GET /name/:key', () => {
 
     assert(res.ok)
 
-    const { value, record } = await res.json() as GetKeyResponse
+    const { value, record } = await res.json()
 
     assert.equal(value, '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui')
     assert.equal(record, 'CkEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRs')
@@ -67,7 +63,7 @@ describe('POST /name/:key', () => {
 
     assert(resolveRes.ok)
 
-    const resolved = await resolveRes.json()
+    const resolved: GetKeyResponse = await resolveRes.json()
 
     assert.strictEqual(resolved.record, uint8arrays.toString(record, 'base64pad'))
     assert.strictEqual(resolved.value, value)
@@ -97,24 +93,23 @@ describe('GET /name/:key/watch', () => {
     )
 
     const conn = res.webSocket
-    conn.binaryType = 'arraybuffer'
-
-    console.log('here', res, conn)
-    conn.accept()
 
     // we're going to publish on two keys, but we're only listening on one
     // so we should only receive 2 messages.
     const expectedMsgCount = 2
-    const msgs = []
+    const msgs: Array<(string | ArrayBuffer)> = []
     const deferred = pDefer()
 
-    conn.addEventListener('message', (event) => {
-      console.log('hello websocket', event.data.byteLength, event, event.data)
-      msgs.push(event.data)
-      if (msgs.length >= expectedMsgCount) {
-        deferred.resolve()
-      }
-    })
+    if (conn != null) {
+      conn.accept()
+
+      conn.addEventListener('message', (event) => {
+        msgs.push(event.data)
+        if (msgs.length >= expectedMsgCount) {
+          deferred.resolve()
+        }
+      })
+    }
 
     try {
       await publishRecord(name0.id, name0Record0)
@@ -123,20 +118,17 @@ describe('GET /name/:key/watch', () => {
       // we should NOT receive an update for this key
       await publishRecord(name1.id, name1Record1)
       await publishRecord(name0.id, name0Record1)
-      console.log('tata')
 
       // wait for update message to be received
       await deferred.promise
 
-      console.log('ho1', msgs[0])
-      console.log('ho2', msgs[0].utf8Data)
-
       assert.strictEqual(msgs.length, expectedMsgCount)
-      assert.strictEqual(JSON.parse(msgs[0]).value, name0Value0)
-      assert.strictEqual(JSON.parse(msgs[1]).value, name0Value1)
-      console.log('tata2')
+      assert.strictEqual(JSON.parse(msgs[0] as string).value, name0Value0)
+      assert.strictEqual(JSON.parse(msgs[1] as string).value, name0Value1)
     } finally {
-      conn.close()
+      if (conn != null) {
+        conn.close()
+      }
     }
   })
 
@@ -163,19 +155,22 @@ describe('GET /name/:key/watch', () => {
     )
 
     const conn = res.webSocket
-    conn.accept()
 
     // we're going to publish on two keys
     const expectedMsgCount = 4
-    const msgs = []
+    const msgs: Array<(string | ArrayBuffer)> = []
     const deferred = pDefer()
 
-    conn.addEventListener('message', (event) => {
-      msgs.push(event.data)
-      if (msgs.length >= expectedMsgCount) {
-        deferred.resolve()
-      }
-    })
+    if (conn != null) {
+      conn.accept()
+
+      conn.addEventListener('message', (event) => {
+        msgs.push(event.data)
+        if (msgs.length >= expectedMsgCount) {
+          deferred.resolve()
+        }
+      })
+    }
 
     try {
       await publishRecord(name1.id, name1Record0)
@@ -187,16 +182,22 @@ describe('GET /name/:key/watch', () => {
       await deferred.promise
 
       assert.strictEqual(msgs.length, expectedMsgCount)
+      // @ts-expect-error
       assert.strictEqual(JSON.parse(msgs[0]).value, name1Value0)
+      // @ts-expect-error
       assert.strictEqual(JSON.parse(msgs[1]).value, name0Value0)
+      // @ts-expect-error
       assert.strictEqual(JSON.parse(msgs[2]).value, name1Value1)
+      // @ts-expect-error
       assert.strictEqual(JSON.parse(msgs[3]).value, name0Value1)
     } finally {
-      conn.close()
+      if (conn != null) {
+        conn.close()
+      }
     }
   })
 
-  async function publishRecord (key: string, record: Uint8Array): void {
+  async function publishRecord (key: string, record: Uint8Array): Promise<void> {
     const publishRes = await mf.dispatchFetch(
       new Request(
         new URL(`name/${key}`, endpoint),

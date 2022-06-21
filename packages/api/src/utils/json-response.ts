@@ -9,5 +9,5 @@ export class JSONResponse extends Response {
 }
 
 export function notFound (message = 'Not Found'): JSONResponse {
-  return new JSONResponse(message, { status: 404 })
+  return new Response(message, { status: 404, headers: { 'Content-Type': 'application/json;charset=UTF-8' } })
 }

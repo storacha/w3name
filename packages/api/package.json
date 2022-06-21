@@ -1,55 +1,62 @@
 {
   "name": "@w3name/api",
   "version": "0.1.0",
-  "private": true,
-  "type": "module",
   "description": "w3name api",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "build": "node build.js",
-    "tests": "mocha --require ts-node/register --extensions ts,tsx --experimental-vm-modules --async-stack-traces --full-trace test/**/*.ts",
-    "lint": "npx ts-standard",
-    "test": "npm run build && node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose --detectOpenHandles --forceExit"
-  },
+  "author": "",
+  "license": "Apache-2.0 OR MIT",
+  "homepage": "https://github.com/web3-storage/w3name#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3name/packages/api"
+    "url": "git+https://github.com/web3-storage/w3name.git"
   },
-  "author": "",
-  "license": "(Apache-2.0 OR MIT)",
-  "devDependencies": {
-    "@cloudflare/workers-types": "^3.11.0",
-    "@typescript-eslint/experimental-utils": "^5.28.0",
-    "esbuild": "^0.14.43",
-    "jest": "^28.1.1",
-    "jest-environment-miniflare": "^2.5.0",
-    "miniflare": "^2.5.0",
-    "mocha": "^10.0.0",
-    "p-defer": "^4.0.0",
-    "ts-loader": "^9.3.0",
-    "ts-standard": "^11.0.0",
-    "typescript": "^4.7.3",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.9.2"
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3name/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "type": "module",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "src",
+    "dist/src",
+    "!dist/test",
+    "!**/*.tsbuildinfo"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "eslintConfig": {
+    "extends": "ipfs",
+    "parserOptions": {
+      "sourceType": "module"
+    }
+  },
+  "scripts": {
+    "build": "node buildworkermodule.mjs; aegir build",
+    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test",
+    "lint": "aegir lint",
+    "dev": "miniflare --live-reload"
   },
   "dependencies": {
-    "@iarna/toml": "^2.2.5",
-    "@types/jest": "^28.1.1",
-    "@types/service-worker-mock": "^2.0.1",
-    "@web-std/fetch": "^4.1.0",
     "ipns": "^1.0.2",
     "itty-router": "^2.6.1",
     "libp2p-crypto": "^0.21.2",
-    "multiformats": "^9.6.5",
-    "peer-id": "^0.16.0",
-    "service-worker-mock": "^2.0.5",
-    "ts-jest": "^28.0.4",
-    "ts-node": "^10.8.1",
-    "typescript-eslint": "^0.0.1-alpha.0",
-    "uint8arrays": "^3.0.0"
-  }
+    "p-defer": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.13.0",
+    "@types/mocha": "^9.1.1",
+    "aegir": "^37.3.0",
+    "miniflare": "^2.5.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "module": "dist/index.mjs",
+  "private": true
 }

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const db = {}
 
 module.exports = ({ params, body }) => {

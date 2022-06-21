@@ -64,6 +64,7 @@ export default {
       env = { ...env } // new env object for every request (it is shared otherwise)!
       response = await router.handle(request, env, ctx)
     } catch (error) {
+      console.log('error', error)
       // response = serverError(error, request, env)
     }
     // await env.log.end(response)
@@ -71,4 +72,4 @@ export default {
   }
 }
 
-export { NameRoom as NameRoom0 } from './name.js'
+export { NameRoom as NameRoom0 } from './broadcast'
