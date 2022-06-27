@@ -29,14 +29,14 @@
 
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import * as ipns from 'ipns'
-import * as Digest from 'multiformats/hashes/digest'
+import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
 import { identity } from 'multiformats/hashes/identity'
 import { base36 } from 'multiformats/bases/base36'
 import { CID } from 'multiformats/cid'
-import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
+import * as Digest from 'multiformats/hashes/digest'
+import * as ipns from 'ipns'
 import * as cbor from 'cborg'
-// import { fetch } from './platform.js'
+
 import type { PublicService, W3NameService } from './service.js'
 import fetch from '@web-std/fetch'
 
@@ -44,7 +44,6 @@ const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
 const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
-
 
 /**
  * Name is an IPNS key ID.
@@ -99,8 +98,6 @@ export class WritableName extends Name {
 /**
  * Create a new name with associated signing key that can be used to create and
  * publish IPNS record revisions.
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
  */
 export async function create () {
   const privKey = await keys.generateKeyPair('Ed25519', 2048)
@@ -109,10 +106,6 @@ export async function create () {
 
 /**
  * Parses string name to readable name.
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
- * @param {string} name The name to parse.
  */
 export function parse (name: string) {
   const keyCid = CID.parse(name, base36)
@@ -125,10 +118,6 @@ export function parse (name: string) {
 
 /**
  * Create a name from an existing signing key (private key).
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
- * @param {Uint8Array} key Binary representation of the signing key for the name.
  */
 export async function from (key: Uint8Array) {
   const privKey = await keys.unmarshalPrivateKey(key)
@@ -138,11 +127,6 @@ export async function from (key: Uint8Array) {
 /**
  * Create an initial version of the IPNS record for the passed name, set to the
  * passed value.
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
- * @param {Name} name
- * @param {string} value
  */
 export async function v0 (name: Name, value: string) {
   return new Revision(name, value, 0n, defaultValidity())
@@ -151,11 +135,6 @@ export async function v0 (name: Name, value: string) {
 /**
  * Create a revision of the passed IPNS record by incrementing the sequence
  * number and changing the value.
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
- * @param {Revision} revision
- * @param {string} value
  */
 export async function increment (revision: Revision, value: string): Promise<Revision> {
   const seqno = revision.sequence + 1n
@@ -163,7 +142,7 @@ export async function increment (revision: Revision, value: string): Promise<Rev
 }
 
 /**
- * A represetation of a IPNS record that may be initial or revised.
+ * A representation of a IPNS record that may be initial or revised.
  */
 export class Revision {
   _name: Name
@@ -171,12 +150,6 @@ export class Revision {
   _sequence: bigint
   _validity: string
 
-  /**
-   * @param {Name} name
-   * @param {string} value
-   * @param {bigint} sequence
-   * @param {string} validity
-   */
   constructor (name: Name, value: string, sequence: bigint, validity: string) {
     this._name = name
     if (typeof value !== 'string') {
@@ -241,14 +214,8 @@ export class Revision {
 /**
  * Publish a name revision to Web3.Storage.
  *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
  * ⚠️ Name records are not _yet_ published to or updated from the IPFS network.
  * Working with name records simply updates the Web3.Storage cache of data.
- *
- * @param {import('./lib/interface.js').Service} service
- * @param {Revision} revision Revision of record to publish.
- * @param {SigningKey} key Private key to sign the record with.
  */
 export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
   const url = new URL(`name/${revision.name}`, service.endpoint)
@@ -267,11 +234,6 @@ export async function publish (service: W3NameService, revision: Revision, key: 
 
 /**
  * Resolve the current IPNS record revision for the passed name.
- *
- * **❗️Experimental** this API may not work, may change, and may be removed.
- *
- * @param {import('./lib/interface.js').PublicService} service
- * @param {Name} name The name to resolve.
  */
 export async function resolve (service: PublicService, name: Name): Promise<Revision> {
   const url = new URL(`name/${name}`, service.endpoint)
@@ -291,10 +253,6 @@ export async function resolve (service: PublicService, name: Name): Promise<Revi
   )
 }
 
-/**
- * @param {Promise<Response>} resPromise
- * @returns {Promise<Response>}
- */
 async function maybeHandleError (resPromise: Promise<globalThis.Response>): Promise<globalThis.Response> {
   const res = await resPromise
   if (res.ok) return res

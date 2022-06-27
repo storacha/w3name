@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "aegir build",
-    "test": "aegir test",
+    "test": "npm run build && cd dist && aegir test",
     "lint": "aegir lint"
   },
   "repository": {
