@@ -1,4 +1,7 @@
+import type { Env } from './env'
+
 export interface BroadcastData {
+  key: string
   value: string
   record: string
 }
@@ -11,15 +14,10 @@ export interface BroadcastData {
 export class NameRoom {
     sessions: Array<{ webSocket: WebSocket }>
 
-    constructor () {
-      /** @type {Array<{ webSocket: WebSocket }>} */
+    constructor (state: DurableObjectState, env: Env) {
       this.sessions = []
     }
 
-    /**
-     * @param {Request} request
-     * @returns {Promise<Response>}
-     */
     async fetch (request: Request): Promise<Response> {
       const url = new URL(request.url)
       switch (url.pathname) {
@@ -28,7 +26,6 @@ export class NameRoom {
           if (request.headers.get('Upgrade') !== 'websocket') {
             return new Response('expected websocket upgrade', { status: 400 })
           }
-          /** @type {[WebSocket, WebSocket]} */
           const [client, server] = Object.values(new WebSocketPair())
           // @ts-expect-error TODO investigate why accept is not available via types
           server.accept()

@@ -1,13 +1,7 @@
-// @ts-nocheck
-
-export class JSONResponse extends Response {
-  constructor (bodyInit?: BodyInit | null, maybeInit?: ResponseInit | Response) {
-    maybeInit.headers = (maybeInit.headers != null) || {}
-    maybeInit.headers['Content-Type'] = 'application/json;charset=UTF-8'
-    super(JSON.stringify(body), init)
-  }
+export function notFound (message: string = 'Not Found'): Response {
+  return jsonResponse(JSON.stringify({ message: message }), 404)
 }
 
-export function notFound (message = 'Not Found'): JSONResponse {
-  return new Response(message, { status: 404, headers: { 'Content-Type': 'application/json;charset=UTF-8' } })
+export function jsonResponse (body: string, status: number = 200): Response {
+  return new Response(body, { status, headers: { 'Content-Type': 'application/json;charset=UTF-8' } })
 }
