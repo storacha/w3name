@@ -40,7 +40,7 @@
     "build": "node buildworkermodule.mjs; aegir build",
     "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
     "lint": "aegir lint",
-    "dev": "miniflare --live-reload"
+    "dev": "miniflare --modules --live-reload"
   },
   "dependencies": {
     "@google-cloud/precise-date": "^3.0.0",

@@ -5,10 +5,6 @@ compatibility_date = "2022-06-10"
 [build]
 command = "npm run build"
 
-[build.upload]
-dir = "dist"
-format = "modules"
-
 [durable_objects]
 bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
@@ -18,8 +14,3 @@ bindings = [
 [[migrations]]
 tag = "v1"
 new_classes = ["NameRoom0", "IPNSRecord"]
-
-[miniflare]
-kv_persist = true
-cache_persist = true
-durable_objects_persist = true
