@@ -1,8 +1,15 @@
+import { base36 } from 'multiformats/bases/base36'
+import { CID } from 'multiformats/cid'
+import { createNameKeypair, createNameRecord, updateNameRecord, NameKeyPair } from './helpers.js'
+import { identity } from 'multiformats/hashes/identity'
+import { keys } from 'libp2p-crypto'
+import { Miniflare, Request } from 'miniflare'
+import { peerIdFromKeys } from '@libp2p/peer-id'
+import * as Digest from 'multiformats/hashes/digest'
+import * as ipns from 'ipns'
+import * as uint8arrays from 'uint8arrays'
 import assert from 'assert/strict'
 import pDefer from 'p-defer'
-import { Miniflare, Request } from 'miniflare'
-import { createNameKeypair, createNameRecord, updateNameRecord, NameKeyPair } from './helpers.js'
-import * as uint8arrays from 'uint8arrays'
 
 interface GetKeyResponse {
   value: string
@@ -10,6 +17,7 @@ interface GetKeyResponse {
 }
 
 let mf: Miniflare
+
 const endpoint = 'http://127.0.0.1:8787'
 
 before((done) => {
@@ -23,23 +31,110 @@ before((done) => {
   done()
 })
 
-describe('GET /name/:key', () => {
-  it('resolves key to value', async () => {
-    const key = 'k51qzi5uqu5dl2hq2hm5m29sdq1lum0kb0lmyqsowicmrmxzxywwgxhy6ymrdv'
-    const url = new URL(`name/${key}`, endpoint).toString()
-
-    const res = await mf.dispatchFetch(url)
-
-    assert(res.ok)
-
-    const { value, record } = await res.json()
-
-    assert.equal(value, '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui')
-    assert.equal(record, 'CkEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRs')
+describe('GET /', () => {
+  it('renders index', async () => {
+    const response = await mf.dispatchFetch(endpoint)
+    const body: { message: string } = await response.json()
+    assert.equal(response.status, 200)
+    assert.ok(body.message.includes('w3name'))
   })
 })
 
-describe('POST /name/:key', () => {
+describe('GET /name/:key', () => {
+  it('returns an error for an invalid key', async () => {
+    const key = '837497jhfd'
+    const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
+    const body: {message: string} = await response.json()
+    assert.equal(response.status, 400)
+    assert.ok(body.message.includes('invalid key'))
+  })
+
+  it('returns an error for a key with an invalid code', async () => {
+    const keyPair = await keys.generateKeyPair('Ed25519', 2048)
+    const digest = Digest.create(identity.code, keyPair.public.bytes)
+    const key = CID.createV1(140, digest).toString(base36)
+    const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
+    const body: {message: string} = await response.json()
+    assert.equal(response.status, 400)
+    assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+  })
+
+  it('returns an error for a non-existing key', async () => {
+    const keyPair = await keys.generateKeyPair('Ed25519', 2048)
+    const digest = Digest.create(identity.code, keyPair.public.bytes)
+    const key = CID.createV1(114, digest).toString(base36)
+    const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
+    const body: {message: string} = await response.json()
+    assert.equal(response.status, 404)
+    assert.ok(body.message.includes(`record not found for key: ${key}`))
+  })
+})
+
+describe('POST/GET /name/:key', () => {
+  it('returns an error for an invalid key', async () => {
+    const key = '837497jhfd'
+    const { privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const record = await createNameRecord(privateKey, value)
+    const response = await mf.dispatchFetch(
+      new Request(
+        new URL(`name/${key}`, endpoint), {
+          method: 'POST',
+          body: uint8arrays.toString(record, 'base64pad')
+        })
+    )
+    const body: {message: string} = await response.json()
+
+    assert.equal(response.status, 400)
+    assert.ok(body.message.includes('invalid key'))
+  })
+
+  it('returns an error for a key with an invalid code', async () => {
+    const keyPair = await keys.generateKeyPair('Ed25519', 2048)
+    const digest = Digest.create(identity.code, keyPair.public.bytes)
+    const key = CID.createV1(140, digest).toString(base36)
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const record = await createNameRecord(keyPair.bytes, value)
+    const response = await mf.dispatchFetch(
+      new Request(
+        new URL(`name/${key}`, endpoint), {
+          method: 'POST',
+          body: uint8arrays.toString(record, 'base64pad')
+        })
+    )
+    const body: {message: string} = await response.json()
+
+    assert.equal(response.status, 400)
+    assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+  })
+
+  it.skip('returns an error when there is a public key mismatch', async () => {
+    // Implement test
+  })
+
+  it('returns an error when there is an ipns record validation problem', async () => {
+    // Test that we catch errors raised by `ipns/validator`
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
+    const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
+    // Deliberately create an expired entry
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), 0, 0)
+    const record = ipns.marshal(entry)
+
+    const response = await mf.dispatchFetch(
+      new Request(
+        new URL(`name/${key}`, endpoint), {
+          method: 'POST',
+          body: uint8arrays.toString(record, 'base64pad')
+        })
+    )
+    const body: {message: string} = await response.json()
+
+    assert.equal(response.status, 400)
+    assert.equal(body.message, 'invalid ipns entry: record has expired')
+  })
+
   it('publishes value for key', async () => {
     const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
@@ -210,4 +305,13 @@ describe('GET /name/:key/watch', () => {
 
     assert(publishRes.ok)
   }
+})
+
+describe('Not found', () => {
+  it('returns a not found error', async () => {
+    const response = await mf.dispatchFetch(new URL('/help', endpoint))
+    const body: {message: string} = await response.json()
+    assert.equal(response.status, 404)
+    assert.equal(body.message, 'Not Found')
+  })
 })

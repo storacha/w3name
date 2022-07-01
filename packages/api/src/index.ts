@@ -1,45 +1,15 @@
-import { nameGet, nameWatchGet, namePost } from './name'
-import { notFound } from './utils/json-response'
-
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `wrangler dev src/index.ts` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `wrangler publish src/index.ts --name my-worker` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
 import { Router } from 'itty-router'
+import { jsonResponse, notFound } from './utils/json-response'
+import { nameGet, nameWatchGet, namePost } from './name'
+import { HTTPError } from './errors'
 
 const router = Router()
 
 router.get('/name/:key', nameGet)
 router.get('/name/:key/watch', nameWatchGet)
 router.post('/name/:key', namePost)
-
-router.get('/', () => {
-  return new Response(
-    `
-<body style="font-family: -apple-system, system-ui">
-  <h1>⁂</h1>
-  <p>try
-    <a href='/car/bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy'>
-      /car/bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy
-    </a>
-  </p>
-</body>`,
-    {
-      status: 200,
-      headers: {
-        'content-type': 'text/html; charset=UTF-8'
-      }
-    }
-  )
-})
-
-router.all('*', notFound)
+router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
+router.all('*', () => notFound())
 
 export interface Env {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -51,6 +21,7 @@ export interface Env {
   // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
   // MY_BUCKET: R2Bucket;
   NAME_ROOM: DurableObjectNamespace
+  IPNS_RECORD: DurableObjectNamespace
 }
 
 export default {
@@ -59,17 +30,17 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
-    let response
     try {
       env = { ...env } // new env object for every request (it is shared otherwise)!
-      response = await router.handle(request, env, ctx)
-    } catch (error) {
-      console.log('error', error)
-      // response = serverError(error, request, env)
+      return await router.handle(request, env, ctx)
+    } catch (error: any) {
+      if (error instanceof HTTPError) {
+        return jsonResponse(JSON.stringify({ message: error.message }), error.status)
+      }
     }
-    // await env.log.end(response)
-    return response
+    return new Response()
   }
 }
 
 export { NameRoom as NameRoom0 } from './broadcast'
+export { IPNSRecord } from './record'
