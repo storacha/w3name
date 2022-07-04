@@ -218,17 +218,25 @@ export class Revision {
  * Working with name records simply updates the Web3.Storage cache of data.
  */
 export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
+  console.log('here',`name/${revision.name}`, service.endpoint)
   const url = new URL(`name/${revision.name}`, service.endpoint)
+  console.log('url',url)
+
   const entry = await ipns.create(
     key,
     uint8ArrayFromString(revision.value),
     revision.sequence,
     new Date(revision.validity).getTime() - Date.now()
   )
+  console.log('entry',entry)
+  console.log('entry', uint8ArrayToString(ipns.marshal(entry), 'base64pad'))
+
   const res = await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
     body: uint8ArrayToString(ipns.marshal(entry), 'base64pad')
   }))
+
+  console.log('a res', res)
   await res.json()
 }
 

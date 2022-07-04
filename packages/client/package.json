@@ -9,8 +9,10 @@
   },
   "scripts": {
     "build": "aegir build",
-    "test": "npm run build && cd dist && aegir test",
-    "lint": "aegir lint"
+    "lint": "aegir lint",
+    "test": "run-p -r mock:api test:all",
+    "test:all": "npm run build && cd dist && API_PORT=1337 aegir test",
+    "mock:api": "smoke -p 1337 test/mocks/api"
   },
   "repository": {
     "type": "git",
@@ -19,8 +21,10 @@
   "author": "",
   "license": "(Apache-2.0 OR MIT)",
   "devDependencies": {
+    "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
-    "@types/mocha": "^9.1.1"
+    "smoke": "^3.1.1",
+    "uint8arrays": "^3.0.0"
   },
   "files": [
     "src",
