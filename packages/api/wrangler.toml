@@ -1,4 +1,5 @@
-name = "w3name-staging"
+# name = "w3name-staging"
+name = "adam-durable-object-test"
 main = "dist/index.mjs"
 compatibility_date = "2022-06-10"
 
@@ -8,9 +9,10 @@ command = "npm run build"
 [durable_objects]
 bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
+	{ name = "TEST_DO", class_name = "TestDurableObject" }
 ]
 
 [[migrations]]
 tag = "v1"
-new_classes = ["NameRoom0", "IPNSRecord"]
+new_classes = ["NameRoom0", "IPNSRecord", "TestDurableObject"]

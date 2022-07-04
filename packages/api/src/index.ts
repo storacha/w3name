@@ -2,6 +2,7 @@ import { Router } from 'itty-router'
 import { jsonResponse, notFound } from './utils/json-response'
 import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
+import { MakeDurableObjects, ListDurableObjects } from './do-test.js'
 
 const router = Router()
 
@@ -9,6 +10,8 @@ router.get('/name/:key', nameGet)
 router.get('/name/:key/watch', nameWatchGet)
 router.post('/name/:key', namePost)
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
+router.get('/durable-objects/make', MakeDurableObjects)
+router.get('/durable-objects/list', ListDurableObjects)
 router.all('*', () => notFound())
 
 export interface Env {
@@ -44,3 +47,4 @@ export default {
 
 export { NameRoom as NameRoom0 } from './broadcast'
 export { IPNSRecord } from './record'
+export { TestDurableObject } from './do-test.js'
