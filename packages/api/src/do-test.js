@@ -20,7 +20,7 @@ export class TestDurableObject {
       console.log(`Finsihed awaiting state.storage.put`)
       return new Response('Stored some stuff, yo')
     } else if (request.url.match(/list$/)) {
-      return new Response(await this.state.storage.get(['test_key']))
+      return new Response(await this.state.storage.get('test_key'))
     }
   }
 }
@@ -29,6 +29,10 @@ export async function MakeDurableObjects (request, env) {
   for (const id of OBJECT_IDS) {
     try {
       console.log(`Got to loop: ${id}`)
+      // The `idFromName` method is essentially a hash function, so when we query for
+      // the list of Durable Objects, there's no way to ever get the input to this back
+      // again. So if you want a meaningful label for the object then you need to store
+      // it *inside* the object in this.state.storage
       const objId = env.TEST_DO.idFromName(id)
       const obj = env.TEST_DO.get(objId)
       console.log(Object.keys(obj))
@@ -52,7 +56,11 @@ export async function ListDurableObjects (request, env) {
     for (const namespaceInfo of namespaceInfos) {
       const namespaceData = { info: namespaceInfo.namespace, objects: [] }
       for (const objectInfo of namespaceInfo.objects) {
-        const obj = env.TEST_DO.get(objectInfo.id)
+        console.log(`Creating DO for ID: ${objectInfo.id}`)
+        // The "ID" that the API gives us is a hex string, which is somehow still not
+        // actually the ID, so we convert the ID to an ID 🤷
+        const objId = env.TEST_DO.idFromString(objectInfo.id)
+        const obj = env.TEST_DO.get(objId)
         const response = await obj.fetch(request)
         const text = await response.text()
         namespaceData.objects.push({
@@ -62,7 +70,7 @@ export async function ListDurableObjects (request, env) {
       }
       responses.push(namespaceData)
     }
-    return jsonResponse({ responses: responses })
+    return jsonResponse(JSON.stringify({ responses: responses }))
   } catch (err) {
     return new Response(`Error: ${err}`)
   }
