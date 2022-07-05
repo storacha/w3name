@@ -21,7 +21,14 @@ module.exports = ({ params: { key } }) => {
   }
 
   if (db[key]) {
-    const entry = ipns.unmarshal(uint8arrays.fromString(db[key], 'base64pad'))
+    let entry
+    try {
+      const thing = uint8arrays.fromString(db[key], 'base64pad')
+      entry = ipns.unmarshal(thing)
+    } catch (error) {
+      return
+    }
+
     return {
       statusCode: 200,
       body: {

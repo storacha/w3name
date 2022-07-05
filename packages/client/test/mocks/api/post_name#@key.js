@@ -2,8 +2,8 @@
 
 const db = {}
 
-module.exports = ({ params, body }) => {
-  db[params.key] = body
+module.exports = async ( {params, body}) => {
+  db[params.key] = body.value
   return {
     statusCode: 200,
     body: {}

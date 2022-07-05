@@ -11,7 +11,7 @@
     "build": "aegir build",
     "lint": "aegir lint",
     "test": "run-p -r mock:api test:all",
-    "test:all": "npm run build && cd dist && API_PORT=1337 aegir test",
+    "test:all": "npm run build && cd dist && API_PORT=1337 NODE_OPTIONS=--experimental-vm-modules aegir test",
     "mock:api": "smoke -p 1337 test/mocks/api"
   },
   "repository": {
