@@ -38,12 +38,13 @@
   },
   "scripts": {
     "build": "node buildworkermodule.mjs; aegir build",
-    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test",
+    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
     "lint": "aegir lint",
-    "dev": "miniflare --live-reload"
+    "dev": "miniflare --modules --live-reload"
   },
   "dependencies": {
-    "ipns": "^1.0.2",
+    "@google-cloud/precise-date": "^3.0.0",
+    "ipns": "^1.0.1",
     "itty-router": "^2.6.1",
     "libp2p-crypto": "^0.21.2",
     "p-defer": "^4.0.0"

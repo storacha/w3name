@@ -1,19 +1,16 @@
-name = "api"
+name = "w3name-staging"
 main = "dist/index.mjs"
 compatibility_date = "2022-06-10"
 
 [build]
 command = "npm run build"
 
-[build.upload]
-dir = "dist"
-main = "index.mjs"
-format = "modules"
-
 [durable_objects]
-bindings = [{ name = "NAME_ROOM", class_name = "NameRoom0" }]
+bindings = [
+    { name = "NAME_ROOM", class_name = "NameRoom0" },
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+]
 
-[miniflare]
-kv_persist = true
-cache_persist = true
-durable_objects_persist = true
+[[migrations]]
+tag = "v1"
+new_classes = ["NameRoom0", "IPNSRecord"]
