@@ -16,3 +16,11 @@ bindings = [
 [[migrations]]
 tag = "v1"
 new_classes = ["NameRoom0", "IPNSRecord", "TestDurableObject"]
+
+
+[miniflare]
+cache_persist = true
+durable_objects_persist = true
+
+[triggers]
+crons = ["1 */12 * * *"]

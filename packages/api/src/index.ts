@@ -3,6 +3,7 @@ import { jsonResponse, notFound } from './utils/json-response'
 import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
 import { MakeDurableObjects, ListDurableObjects } from './do-test.js'
+import { repubishAll } from './republish'
 
 const router = Router()
 
@@ -42,7 +43,19 @@ export default {
       }
     }
     return new Response()
-  }
+  },
+
+  /** The entrypoint for cron jobs scheduled by Cloudflare.
+   * @param {ScheduledEvent} event
+   * @param {}
+   */
+  async scheduled(
+    event: ScheduledEvent,
+    env: Env,
+    ctx: ExecutionContext
+    ): Promise<void> {
+      ctx.waitUntil(repubishAll(env));
+  },
 }
 
 export { NameRoom as NameRoom0 } from './broadcast'
