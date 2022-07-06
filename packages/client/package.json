@@ -3,26 +3,23 @@
   "version": "0.1.0",
   "type": "module",
   "description": "The JavaScript API client w3name",
-  "main": "dist/index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "build": "aegir build",
-    "lint": "aegir lint",
-    "test": "run-p -r mock:api test:all",
-    "test:all": "npm run build && cd dist && API_PORT=1337 NODE_OPTIONS=--experimental-vm-modules aegir test",
-    "mock:api": "smoke -p 1337 test/mocks/api"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/web3-storage/w3name/packages/client"
   },
   "author": "",
   "license": "(Apache-2.0 OR MIT)",
+  "scripts": {
+    "build": "aegir build",
+    "lint": "aegir lint",
+    "test": "run-p -r mock:api test:all",
+    "test:all": "npm run build && API_PORT=1337 aegir test",
+    "mock:api": "smoke -p 1337 test/mocks/api"
+  },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
+    "npm-run-all": "^4.1.5",
     "smoke": "^3.1.1",
     "uint8arrays": "^3.0.0"
   },
@@ -44,5 +41,9 @@
     "ipns": "^0.16.0",
     "libp2p-crypto": "^0.21.2",
     "throttled-queue": "^2.1.4"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "module": "dist/index.mjs"
 }
