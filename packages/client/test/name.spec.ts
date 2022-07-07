@@ -1,7 +1,6 @@
 import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
 import { base36 } from 'multiformats/bases/base36'
-// import { Web3Storage } from 'web3.storage'
 import { identity } from 'multiformats/hashes/identity'
 import { keys } from 'libp2p-crypto'
 import * as Digest from 'multiformats/hashes/digest'

@@ -9,6 +9,7 @@
     "packages/website"
   ],
   "scripts": {
+    "start": "npm run dev -w packages/api"
   },
   "devDependencies": {
   },

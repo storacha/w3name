@@ -5,10 +5,8 @@
  *
  * @example
  * ```js
- * import { Web3Storage } from 'web3.storage'
- * import * as Name from 'web3.storage/name'
+ * import * as Name from 'w3name'
  *
- * const client = new Web3Storage({ token: API_TOKEN })
  * const name = await Name.create()
  *
  * console.log('Name:', name.toString())
@@ -19,7 +17,7 @@
  * const revision = await Name.v0(name, value)
  *
  * // Publish the revision
- * await Name.publish(client, revision, name.key)
+ * await Name.publish(revision, name.key)
  *
  * // Resolve the latest value
  * await Name.resolve(name)
@@ -212,10 +210,10 @@ export class Revision {
 }
 
 /**
- * Publish a name revision to Web3.Storage.
+ * Publish a name revision to W3name.
  *
  * ⚠️ Name records are not _yet_ published to or updated from the IPFS network.
- * Working with name records simply updates the Web3.Storage cache of data.
+ * Working with name records simply updates the w3name cache of data.
  */
 export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
   const url = new URL(`name/${revision.name}`, service.endpoint)
