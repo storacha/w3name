@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: npm install
+      - uses: bahmutov/npm-install@v1
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
-  
+
