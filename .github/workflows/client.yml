@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: 16
       - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: packages/client
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
 
