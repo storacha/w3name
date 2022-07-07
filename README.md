@@ -36,7 +36,7 @@ TODO: Add cURL instructions here!
 
 ## Building w3name
 
-Want to help us improve web3.storage? Great! This project uses node v16 and npm v7. It's a monorepo that use [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) to handle resolving dependencies between the local `packages/*` folders.
+Want to help us improve w3name? Great! This project uses node v16 and npm v7. It's a monorepo that use [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) to handle resolving dependencies between the local `packages/*` folders.
 
 Install the deps with `npm`
 
