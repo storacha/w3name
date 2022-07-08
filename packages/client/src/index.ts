@@ -49,9 +49,6 @@ const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
 export class Name {
   _pubKey: PublicKey
 
-  /**
-   * @param {PublicKey} pubKey Public key.
-   */
   constructor (pubKey: PublicKey) {
     /**
      * @private
@@ -77,9 +74,6 @@ export class Name {
 export class WritableName extends Name {
   _privKey: PrivateKey
 
-  /**
-   * @param {PrivateKey} privKey
-   */
   constructor (privKey: PrivateKey) {
     super(privKey.public)
     /**
@@ -187,8 +181,6 @@ export class Revision {
   /**
    * Note: if `revision.name` is a `WritableName` then signing key data will be
    * lost. i.e. the private key is not encoded.
-   *
-   * @param {Revision} revision Revision to encode.
    */
   static encode (revision: Revision) {
     return cbor.encode({
@@ -199,9 +191,6 @@ export class Revision {
     })
   }
 
-  /**
-   * @param {Uint8Array} bytes
-   */
   static decode (bytes: Uint8Array) {
     const raw = cbor.decode(bytes)
     const name = parse(raw.name)
@@ -216,7 +205,7 @@ export class Revision {
  * Working with name records simply updates the w3name cache of data.
  */
 export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
-  const url = new URL(`name/${revision.name}`, service.endpoint)
+  const url = new URL(`name/${revision.name.toString()}`, service.endpoint)
   const entry = await ipns.create(
     key,
     uint8ArrayFromString(revision.value),
@@ -226,8 +215,8 @@ export async function publish (service: W3NameService, revision: Revision, key: 
 
   const res = await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
-    body: JSON.stringify({value: uint8ArrayToString(ipns.marshal(entry), 'base64pad')}),
-    headers: {'Content-Type': 'application/json'}
+    body: JSON.stringify({ value: uint8ArrayToString(ipns.marshal(entry), 'base64pad') }),
+    headers: { 'Content-Type': 'application/json' }
   }))
   await res.json()
 }
@@ -236,7 +225,7 @@ export async function publish (service: W3NameService, revision: Revision, key: 
  * Resolve the current IPNS record revision for the passed name.
  */
 export async function resolve (service: PublicService, name: Name): Promise<Revision> {
-  const url = new URL(`name/${name}`, service.endpoint)
+  const url = new URL(`name/${name.toString()}`, service.endpoint)
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
   const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))

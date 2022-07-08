@@ -1,3 +1,5 @@
+/* eslint-disable max-nested-callbacks */
+
 import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
 import { base36 } from 'multiformats/bases/base36'
@@ -102,8 +104,8 @@ describe('Name', () => {
 
   // TODO: Get this working with real API.
   describe('publishing', () => {
-    const { API_PORT } = process.env
-    const endpoint = new URL(API_PORT ? `http://localhost:${API_PORT}` : 'http://localhost:8787')
+    const API_PORT: string = process.env.API_PORT ?? '8787'
+    const endpoint = new URL(`http://localhost:${API_PORT}`)
     const service = new W3NameService(endpoint)
 
     it('publishes and resolves', async () => {

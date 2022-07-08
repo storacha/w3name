@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 
 const uint8arrays = require('uint8arrays')
 const ipns = require('ipns')
