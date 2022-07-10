@@ -163,6 +163,64 @@ describe('POST/GET /name/:key', () => {
     assert.strictEqual(resolved.record, uint8arrays.toString(record, 'base64pad'))
     assert.strictEqual(resolved.value, value)
   })
+
+  it.only('republishes valid records but errors with outdated records', async () => {
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+
+    const updates = [];
+
+    // Publish a new record with a few updates
+    let i = 0;
+    while(i < 3) {
+      const updateValue = `/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudr${i}`
+
+      const updateRecord = await createNameRecord(privateKey, updateValue)
+
+      const updatePublishRes = await mf.dispatchFetch(
+        new Request(
+          new URL(`name/${key}`, endpoint), {
+            method: 'POST',
+            body: uint8arrays.toString(updateRecord, 'base64pad')
+          })
+      )
+
+      assert(updatePublishRes.ok)
+
+      const { id } = await updatePublishRes.json()
+
+      assert.strictEqual(id, key)
+
+      const updateResolveRes = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
+
+      assert(updateResolveRes.ok)
+
+      const updateResolved: GetKeyResponse = await updateResolveRes.json()
+      assert.strictEqual(updateResolved.record, uint8arrays.toString(updateRecord, 'base64pad'))
+      assert.strictEqual(updateResolved.value, updateValue)
+
+      updates.push(updateRecord);
+      i++;
+    }
+
+    // Update the record with a previous version
+    const updateOldPublishRes = await mf.dispatchFetch(
+      new Request(
+        new URL(`name/${key}`, endpoint), {
+          method: 'POST',
+          body: uint8arrays.toString(updates[1], 'base64pad')
+        })
+    )
+    /* TODO: Test more invalid records
+        We should add tests to catch
+          - invalid seqno
+          - invalid v2sig
+          - invalid validity
+          - invalid record data size
+    */
+    const body: {message: string} = await updateOldPublishRes.json()
+    assert.equal(updateOldPublishRes.status, 400)
+    assert.ok(body.message.includes('invalid record: the record is outdated'))
+  })
 })
 
 describe('GET /name/:key/watch', () => {
