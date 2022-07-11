@@ -164,7 +164,7 @@ describe('POST/GET /name/:key', () => {
     assert.strictEqual(resolved.value, value)
   })
 
-  it.only('republishes valid records but errors with outdated records', async () => {
+  it('republishes valid records but errors with outdated records', async () => {
     const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
 
     const updates = [];
@@ -198,8 +198,8 @@ describe('POST/GET /name/:key', () => {
       assert.strictEqual(updateResolved.record, uint8arrays.toString(updateRecord, 'base64pad'))
       assert.strictEqual(updateResolved.value, updateValue)
 
-      updates.push(updateRecord);
-      i++;
+      updates.push(updateRecord)
+      i++
     }
 
     // Update the record with a previous version
