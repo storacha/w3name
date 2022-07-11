@@ -167,11 +167,11 @@ describe('POST/GET /name/:key', () => {
   it('republishes valid records but errors with outdated records', async () => {
     const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
 
-    const updates = [];
+    const updates = []
 
     // Publish a new record with a few updates
-    let i = 0;
-    while(i < 3) {
+    let i = 0
+    while (i < 3) {
       const updateValue = `/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudr${i}`
 
       const updateRecord = await createNameRecord(privateKey, updateValue)
