@@ -121,20 +121,19 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     const objGetResponse = await obj.fetch(url.toString())
     const ipnsRecord: IPNSRecordData = await objGetResponse.json()
 
-    if (ipnsRecord.key) {
+    if (ipnsRecord.key && ipnsRecord.key !== '') {
       // We have an existing record, ensure it is older than the one we are publishing.
       if (
         (recordData.hasV2Sig && !ipnsRecord.hasV2Sig) ||
         Number(recordData.seqno) > Number(ipnsRecord.seqno) ||
         recordData.validity > ipnsRecord.validity ||
-        recordData.record.length >  recordData.record.length
+        recordData.record.length > ipnsRecord.record.length
       ) {
         // Published record is valid
       } else {
         return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
       }
     }
-
   } catch (error) {
     return jsonResponse(JSON.stringify({ message: 'please try again' }), 500)
   }
