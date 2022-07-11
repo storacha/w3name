@@ -121,7 +121,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     const objGetResponse = await obj.fetch(url.toString())
     const ipnsRecord: IPNSRecordData = await objGetResponse.json()
 
-    if (ipnsRecord.key && ipnsRecord.key !== '') {
+    if (ipnsRecord.key ?? '') {
       // We have an existing record, ensure it is older than the one we are publishing.
       if (
         (recordData.hasV2Sig && !ipnsRecord.hasV2Sig) ||
