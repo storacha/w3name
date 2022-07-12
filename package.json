@@ -1,0 +1,20 @@
+{
+  "name": "web3.name",
+  "version": "1.0.0",
+  "private": true,
+  "license": "(Apache-2.0 AND MIT)",
+  "workspaces": [
+    "packages/api",
+    "packages/client",
+    "packages/website"
+  ],
+  "scripts": {
+    "start": "npm run dev -w packages/api"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": "16.x",
+    "npm": ">=7.x"
+  }
+}
