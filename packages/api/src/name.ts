@@ -109,35 +109,6 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     validity: new PreciseDate(uint8ArrayToString(entry.validity)).getFullTime().toString()
   }
 
-  // Validate the published record is newer
-  // Logic copied from https://github.com/ipfs/go-ipns/blob/a8379aa25ef287ffab7c5b89bfaad622da7e976d/ipns.go#L325
-  try {
-    // Fetch the old record if one exists - is there a better way of doing this?
-    const objId = env.IPNS_RECORD.idFromName(key)
-    const obj = env.IPNS_RECORD.get(objId)
-    const url = new URL(request.url)
-
-    url.pathname = key
-    const objGetResponse = await obj.fetch(url.toString())
-    const ipnsRecord: IPNSRecordData = await objGetResponse.json()
-
-    if (ipnsRecord.key ?? '') {
-      // We have an existing record, ensure it is older than the one we are publishing.
-      if (
-        (recordData.hasV2Sig && !ipnsRecord.hasV2Sig) ||
-        Number(recordData.seqno) > Number(ipnsRecord.seqno) ||
-        recordData.validity > ipnsRecord.validity ||
-        recordData.record.length > ipnsRecord.record.length
-      ) {
-        // Published record is valid
-      } else {
-        return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
-      }
-    }
-  } catch (error) {
-    return jsonResponse(JSON.stringify({ message: 'please try again' }), 500)
-  }
-
   const broadcastData: BroadcastData = {
     key,
     value: uint8ArrayToString(value),
@@ -158,6 +129,9 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
       })())
 
       return jsonResponse(JSON.stringify({ id: key }), 202)
+    } else {
+      // Proxy the error response from the Durable Object
+      return objPostResponse
     }
   } catch (error) {
     // pass
