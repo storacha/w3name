@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@google-cloud/precise-date": "^3.0.0",
+    "@web-std/fetch": "^4.1.0",
     "ipns": "^1.0.1",
     "itty-router": "^2.6.1",
     "libp2p-crypto": "^0.21.2",
