@@ -160,7 +160,10 @@ describe('POST/GET /name/:key', () => {
     // Given an update with a V1 signature
     const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
     const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
-    const entry = await ipns.create(peerId, uint8arrays.fromString(value), 0, 100000)
+    // Even if the sequence number is higher, the fact that the signature version is older
+    // should prevent it from being valid
+    const seqno = 99
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), seqno, 100000)
 
     delete entry.signatureV2
 
