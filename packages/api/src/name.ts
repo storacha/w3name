@@ -99,8 +99,6 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     throw new HTTPError('embedded public key mismatch', 400)
   }
 
-  const { value } = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
-
   const recordData = {
     key, // base36 "libp2p-key" encoding of the public key
     record, // the serialized IPNS record - base64 encoded
@@ -111,7 +109,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 
   const broadcastData: BroadcastData = {
     key,
-    value: uint8ArrayToString(value),
+    value: uint8ArrayToString(entry.value),
     record
   }
 
