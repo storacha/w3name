@@ -11,6 +11,10 @@ bindings = [
     { name = "IPNS_RECORD", class_name = "IPNSRecord" }
 ]
 
+[env.test.vars]
+REBROADCAST_INTERVAL_MS = 500
+BROACAST_ENDPOINT = "http://127.0.0.1:8787"
+
 [[migrations]]
 tag = "v1"
 new_classes = ["NameRoom0", "IPNSRecord"]
