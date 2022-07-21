@@ -20,6 +20,18 @@ let mf: Miniflare
 
 const endpoint = 'http://127.0.0.1:8787'
 
+async function publishRecord (key: string, record: Uint8Array): Promise<Response> {
+  return await mf.dispatchFetch(
+    new Request(
+      new URL(`name/${key}`, endpoint),
+      {
+        method: 'POST',
+        body: uint8arrays.toString(record, 'base64pad')
+      }
+    )
+  ) as any
+}
+
 before((done) => {
   mf = new Miniflare({
     envPath: true,
@@ -76,13 +88,7 @@ describe('POST/GET /name/:key', () => {
     const { privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
     const record = await createNameRecord(privateKey, value)
-    const response = await mf.dispatchFetch(
-      new Request(
-        new URL(`name/${key}`, endpoint), {
-          method: 'POST',
-          body: uint8arrays.toString(record, 'base64pad')
-        })
-    )
+    const response = await publishRecord(key, record)
     const body: {message: string} = await response.json()
 
     assert.equal(response.status, 400)
@@ -95,13 +101,7 @@ describe('POST/GET /name/:key', () => {
     const key = CID.createV1(140, digest).toString(base36)
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
     const record = await createNameRecord(keyPair.bytes, value)
-    const response = await mf.dispatchFetch(
-      new Request(
-        new URL(`name/${key}`, endpoint), {
-          method: 'POST',
-          body: uint8arrays.toString(record, 'base64pad')
-        })
-    )
+    const response = await publishRecord(key, record)
     const body: {message: string} = await response.json()
 
     assert.equal(response.status, 400)
@@ -121,14 +121,7 @@ describe('POST/GET /name/:key', () => {
     // Deliberately create an expired entry
     const entry = await ipns.create(peerId, uint8arrays.fromString(value), 0, 0)
     const record = ipns.marshal(entry)
-
-    const response = await mf.dispatchFetch(
-      new Request(
-        new URL(`name/${key}`, endpoint), {
-          method: 'POST',
-          body: uint8arrays.toString(record, 'base64pad')
-        })
-    )
+    const response = await publishRecord(key, record)
     const body: {message: string} = await response.json()
 
     assert.equal(response.status, 400)
@@ -140,13 +133,7 @@ describe('POST/GET /name/:key', () => {
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
     const record = await createNameRecord(privateKey, value)
 
-    const publishRes = await mf.dispatchFetch(
-      new Request(
-        new URL(`name/${key}`, endpoint), {
-          method: 'POST',
-          body: uint8arrays.toString(record, 'base64pad')
-        })
-    )
+    const publishRes = await publishRecord(key, record)
 
     assert(publishRes.ok)
 
@@ -162,6 +149,86 @@ describe('POST/GET /name/:key', () => {
 
     assert.strictEqual(resolved.record, uint8arrays.toString(record, 'base64pad'))
     assert.strictEqual(resolved.value, value)
+  })
+
+  it('raises an error when the signature version is older', async () => {
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const record = await createNameRecord(privateKey, value)
+    await publishRecord(key, record)
+
+    // Given an update with a V1 signature
+    const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
+    const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
+    // Even if the sequence number is higher, the fact that the signature version is older
+    // should prevent it from being valid
+    const seqno = 99
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), seqno, 100000)
+
+    delete entry.signatureV2
+
+    const recordV1 = ipns.marshal(entry)
+    const publishV1Res = await publishRecord(key, recordV1)
+    const body: {message: string} = await publishV1Res.json()
+
+    assert.equal(publishV1Res.status, 400, body.message)
+    assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
+  })
+
+  it('raises an error when the sequence number is smaller', async () => {
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
+    const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), 10n, 100000)
+    const response = await publishRecord(key, ipns.marshal(entry))
+
+    assert.ok(response.ok)
+
+    // Given an update with a smaller sequence number (same signature version and validity)
+    const value2 = '/ipfs/bafybeiauyddeo2dfgargy56kwxirquxax003nobtjtjvoqu552oqciudxf'
+    const entry2 = await ipns.create(peerId, uint8arrays.fromString(value2), 9n, 100000)
+
+    const updateResponse = await publishRecord(key, ipns.marshal(entry2))
+    const body: {message: string} = await updateResponse.json()
+
+    assert.equal(updateResponse.status, 400, body.message)
+    assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
+  })
+
+  it('raises an error when overwriting validity with a lower value', async () => {
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
+    const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), 1n, 100000)
+    const response = await publishRecord(key, ipns.marshal(entry))
+    assert.ok(response.ok)
+
+    // Given an update with the same signature version, sequence number and a smaller validity
+    const entry2 = await ipns.create(peerId, uint8arrays.fromString(value), 1n, 90000)
+    const updateResponse = await publishRecord(key, ipns.marshal(entry2))
+    const body: {message: string} = await updateResponse.json()
+
+    assert.equal(updateResponse.status, 400, body.message)
+    assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
+  })
+
+  it('raises an error when overwriting with the same record', async () => {
+    const { id: key, privateKey }: { id: string, privateKey: Uint8Array } = await createNameKeypair()
+    const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
+    const privKeyObj = await keys.unmarshalPrivateKey(privateKey)
+    const peerId = await peerIdFromKeys(privKeyObj.public.bytes, privKeyObj.bytes)
+    const entry = await ipns.create(peerId, uint8arrays.fromString(value), 1n, 100000)
+    const response = await publishRecord(key, ipns.marshal(entry))
+    assert.ok(response.ok)
+
+    // Given an update with the same record
+    const updateResponse = await publishRecord(key, ipns.marshal(entry))
+    const body: {message: string} = await updateResponse.json()
+
+    assert.equal(updateResponse.status, 400, body.message)
+    assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
   })
 })
 
@@ -291,20 +358,6 @@ describe('GET /name/:key/watch', () => {
       }
     }
   })
-
-  async function publishRecord (key: string, record: Uint8Array): Promise<void> {
-    const publishRes = await mf.dispatchFetch(
-      new Request(
-        new URL(`name/${key}`, endpoint),
-        {
-          method: 'POST',
-          body: uint8arrays.toString(record, 'base64pad')
-        }
-      )
-    )
-
-    assert(publishRes.ok)
-  }
 })
 
 describe('Not found', () => {

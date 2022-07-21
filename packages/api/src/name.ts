@@ -127,6 +127,9 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
       })())
 
       return jsonResponse(JSON.stringify({ id: key }), 202)
+    } else {
+      // Proxy the error response from the Durable Object
+      return objPostResponse
     }
   } catch (error) {
     // pass
