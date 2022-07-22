@@ -1,0 +1,15 @@
+{
+  "name": "@w3name/e2e",
+  "version": "0.1.0",
+  "description": "e2e tests for w3name",
+  "author": "",
+  "private": true,
+  "license": "Apache-2.0 OR MIT",
+  "scripts": {
+    "test": "npx mocha --experimental-modules --experimental-vm-modules test/**/*.spec.mjs"
+  },
+  "devDependencies": {
+    "miniflare": "^2.6.0",
+    "mocha": "^10.0.0"
+  }
+}
