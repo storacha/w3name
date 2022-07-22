@@ -34,8 +34,7 @@ import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
 import * as cbor from 'cborg'
-
-import type { PublicService, W3NameService } from './service.js'
+import type W3NameService from './service.js'
 import fetch from '@web-std/fetch'
 
 const libp2pKeyCode = 0x72
@@ -213,18 +212,16 @@ export async function publish (service: W3NameService, revision: Revision, key: 
     new Date(revision.validity).getTime() - Date.now()
   )
 
-  const res = await maybeHandleError(fetch(url.toString(), {
+  await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
-    body: JSON.stringify({ value: uint8ArrayToString(ipns.marshal(entry), 'base64pad') }),
-    headers: { 'Content-Type': 'application/json' }
+    body: uint8ArrayToString(ipns.marshal(entry), 'base64pad')
   }))
-  await res.json()
 }
 
 /**
  * Resolve the current IPNS record revision for the passed name.
  */
-export async function resolve (service: PublicService, name: Name): Promise<Revision> {
+export async function resolve (service: W3NameService, name: Name): Promise<Revision> {
   const url = new URL(`name/${name.toString()}`, service.endpoint)
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()

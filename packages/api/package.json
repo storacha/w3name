@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "w3name api",
   "author": "",
+  "directories": {
+    "test": "test"
+  },
+  "private": true,
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/web3-storage/w3name#readme",
   "repository": {
@@ -12,6 +16,7 @@
   "bugs": {
     "url": "https://github.com/web3-storage/w3name/issues"
   },
+  "keywords": ["w3name", "ipns"],
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
@@ -30,12 +35,7 @@
       "import": "./dist/src/index.js"
     }
   },
-  "eslintConfig": {
-    "extends": "ipfs",
-    "parserOptions": {
-      "sourceType": "module"
-    }
-  },
+  "module": "dist/index.mjs",
   "scripts": {
     "build": "node buildworkermodule.mjs; aegir build",
     "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
@@ -55,9 +55,10 @@
     "aegir": "^37.3.0",
     "miniflare": "^2.5.1"
   },
-  "directories": {
-    "test": "test"
-  },
-  "module": "dist/index.mjs",
-  "private": true
+  "eslintConfig": {
+    "extends": "ipfs",
+    "parserOptions": {
+      "sourceType": "module"
+    }
+  }
 }

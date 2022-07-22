@@ -3,7 +3,7 @@ import { CID } from 'multiformats/cid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { HTTPError } from './errors'
 import { jsonResponse } from './utils/json-response'
-import { keys } from 'libp2p-crypto'
+import { keys, PublicKey } from 'libp2p-crypto'
 import { NameRoom, BroadcastData } from './broadcast'
 import { PreciseDate } from '@google-cloud/precise-date'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
@@ -84,10 +84,12 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 
   const keyCid = parseAndValidateCID(key)
   const record = await request.text()
-  const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
-  const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
+  let entry: ipns.IPNSEntry | undefined
+  let pubKey: PublicKey | undefined
 
   try {
+    entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
+    pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
     await ipnsValidate(pubKey, entry)
   } catch (error: any) {
     if (error instanceof Error) {
@@ -95,44 +97,45 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     }
   }
 
-  if (entry.pubKey !== undefined && !keys.unmarshalPublicKey(entry.pubKey).equals(pubKey)) {
-    throw new HTTPError('embedded public key mismatch', 400)
-  }
-
-  const recordData = {
-    key, // base36 "libp2p-key" encoding of the public key
-    record, // the serialized IPNS record - base64 encoded
-    hasV2Sig: Boolean(entry.signatureV2),
-    seqno: entry.sequence.toString(),
-    validity: new PreciseDate(uint8ArrayToString(entry.validity)).getFullTime().toString()
-  }
-
-  const broadcastData: BroadcastData = {
-    key,
-    value: uint8ArrayToString(entry.value),
-    record
-  }
-
-  const objId = env.IPNS_RECORD.idFromName(key)
-  const obj = env.IPNS_RECORD.get(objId)
-  const postRequest = new Request(request.url, { method: 'PUT', body: JSON.stringify(recordData) })
-
-  try {
-    const objPostResponse = await obj.fetch(postRequest)
-
-    if (objPostResponse.ok) {
-      ctx.waitUntil((async () => {
-        await NameRoom.broadcast(request, env.NAME_ROOM, key, broadcastData)
-        await NameRoom.broadcast(request, env.NAME_ROOM, '*', broadcastData)
-      })())
-
-      return jsonResponse(JSON.stringify({ id: key }), 202)
-    } else {
-      // Proxy the error response from the Durable Object
-      return objPostResponse
+  if (entry !== undefined && pubKey !== undefined) {
+    if (entry.pubKey !== undefined && !keys.unmarshalPublicKey(entry.pubKey).equals(pubKey)) {
+      throw new HTTPError('embedded public key mismatch', 400)
     }
-  } catch (error) {
-    // pass
+
+    const recordData = {
+      key, // base36 "libp2p-key" encoding of the public key
+      record, // the serialized IPNS record - base64 encoded
+      hasV2Sig: Boolean(entry.signatureV2),
+      seqno: entry.sequence.toString(),
+      validity: new PreciseDate(uint8ArrayToString(entry.validity)).getFullTime().toString()
+    }
+
+    const broadcastData: BroadcastData = {
+      key,
+      value: uint8ArrayToString(entry.value),
+      record
+    }
+
+    const objId = env.IPNS_RECORD.idFromName(key)
+    const obj = env.IPNS_RECORD.get(objId)
+    const postRequest = new Request(request.url, { method: 'PUT', body: JSON.stringify(recordData) })
+
+    try {
+      const objPostResponse = await obj.fetch(postRequest)
+
+      if (objPostResponse.ok) {
+        ctx.waitUntil((async () => {
+          await NameRoom.broadcast(request, env.NAME_ROOM, key, broadcastData)
+          await NameRoom.broadcast(request, env.NAME_ROOM, '*', broadcastData)
+        })())
+        return jsonResponse(JSON.stringify({ id: key }), 202)
+      } else {
+        // Proxy the error response from the Durable Object
+        return objPostResponse
+      }
+    } catch (error) {
+      // pass
+    }
   }
 
   return jsonResponse(JSON.stringify({ message: 'please try again' }), 500)
