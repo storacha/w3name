@@ -44,16 +44,18 @@
   },
   "dependencies": {
     "@google-cloud/precise-date": "^3.0.0",
+    "@web-std/fetch": "^4.1.0",
     "ipns": "^1.0.1",
     "itty-router": "^2.6.1",
     "libp2p-crypto": "^0.21.2",
-    "p-defer": "^4.0.0"
+    "p-defer": "^4.0.0",
+    "sinon": "^14.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.13.0",
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
-    "miniflare": "^2.5.1"
+    "miniflare": "^2.6.0"
   },
   "directories": {
     "test": "test"
