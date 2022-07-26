@@ -13,7 +13,8 @@ bindings = [
 
 [env.test.vars]
 REBROADCAST_INTERVAL_MS = 500
-BROACAST_ENDPOINT = "http://127.0.0.1:8787"
+PUBLISHER_ENDPOINT_URL = "http://127.0.0.1:8000"
+PUBLISHER_AUTH_SECRET = 123456
 
 [[migrations]]
 tag = "v1"
