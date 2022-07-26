@@ -29,7 +29,7 @@ describe('Rebroadcast alarm', () => {
       modules: true
     })
 
-    server.listen(8787, '127.0.0.1')
+    server.listen(8000, '127.0.0.1')
 
     done()
   })

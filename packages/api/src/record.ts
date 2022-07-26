@@ -11,7 +11,8 @@ export interface IPNSRecordData {
 }
 
 const REBROADCAST_INTERVAL_MS = 12 * 60 * 60 * 1000
-const BROADCAST_ENDPOINT = 'https://ipns-publisher.w3name.com'
+const PUBLISHER_ENDPOINT_URL = 'http://localhost:8000'
+const PUBLISHER_AUTH_SECRET = '123456'
 
 export function canOverwrite (current: IPNSRecordData, candidate: IPNSRecordData): boolean {
   // Logic copied from https://github.com/ipfs/go-ipns/blob/a8379aa25ef287ffab7c5b89bfaad622da7e976d/ipns.go#L325
@@ -119,9 +120,12 @@ export class IPNSRecord {
 
     // eslint-disable-next-line no-useless-catch
     try {
-      const response = await fetch(this.broadcastEndpointURL, {
+      const response = await fetch(this.publisherEndpointURL, {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: this.publisherEndpointToken
+        }
       })
 
       if (response.ok) {
@@ -148,11 +152,11 @@ export class IPNSRecord {
     return data
   }
 
-  get broadcastEndpointURL (): string {
-    if (this.env.BROACAST_ENDPOINT !== '') {
-      return this.env.BROACAST_ENDPOINT
+  get publisherEndpointURL (): string {
+    if (this.env.PUBLISHER_ENDPOINT_URL && this.env.PUBLISHER_ENDPOINT_URL !== '') {
+      return this.env.PUBLISHER_ENDPOINT_URL
     }
-    return BROADCAST_ENDPOINT
+    return PUBLISHER_ENDPOINT_URL
   }
 
   get rebroadcastScheduledTime (): number {
@@ -161,5 +165,12 @@ export class IPNSRecord {
       interval = Number(this.env.REBROADCAST_INTERVAL_MS)
     }
     return Date.now() + interval
+  }
+
+  get publisherEndpointToken (): string {
+    if (this.env.PUBLISHER_AUTH_SECRET) {
+      return this.env.PUBLISHER_AUTH_SECRET
+    }
+    return PUBLISHER_AUTH_SECRET
   }
 }
