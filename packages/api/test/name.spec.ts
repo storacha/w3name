@@ -38,7 +38,10 @@ before((done) => {
     packagePath: true,
     wranglerConfigPath: true,
     wranglerConfigEnv: 'test',
-    modules: true
+    modules: true,
+    bindings: {
+      REBROADCAST_INTERVAL_MS: 0
+    }
   })
   done()
 })
