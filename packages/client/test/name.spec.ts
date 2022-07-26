@@ -7,7 +7,7 @@ import { identity } from 'multiformats/hashes/identity'
 import { keys } from 'libp2p-crypto'
 import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
-import { W3NameService } from '../src/service.js'
+import W3NameService from '../src/service.js'
 import * as Name from '../src/index.js'
 
 const libp2pKeyCode = 0x72

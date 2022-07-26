@@ -19,7 +19,7 @@ function createRateLimiter () {
   return async () => await throttle(() => {})
 }
 
-export class W3NameService implements PublicService {
+export default class W3NameService implements PublicService {
   endpoint: URL
   rateLimiter?: RateLimiter | undefined
 
