@@ -11,8 +11,7 @@ const server = http.createServer((req, res) => {
     throw Error('No url passed to mock server')
   }
 
-  const reqUrl = new URL(req.url).pathname
-
+  const reqUrl = req.url
   if (reqUrl?.startsWith('/name/')) {
     const key = reqUrl.split('/').at(-1)
 
