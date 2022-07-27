@@ -47,9 +47,8 @@
   "scripts": {
     "build": "aegir build",
     "lint": "aegir lint",
-    "test": "run-p -r mock:api test:all",
-    "test:all": "npm run build && API_PORT=1337 aegir test",
-    "mock:api": "smoke -p 1337 test/mocks/api"
+    "test": "run-p -r test:all",
+    "test:all": "npm run build && API_PORT=1337 aegir test --target node"
   },
   "dependencies": {
     "@web-std/fetch": "^4.1.0",
