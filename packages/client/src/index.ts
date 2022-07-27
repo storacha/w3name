@@ -34,7 +34,7 @@ import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
 import * as cbor from 'cborg'
-import type W3NameService from './service.js'
+import W3NameService from './service.js'
 import fetch from '@web-std/fetch'
 
 const libp2pKeyCode = 0x72
@@ -42,6 +42,7 @@ const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
 const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
 
+const defaultService = new W3NameService()
 /**
  * Name is an IPNS key ID.
  */
@@ -203,7 +204,7 @@ export class Revision {
  * ⚠️ Name records are not _yet_ published to or updated from the IPFS network.
  * Working with name records simply updates the w3name cache of data.
  */
-export async function publish (service: W3NameService, revision: Revision, key: PrivateKey) {
+export async function publish (revision: Revision, key: PrivateKey, service: W3NameService = defaultService) {
   const url = new URL(`name/${revision.name.toString()}`, service.endpoint)
   const entry = await ipns.create(
     key,
@@ -211,7 +212,9 @@ export async function publish (service: W3NameService, revision: Revision, key: 
     revision.sequence,
     new Date(revision.validity).getTime() - Date.now()
   )
-
+  if (service.rateLimiter) {
+    await service.rateLimiter()
+  }
   await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
     body: uint8ArrayToString(ipns.marshal(entry), 'base64pad')
@@ -221,8 +224,11 @@ export async function publish (service: W3NameService, revision: Revision, key: 
 /**
  * Resolve the current IPNS record revision for the passed name.
  */
-export async function resolve (service: W3NameService, name: Name): Promise<Revision> {
+export async function resolve (name: Name, service: W3NameService = defaultService): Promise<Revision> {
   const url = new URL(`name/${name.toString()}`, service.endpoint)
+  if (service.rateLimiter) {
+    await service.rateLimiter()
+  }
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
 
