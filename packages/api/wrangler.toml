@@ -19,3 +19,19 @@ PUBLISHER_AUTH_SECRET = 123456
 [[migrations]]
 tag = "v1"
 new_classes = ["NameRoom0", "IPNSRecord"]
+
+[env.production]
+# name = "w3name-production"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+# TODO: confirm and add correct route URL
+route = "https://w3name-production.protocol-labs.workers.dev/*"
+route = "https://w3name.web3.storage/*"
+vars = { ENV = "production" }
+
+[env.staging]
+# name = "w3name-staging"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+# TODO: confirm and add correct route URL
+route = "https://w3name-staging.protocol-labs.workers.dev/*"
+route = "https://staging.w3name.web3.storage/*"
+vars = { ENV = "staging" }
