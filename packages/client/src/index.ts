@@ -212,9 +212,7 @@ export async function publish (revision: Revision, key: PrivateKey, service: W3N
     revision.sequence,
     new Date(revision.validity).getTime() - Date.now()
   )
-  if (service.rateLimiter) {
-    await service.rateLimiter()
-  }
+  await service.waitForRateLimit()
   await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
     body: uint8ArrayToString(ipns.marshal(entry), 'base64pad')
@@ -226,9 +224,8 @@ export async function publish (revision: Revision, key: PrivateKey, service: W3N
  */
 export async function resolve (name: Name, service: W3NameService = defaultService): Promise<Revision> {
   const url = new URL(`name/${name.toString()}`, service.endpoint)
-  if (service.rateLimiter) {
-    await service.rateLimiter()
-  }
+  await service.waitForRateLimit()
+
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
 
