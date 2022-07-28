@@ -141,7 +141,7 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
 
         assert.unreachable()
       } catch (err: any) {
@@ -154,7 +154,7 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
 
         assert.unreachable()
       } catch (err: any) {
