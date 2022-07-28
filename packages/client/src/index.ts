@@ -225,6 +225,7 @@ export async function resolve (service: W3NameService, name: Name): Promise<Revi
   const url = new URL(`name/${name.toString()}`, service.endpoint)
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
+
   const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
   const keyCid = CID.decode(name.bytes)
   const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
