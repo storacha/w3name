@@ -7,7 +7,7 @@
   "homepage": "https://github.com/web3-storage/w3name#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3name/packages/client"
+    "url": "https://github.com/web3-storage/w3name/tree/main/packages/client"
   },
   "bugs": {
     "url": "https://github.com/web3-storage/w3name/issues"
