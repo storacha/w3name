@@ -1,6 +1,8 @@
 <h1 align="center">⁂<br/>w3name</h1>
 <p align="center">The JavaScript API client for <a href="TODO: Add web url">TODO: Add web url</a></p>
 
+Warning: This package is currently in beta and uses experimental features and could change at any time. The W3Name API is not yet prepared so currently calls will fail.
+
 ## Getting started
 
 Install the package using npm

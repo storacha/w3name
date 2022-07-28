@@ -25,6 +25,8 @@
  * @module
  */
 
+console.warn("Warning: This package is currently in beta and uses experimental features and could change at any time. The W3Name API is not yet prepared so currently calls will fail.")
+
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
