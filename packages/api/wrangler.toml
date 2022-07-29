@@ -12,9 +12,9 @@ new_classes = ["NameRoom0", "IPNSRecord"]
 # Test
 
 [env.test.vars]
-REBROADCAST_INTERVAL_MS = 500
+REBROADCAST_INTERVAL_MS = "500"
 PUBLISHER_ENDPOINT_URL = "http://127.0.0.1:8000"
-PUBLISHER_AUTH_SECRET = 123456
+PUBLISHER_AUTH_SECRET = "123456"
 
 # Staging
 
@@ -23,7 +23,7 @@ account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
 routes = [
   { pattern = "https://name-staging.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
 ]
-vars = { ENV = "staging" }
+vars = { ENV = "staging", REBROADCAST_INTERVAL_MS = "86400000" }
 [env.staging.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
@@ -37,9 +37,14 @@ account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
 routes = [
   { pattern = "https://name.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
 ]
-vars = { ENV = "production" }
+vars = { ENV = "production", REBROADCAST_INTERVAL_MS = "86400000" }
 [env.production.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
     { name = "IPNS_RECORD", class_name = "IPNSRecord" }
   ]
+
+# The necessary secrets are:
+# - PUBLISHER_ENDPOINT_URL
+# - PUBLISHER_AUTH_SECRET
+# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
