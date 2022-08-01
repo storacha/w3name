@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 import * as Name from 'w3name'
 import { W3NameService } from 'w3name/service'
@@ -10,7 +11,7 @@ const stagingAPIURL = new URL('https://w3name-staging.protocol-labs.workers.dev/
  * This is part of the deployment process for staging to ensure that the deployed new
  * Cloudflare Worker works.
  */
-async function doStagingTestPublish() {
+async function doStagingTestPublish () {
   console.log('Doing publish of test record to w3name staging...')
   const service = W3NameService(stagingAPIURL)
 
