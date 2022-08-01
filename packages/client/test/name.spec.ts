@@ -122,18 +122,16 @@ describe('Name', () => {
       const value = '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui'
       const revision = await Name.v0(name, value)
 
-      await Name.publish(service, revision, name.key)
+      await Name.publish(revision, name.key, service)
 
-      const resolved = await Name.resolve(service, name)
-
+      const resolved = await Name.resolve(name, service)
       assert.equal(resolved.value, revision.value)
 
       const newValue = '/ipfs/QmPFpDRC87jTdSYxjnEZUTjJuYF5yLRWxir3DzJ1XiVZ3t'
       const newRevision = await Name.increment(revision, newValue)
 
-      await Name.publish(service, newRevision, name.key)
-
-      const newResolved = await Name.resolve(service, name)
+      await Name.publish(newRevision, name.key, service)
+      const newResolved = await Name.resolve(name, service)
 
       assert.equal(newResolved.value, newRevision.value)
     })
@@ -143,7 +141,7 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
 
         assert.unreachable()
       } catch (err: any) {
@@ -156,7 +154,7 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
 
         assert.unreachable()
       } catch (err: any) {

@@ -24,7 +24,7 @@ describe('w3name module', () => {
   })
 
   after((done) => {
-    server.close() 
+    server.close()
     done()
   })
 
@@ -32,9 +32,9 @@ describe('w3name module', () => {
     const name = await Name.create()
     const value = '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui'
     const revision = await Name.v0(name, value)
-    await Name.publish(service, revision, name.key)
+    await Name.publish(revision, name.key, service)
 
-    let latest = await Name.resolve(service, name)
+    let latest = await Name.resolve(name, service)
     assert.equal(latest.name, name)
     assert.equal(latest.value, value)
     assert.equal(latest.sequence, 0n)
@@ -42,9 +42,9 @@ describe('w3name module', () => {
 
     const value_2 = '/ipfs/bafkreid7fbwjx4swwewit5txzttoja4t4xnkj3rx3q7dlbj76gvixuq35y'
     const revision_2 = await Name.increment(revision, value_2)
-    await Name.publish(service, revision_2, name.key)
+    await Name.publish(revision_2, name.key, service)
 
-    latest = await Name.resolve(service, name)
+    latest = await Name.resolve(name, service)
     assert.equal(latest.name, name)
     assert.equal(latest.value, value_2)
     assert.equal(latest.sequence, 1n)
