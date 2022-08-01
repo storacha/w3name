@@ -90,11 +90,11 @@ export class IPNSRecord {
         validity: payload.validity,
         lastRebroadcast: now.toISOString()
       }
-      
+
       if (record.key !== undefined && !canOverwrite(record, data)) {
         return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
       }
-      
+
       await this.state.storage.put(data)
 
       return jsonResponse(JSON.stringify(data), 200)
@@ -153,7 +153,7 @@ export class IPNSRecord {
   }
 
   get publisherEndpointURL (): string {
-    if (this.env.PUBLISHER_ENDPOINT_URL && this.env.PUBLISHER_ENDPOINT_URL !== '') {
+    if (this.env.PUBLISHER_ENDPOINT_URL !== null && this.env.PUBLISHER_ENDPOINT_URL !== '') {
       return this.env.PUBLISHER_ENDPOINT_URL
     }
     return PUBLISHER_ENDPOINT_URL
@@ -168,7 +168,7 @@ export class IPNSRecord {
   }
 
   get publisherEndpointToken (): string {
-    if (this.env.PUBLISHER_AUTH_SECRET) {
+    if (this.env.PUBLISHER_AUTH_SECRET !== null && this.env.PUBLISHER_AUTH_SECRET !== '') {
       return this.env.PUBLISHER_AUTH_SECRET
     }
     return PUBLISHER_AUTH_SECRET
