@@ -45,7 +45,6 @@
   },
   "module": "dist/index.mjs",
   "scripts": {
-    "build": "aegir build",
     "test": "run-p -r test:all",
     "test:all": "npm run build && API_PORT=1337 aegir test --target node"
   },

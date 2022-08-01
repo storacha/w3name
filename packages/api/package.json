@@ -37,7 +37,7 @@
   },
   "module": "dist/index.mjs",
   "scripts": {
-    "build": "node buildworkermodule.mjs; aegir build",
+    "build": "node buildworkermodule.mjs",
     "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
     "dev": "miniflare --modules --live-reload"
   },
