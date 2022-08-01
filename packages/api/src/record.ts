@@ -146,7 +146,7 @@ export class IPNSRecord {
       record: map.get('record'),
       hasV2Sig: map.get('hasV2Sig'),
       seqno: map.get('seqno'),
-      validity: map.get('validity')
+      validity: map.get("validity")
     }
 
     return data

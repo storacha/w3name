@@ -96,7 +96,7 @@ export class WritableName extends Name {
  * publish IPNS record revisions.
  */
 export async function create () {
-  const privKey = await keys.generateKeyPair("Ed25519", 2048)
+  const privKey = await keys.generateKeyPair('Ed25519', 2048)
   return new WritableName(privKey)
 }
 
