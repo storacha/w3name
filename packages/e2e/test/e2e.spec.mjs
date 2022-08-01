@@ -1,7 +1,8 @@
+/* global describe, it, before, after */
 import * as Name from 'w3name'
 import W3NameService from 'w3name/service'
 import assert from 'assert/strict'
-import { Miniflare, Log, LogLevel, Request } from 'miniflare'
+import { Miniflare, Log, LogLevel } from 'miniflare'
 
 const endpoint = 'http://127.0.0.1:8787'
 
@@ -13,13 +14,13 @@ describe('w3name module', () => {
   before(async () => {
     mf = new Miniflare({
       cfFetch: false,
-      buildBasePath: "../api/",
+      buildBasePath: '../api/',
       packagePath: '../api/package.json',
       wranglerConfigPath: '../api/wrangler.toml',
       log: new Log(LogLevel.DEBUG),
       modules: true
     })
-    service = new W3NameService('http://127.0.0.1:8787')
+    service = new W3NameService(endpoint)
     server = await mf.startServer()
   })
 
@@ -40,13 +41,13 @@ describe('w3name module', () => {
     assert.equal(latest.sequence, 0n)
     assert.ok(latest.validity)
 
-    const value_2 = '/ipfs/bafkreid7fbwjx4swwewit5txzttoja4t4xnkj3rx3q7dlbj76gvixuq35y'
-    const revision_2 = await Name.increment(revision, value_2)
-    await Name.publish(revision_2, name.key, service)
+    const value2 = '/ipfs/bafkreid7fbwjx4swwewit5txzttoja4t4xnkj3rx3q7dlbj76gvixuq35y'
+    const revision2 = await Name.increment(revision, value2)
+    await Name.publish(revision2, name.key, service)
 
     latest = await Name.resolve(name, service)
     assert.equal(latest.name, name)
-    assert.equal(latest.value, value_2)
+    assert.equal(latest.value, value2)
     assert.equal(latest.sequence, 1n)
     assert.ok(latest.validity)
   })
