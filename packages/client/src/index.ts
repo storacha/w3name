@@ -38,7 +38,8 @@ import W3NameService from './service.js'
 import fetch from '@web-std/fetch'
 
 // TODO: Remove this once API is live.
-console.warn("Warning: This package is currently in beta and uses experimental features and could change at any time. The W3Name API is not yet prepared so currently calls will fail.")
+/* eslint-disable no-console */
+console.warn('Warning: This package is currently in beta and uses experimental features and could change at any time. The W3Name API is not yet prepared so currently calls will fail.')
 
 const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
