@@ -1,31 +1,23 @@
-name: Client
+name: Lint
+
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/client/**'
-      - '.github/workflows/client.yml'
   pull_request:
     types:
       # Triggered when a pull request's head branch is updated.
       # For example, when the head branch is updated from the base branch, when new commits are pushed to the head branch, or when the base branch is changed.
       - synchronize
-    paths:
-      - 'packages/client/**'
-      - '.github/workflows/client.yml'
+
 jobs:
-  test:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    name: Test
     steps:
       - uses: actions/checkout@v2
+      - uses: codepunkt/npm-lockfile-changes@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v2
         with:
           node-version: 16
       - uses: bahmutov/npm-install@v1
-        with:
-          working-directory: packages/client
-      - run: npm run build --workspace packages/client
-      - run: npm test --workspace packages/client
-
+      - run: npm run lint
