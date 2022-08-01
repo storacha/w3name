@@ -10,12 +10,25 @@
     "packages/website"
   ],
   "scripts": {
-    "start": "npm run dev -w packages/api"
+    "start": "npm run dev -w packages/api",
+    "lint": "standard --verbose | snazzy",
+    "lint:fix": "standard --fix "
   },
   "devDependencies": {
+    "snazzy": "^9.0.0",
+    "standard": "^16.0.3"
   },
   "engines": {
     "node": "16.x",
     "npm": ">=7.x"
+  },
+  "standard": {
+    "globals": [
+      "fetch",
+      "AbortController"
+    ],
+    "ignore": [
+      "packages/*/dist"
+    ]
   }
 }
