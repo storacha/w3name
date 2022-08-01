@@ -153,7 +153,7 @@ export class IPNSRecord {
   }
 
   get publisherEndpointURL (): string {
-    if (this.env.PUBLISHER_ENDPOINT_URL && this.env.PUBLISHER_ENDPOINT_URL !== '') {
+    if (this.env.PUBLISHER_ENDPOINT_URL !== null && this.env.PUBLISHER_ENDPOINT_URL !== '') {
       return this.env.PUBLISHER_ENDPOINT_URL
     }
     return PUBLISHER_ENDPOINT_URL

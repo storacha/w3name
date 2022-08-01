@@ -9,6 +9,7 @@ import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
 import W3NameService from '../src/service.js'
 import * as Name from '../src/index.js'
+import server from './mocks/api.js'
 
 const libp2pKeyCode = 0x72
 
@@ -102,27 +103,35 @@ describe('Name', () => {
     })
   })
 
-  // TODO: Get this working with real API.
-  describe('publishing', () => {
+  describe('publishing and retrieving a record revision', () => {
     const API_PORT: string = process.env.API_PORT ?? '8787'
     const endpoint = new URL(`http://localhost:${API_PORT}`)
     const service = new W3NameService(endpoint)
 
+    before(() => {
+      server.listen(API_PORT)
+    })
+
+    after(() => {
+      server.close()
+    })
+
     it('publishes and resolves', async () => {
       const name = await Name.create()
+
       const value = '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui'
-
       const revision = await Name.v0(name, value)
-      await Name.publish(service, revision, name.key)
 
-      const resolved = await Name.resolve(service, name)
+      await Name.publish(revision, name.key, service)
+
+      const resolved = await Name.resolve(name, service)
       assert.equal(resolved.value, revision.value)
 
       const newValue = '/ipfs/QmPFpDRC87jTdSYxjnEZUTjJuYF5yLRWxir3DzJ1XiVZ3t'
       const newRevision = await Name.increment(revision, newValue)
 
-      await Name.publish(service, newRevision, name.key)
-      const newResolved = await Name.resolve(service, name)
+      await Name.publish(newRevision, name.key, service)
+      const newResolved = await Name.resolve(name, service)
 
       assert.equal(newResolved.value, newRevision.value)
     })
@@ -132,7 +141,8 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
+
         assert.unreachable()
       } catch (err: any) {
         assert.equal(err.message, 'throw an error for the tests')
@@ -144,7 +154,8 @@ describe('Name', () => {
 
       try {
         // @ts-expect-error
-        await Name.resolve(service, name)
+        await Name.resolve(name, service)
+
         assert.unreachable()
       } catch (err: any) {
         assert.equal(err.message, 'unexpected status: 500')

@@ -21,13 +21,13 @@ function createRateLimiter () {
 
 export default class W3NameService implements PublicService {
   endpoint: URL
-  rateLimiter?: RateLimiter | undefined
+  waitForRateLimit: RateLimiter
 
   constructor (
-    endpoint: URL = new URL('https://api.web3.storage'),
-    rateLimiter: RateLimiter | undefined = undefined
+    endpoint: URL = new URL('https://name.web3.storage/'),
+    waitForRateLimit: RateLimiter = createRateLimiter()
   ) {
     this.endpoint = endpoint
-    this.rateLimiter = rateLimiter != null ? rateLimiter : createRateLimiter()
+    this.waitForRateLimit = waitForRateLimit
   }
 }
