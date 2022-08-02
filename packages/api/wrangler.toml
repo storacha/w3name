@@ -9,12 +9,25 @@ command = "npm run build"
 tag = "v1"
 new_classes = ["NameRoom0", "IPNSRecord"]
 
+# For the dev environment. The "durable_objects" section is not shared among environments though.
+[durable_objects]
+  bindings = [
+    { name = "NAME_ROOM", class_name = "NameRoom0" },
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+  ]
+
 # Test
 
 [env.test.vars]
 REBROADCAST_INTERVAL_MS = "500"
 PUBLISHER_ENDPOINT_URL = "http://127.0.0.1:8000"
 PUBLISHER_AUTH_SECRET = "123456"
+
+[env.test.durable_objects]
+  bindings = [
+    { name = "NAME_ROOM", class_name = "NameRoom0" },
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+  ]
 
 # Staging
 
