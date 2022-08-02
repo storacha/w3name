@@ -1,6 +1,6 @@
 {
   "name": "w3name",
-  "version": "0.1.0-beta.0",
+  "version": "1.0.2",
   "description": "The JavaScript API client w3name",
   "author": "",
   "license": "Apache-2.0 OR MIT",
