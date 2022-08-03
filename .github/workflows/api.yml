@@ -22,8 +22,6 @@ jobs:
         with:
           node-version: 16
       - uses: bahmutov/npm-install@v1
-        with:
-          working-directory: packages/api
       - run: npm run lint --workspace packages/api
       - run: npm run build --workspace packages/api
       - run: npm test --workspace packages/api
