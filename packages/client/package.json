@@ -1,6 +1,6 @@
 {
   "name": "w3name",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The JavaScript API client w3name",
   "author": "",
   "license": "Apache-2.0 OR MIT",
@@ -48,7 +48,8 @@
     "build": "aegir build",
     "lint": "aegir lint",
     "test": "run-p -r test:all",
-    "test:all": "npm run build && API_PORT=1337 aegir test --target node"
+    "test:all": "npm run build && API_PORT=1337 aegir test --target node",
+    "publish": "npm run lint && npm run test && npm run build && npm publish"
   },
   "dependencies": {
     "@web-std/fetch": "^4.1.0",
