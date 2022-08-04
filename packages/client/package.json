@@ -44,6 +44,16 @@
     }
   },
   "module": "dist/index.mjs",
+  "typesVersions": {
+    "*": {
+      "index": [
+        "dist/src/index.d.ts"
+      ],
+      "service": [
+        "dist/src/service.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "build": "aegir build",
     "lint": "aegir lint",
