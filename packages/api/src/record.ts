@@ -95,8 +95,7 @@ export class IPNSRecord {
         return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
       }
 
-      // Using noCache to evict the record immediately after the write
-      await this.state.storage.put(data, { noCache: true })
+      await this.state.storage.put(data)
 
       return jsonResponse(JSON.stringify(data), 200)
     }
