@@ -26,7 +26,7 @@ function parseAndValidateCID (key: string): CID {
   try {
     cid = CID.parse(key, base36)
   } catch (err) {
-    throw new HTTPError('invalid key', 400)
+    throw new HTTPError('invalid key: cannot parse CID.', 400)
   }
   validateCIDKeyCode(cid)
   return cid
@@ -69,7 +69,7 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
     if (error instanceof HTTPError) {
       throw (error)
     } else {
-      throw new HTTPError('please try again', 500)
+      throw new HTTPError(`Unable to retrieve name ${error}`, 500)
     }
   }
 }
@@ -95,6 +95,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     if (error instanceof Error) {
       throw new HTTPError(`invalid ipns entry: ${error.message}`, 400)
     }
+    throw new HTTPError(`invalid ipns entry: ${error}`, 400)
   }
 
   if (entry !== undefined && pubKey !== undefined) {
@@ -134,7 +135,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
         return objPostResponse
       }
     } catch (error) {
-      // pass
+      throw new Error(`Unable to broadcast, ${ error instanceof Object ? JSON.stringify(error) : error }`)
     }
   }
 
