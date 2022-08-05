@@ -95,7 +95,8 @@ export class IPNSRecord {
         return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
       }
 
-      await this.state.storage.put(data)
+      // Using noCache to evict the record immediately after the write
+      await this.state.storage.put(data, { noCache: true })
 
       return jsonResponse(JSON.stringify(data), 200)
     }
@@ -138,7 +139,10 @@ export class IPNSRecord {
   }
 
   async getIPNSRecordData (): Promise<IPNSRecordData> {
-    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'hasV2Sig', 'seqno', 'validity'])
+    // Using noCache as it is important to always get the latest record
+    const map: Map<string, any> = await this.state.storage.get(
+      ['key', 'record', 'hasV2Sig', 'seqno', 'validity'], { noCache: true }
+    )
 
     // Values will be set to undefined if the record was not created prior to fetching it
     const data: IPNSRecordData = {
