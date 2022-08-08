@@ -1,6 +1,6 @@
 {
   "name": "@w3name/api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "w3name api",
   "author": "",
   "directories": {
@@ -16,7 +16,10 @@
   "bugs": {
     "url": "https://github.com/web3-storage/w3name/issues"
   },
-  "keywords": ["w3name", "ipns"],
+  "keywords": [
+    "w3name",
+    "ipns"
+  ],
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
