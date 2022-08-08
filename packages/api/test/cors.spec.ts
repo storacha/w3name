@@ -20,10 +20,9 @@ before((done) => {
 })
 
 describe('CORS', () => {
-
   it('sets CORS headers on 404', async () => {
     // const res = await fetch(new URL('nope', endpoint))
-    const res = await mf.dispatchFetch(new URL(`imaginary`, endpoint))
+    const res = await mf.dispatchFetch(new URL('imaginary', endpoint))
     assert(!res.ok)
     assert.strictEqual(res.status, 404, 'Expected 404 on /nope')
     assert.strictEqual(res.headers.get('Access-Control-Allow-Origin'), '*')
@@ -41,7 +40,7 @@ describe('CORS', () => {
   it('correctly responds to preflight request', async () => {
     const res = await mf.dispatchFetch(
       new Request(
-        new URL(`name/abcd`, endpoint),
+        new URL('name/abcd', endpoint),
         {
           method: 'OPTIONS',
           headers: {

@@ -4,7 +4,7 @@ import type { RouteHandler } from 'itty-router'
 /**
  * Handler for CORS OPTIONS requests.
  */
-export function corsOptions(request: Request): Response {
+export function corsOptions (request: Request): Response {
   const headers = request.headers
   // Make sure the necessary headers are present for this to be a valid pre-flight request
   if (
@@ -12,17 +12,24 @@ export function corsOptions(request: Request): Response {
     headers.get('Access-Control-Request-Method') !== null &&
     headers.get('Access-Control-Request-Headers') !== null
   ) {
+    function headerOrDefault (key: string, fallback: string): string {
+      const value = headers.get(key)
+      if (value !== '' && value !== null) {
+        return value
+      }
+      return fallback
+    }
     // Handle CORS pre-flight request.
     /** @type {Record<string, string>} */
     const respHeaders = {
       'Content-Length': '0',
-      'Access-Control-Allow-Origin': headers.get('origin') || '*',
+      'Access-Control-Allow-Origin': headerOrDefault('origin', '*'),
       'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
       'Access-Control-Max-Age': '86400',
       // Allow all future content Request headers to go back to browser
       // such as Authorization (Bearer) or X-Client-Name-Version
       'Access-Control-Allow-Headers':
-        headers.get('Access-Control-Request-Headers') || '',
+        headerOrDefault('Access-Control-Request-Headers', ''),
       'Access-Control-Expose-Headers': 'Link, Count, Page, Size'
     }
 
@@ -41,7 +48,7 @@ export function corsOptions(request: Request): Response {
 /**
  * Wraps a handler which adds CORS headers to the responses.
  */
-export function withCorsHeaders(handler: RouteHandler<Request>): RouteHandler<Request> {
+export function withCorsHeaders (handler: RouteHandler<Request>): RouteHandler<Request> {
   return async (request: Request, ...rest: any[]): Promise<Response> => {
     const response = await handler(request, ...rest)
     return addCorsHeaders(request, response)
@@ -51,11 +58,11 @@ export function withCorsHeaders(handler: RouteHandler<Request>): RouteHandler<Re
 /**
  * Adds CORS headers to an already-generated response.
  */
-export function addCorsHeaders(request: Request, response: Response): Response {
+export function addCorsHeaders (request: Request, response: Response): Response {
   // Clone the response so that it's no longer immutable (like if it comes from cache or fetch)
   response = new Response(response.body, response)
   const origin = request.headers.get('origin')
-  if (origin) {
+  if (origin !== '' && origin !== null) {
     response.headers.set('Access-Control-Allow-Origin', origin)
     response.headers.set('Vary', 'Origin')
   } else {
