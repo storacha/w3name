@@ -2,9 +2,9 @@
 /* eslint-disable no-console */
 
 import * as Name from 'w3name'
-import { W3NameService } from 'w3name/service'
+import W3NameService from 'w3name/service'
 
-const stagingAPIURL = new URL('https://w3name-staging.protocol-labs.workers.dev/')
+const stagingAPIURL = new URL('https://name-staging.web3.storage/')
 
 /**
  * Publish a test record to the staging API.
@@ -13,7 +13,7 @@ const stagingAPIURL = new URL('https://w3name-staging.protocol-labs.workers.dev/
  */
 async function doStagingTestPublish () {
   console.log('Doing publish of test record to w3name staging...')
-  const service = W3NameService(stagingAPIURL)
+  const service = new W3NameService(stagingAPIURL)
 
   // This creates a new private key each time, which means we're slightly cluttering
   // the DHT with this, hence the short validity.
