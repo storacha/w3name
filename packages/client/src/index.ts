@@ -44,7 +44,13 @@ const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
 
 const defaultService = new W3NameService()
 /**
- * Name is an IPNS key ID.
+ * Name is an IPNS key ID. 
+ * 
+ * Names can be used to retrieve the latest published value from the W3name service
+ * using the {@link resolve} function.
+ * 
+ * Note that `Name` contains only the public verification key and does not allow publishing
+ * or updating records. To create or update a record, use the {@link WritableName} subclass.
  */
 export class Name {
   _pubKey: PublicKey
@@ -56,11 +62,17 @@ export class Name {
     this._pubKey = pubKey
   }
 
+  /**
+   * A binary representation of the IPNS verification key.
+   */
   get bytes () {
     const digest = Digest.create(identity.code, this._pubKey.bytes)
     return CID.createV1(libp2pKeyCode, digest).bytes
   }
 
+  /**
+   * @returns the string representation of the IPNS verification key (e.g. `k51qzi5uqu5di9agapykyjh3tqrf7i14a7fjq46oo0f6dxiimj62knq13059lt`)
+   */
   toString () {
     const digest = Digest.create(identity.code, this._pubKey.bytes)
     return CID.createV1(libp2pKeyCode, digest).toString(base36)
@@ -68,8 +80,12 @@ export class Name {
 }
 
 /**
- * WritableName is a Name that has a signing key associated with it such that
- * new IPNS record revisions can be created and signed for it.
+ * WritableName is a {@link Name} that has a signing key associated with it such that
+ * new IPNS record {@link Revision}s can be created and signed for it.
+ * 
+ * New `WritablName`s can be generated using the {@link create} function.
+ * 
+ * To load a `WritableName` from a saved binary representation, see {@link from}.
  */
 export class WritableName extends Name {
   _privKey: PrivateKey
@@ -82,6 +98,12 @@ export class WritableName extends Name {
     this._privKey = privKey
   }
 
+  /** 
+   * The private signing key, as a libp2p `PrivateKey` object.
+   * 
+   * To save a key for later loading with {@link from}, write the
+   * contents of `key.bytes` somewhere safe.
+   */
   get key () {
     return this._privKey
   }
@@ -97,7 +119,10 @@ export async function create () {
 }
 
 /**
- * Parses string name to readable name.
+ * Parses a string-encoded {@link Name} to a {@link Name} object.
+ * 
+ * Note that this returns a read-only {@link Name}, which can be used to {@link resolve} values
+ * but cannot {@link publish} them.
  */
 export function parse (name: string) {
   const keyCid = CID.parse(name, base36)
@@ -109,7 +134,36 @@ export function parse (name: string) {
 }
 
 /**
- * Create a name from an existing signing key (private key).
+ * Creates a {@link WritableName} from an existing signing key (private key).
+ * 
+ * Expects the given `Uint8Array` to contain a binary representation of a
+ * private signing key. Note that this is **not** the same as the output of
+ * {@link Name#bytes | Name.bytes}, which always returns an encoding of the _public_ key,
+ * even when the name in question is a {@link WritableName}.
+ * 
+ * To save the key for a {@link WritableName} so that it can be used with this
+ * function, use `key.bytes`, for example:
+ * 
+ * @example
+ * ```js
+ * import * as Name from 'w3name'
+ * import fs from 'fs'
+ * 
+ * async function example() {
+ *   const myName = await Name.create()
+ * 
+ *   // myName.key.bytes can now be written to disk / database, etc.
+ *   await fs.promises.writeFile('myName.key', myName.key.bytes)
+ *   
+ *   // let's pretend some time has passed and we want to load the
+ *   // key from disk:
+ *   const loadedBytes = await fs.promises.readFile('myName.key')
+ *   const myName2 = await Name.from(loadedBytes)
+ * 
+ *   // myName and myName2 can now be used interchangeably
+ * }
+ * ```
+ * 
  */
 export async function from (key: Uint8Array) {
   const privKey = await keys.unmarshalPrivateKey(key)
@@ -117,16 +171,21 @@ export async function from (key: Uint8Array) {
 }
 
 /**
- * Create an initial version of the IPNS record for the passed name, set to the
+ * Create an initial version of the IPNS record for the passed {@link Name}, set to the
  * passed value.
+ * 
+ * Note that the returned {@link Revision} object must be {@link publish}ed before it
+ * can be {@link resolve}d using the service.
  */
 export async function v0 (name: Name, value: string) {
   return new Revision(name, value, 0n, defaultValidity())
 }
 
 /**
- * Create a revision of the passed IPNS record by incrementing the sequence
- * number and changing the value.
+ * Create a {@link Revision} of the passed IPNS record by incrementing the sequence
+ * number and changing the value. 
+ * 
+ * This returns a new {@link Revision} and  does not alter the original `revision` argument.
  */
 export async function increment (revision: Revision, value: string): Promise<Revision> {
   const seqno = revision.sequence + 1n
@@ -179,6 +238,8 @@ export class Revision {
   }
 
   /**
+   * Encodes a `Revison` to a binary representation and returns it as a `Uint8Array`.
+   * 
    * Note: if `revision.name` is a `WritableName` then signing key data will be
    * lost. i.e. the private key is not encoded.
    */
@@ -191,6 +252,13 @@ export class Revision {
     })
   }
 
+  /**
+   * Decodes a `Revison` from a binary representation.
+   * 
+   * @param bytes a `Uint8Array` containing a binary encoding of a `Revison`, as produced by {@link #encode}.
+   * @returns a {@link Revision} object
+   * @throws if `bytes` does not contain a valid encoded `Revision`
+   */
   static decode (bytes: Uint8Array) {
     const raw = cbor.decode(bytes)
     const name = parse(raw.name)
@@ -199,7 +267,7 @@ export class Revision {
 }
 
 /**
- * Publish a name revision to W3name.
+ * Publish a name {@link Revision} to W3name.
  *
  * ⚠️ Name records are not _yet_ published to or updated from the IPFS network.
  * Working with name records simply updates the w3name cache of data.
@@ -221,6 +289,9 @@ export async function publish (revision: Revision, key: PrivateKey, service: W3N
 
 /**
  * Resolve the current IPNS record revision for the passed name.
+ * 
+ * Note that this will only resolve names published using the W3name service. Names published by
+ * other IPNS implementations should be resolved using a DHT-backed implementation (e.g. kubo, js-ipfs, etc).
  */
 export async function resolve (name: Name, service: W3NameService = defaultService): Promise<Revision> {
   const url = new URL(`name/${name.toString()}`, service.endpoint)

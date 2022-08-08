@@ -28,4 +28,6 @@ jobs:
       - run: npm run lint --workspace packages/client
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
-
+      # generate API docs using typdoc
+      # TODO: publish to gh-pages branch on release
+      - run: npm run typedoc --workspace packages/client
