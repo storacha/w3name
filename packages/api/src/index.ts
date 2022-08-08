@@ -37,21 +37,18 @@ export default {
       if (error instanceof HTTPError) {
         return jsonResponse(JSON.stringify({ message: error.message }), error.status)
       } else {
-
-        const status = error?.status || 500
-
-        let message: string;
+        let message: string
 
         if (typeof error === 'string') {
           message = error
         } else if (error instanceof Object) {
-          message = error.message || JSON.stringify(error)
+          message = JSON.stringify(error)
         } else {
-          message = `Uncaught error: ${error.toString()}`
+          message = 'Uncaught error'
         }
 
-        const httpError = new HTTPError(message, status);
-        return jsonResponse(JSON.stringify({ message: httpError}), httpError.status)
+        const httpError = new HTTPError(message, 500)
+        return jsonResponse(JSON.stringify({ message: httpError }), httpError.status)
       }
     }
   }

@@ -102,7 +102,7 @@ export async function create () {
 export function parse (name: string) {
   const keyCid = CID.parse(name, base36)
   if (keyCid.code !== libp2pKeyCode) {
-    throw new Error(`invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
+    throw new Error(`Invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
   }
   const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
   return new Name(pubKey)
@@ -249,6 +249,8 @@ async function maybeHandleError (resPromise: Promise<globalThis.Response>): Prom
   const err = new Error(`unexpected status: ${res.status}`)
   try {
     Object.assign(err, await res.json())
-  } catch {}
+  } catch {
+    throw err
+  }
   throw err
 }
