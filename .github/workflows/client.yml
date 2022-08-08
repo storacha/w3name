@@ -36,5 +36,5 @@ jobs:
         with:
           web3_token: ${{ secrets.WEB3_STORAGE_KEY }}
           path_to_add: 'packages/client/generated-docs'
-      - run: echo added typedoc output to web3.storage. cid => ${{ steps.web3.outputs.cid }}
-      - run: echo typedoc URL => ${{ steps.web3.outputs.url }}
+      - run: echo added typedoc output to web3.storage. cid -- ${{ steps.web3.outputs.cid }}
+      - run: echo typedoc URL -- ${{ steps.web3.outputs.url }}
