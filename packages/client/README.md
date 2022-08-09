@@ -1,7 +1,9 @@
 <h1 align="center">⁂<br/>w3name</h1>
-<p align="center">The JavaScript API client for <a href="https://github.com/web3-storage/w3name">W3Name</a></p>
+<p align="center">The JavaScript API client for <a href="https://web3.storage/products/w3name/">W3Name</a></p>
+
 
 ## Getting started
+See [the getting started docs][w3storage-docs-w3name-getting-started]
 
 Install the package using npm
 
@@ -113,3 +115,4 @@ await fs.promises.writeFile('ipns.revision', Revision.encode(rev))
 const bytes = await fs.promises.readFile('ipns.revision')
 const revision = Revision.decode(bytes)
 ```
+[w3storage-docs-w3name-getting-started]: https://web3.storage/docs/how-tos/w3name/#getting-started
