@@ -62,6 +62,6 @@ describe('CORS', () => {
     assert(res.ok)
     assert.strictEqual(res.status, 204, 'Expected 204 status for OPTIONS request')
     assert.strictEqual(res.headers.get('Access-Control-Allow-Origin'), 'name.web3.storage')
-    assert.strictEqual(res.headers.get('Access-Control-Allow-Methods'), 'GET,POST,DELETE,OPTIONS')
+    assert.strictEqual(res.headers.get('Access-Control-Allow-Methods'), 'GET,POST,OPTIONS')
   })
 })

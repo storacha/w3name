@@ -24,13 +24,12 @@ export function corsOptions (request: Request): Response {
     const respHeaders = {
       'Content-Length': '0',
       'Access-Control-Allow-Origin': headerOrDefault('origin', '*'),
-      'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
       'Access-Control-Max-Age': '86400',
       // Allow all future content Request headers to go back to browser
       // such as Authorization (Bearer) or X-Client-Name-Version
       'Access-Control-Allow-Headers':
-        headerOrDefault('Access-Control-Request-Headers', ''),
-      'Access-Control-Expose-Headers': 'Link, Count, Page, Size'
+        headerOrDefault('Access-Control-Request-Headers', '')
     }
 
     return new Response(null, {
@@ -68,6 +67,5 @@ export function addCorsHeaders (request: Request, response: Response): Response 
   } else {
     response.headers.set('Access-Control-Allow-Origin', '*')
   }
-  response.headers.set('Access-Control-Expose-Headers', 'Link, Count, Page, Size')
   return response
 }
