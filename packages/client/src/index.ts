@@ -246,11 +246,12 @@ export async function resolve (name: Name, service: W3NameService = defaultServi
 async function maybeHandleError (resPromise: Promise<globalThis.Response>): Promise<globalThis.Response> {
   const res = await resPromise
   if (res.ok) return res
-  const error = new Error(`unexpected status: ${res.status}`)
+  let error
   try {
-    Object.assign(error, await res.json())
+    const parsedError = await res.json()
+    error = new Error(parsedError.message)
   } catch (jsonParseError) {
-    Object.assign(error, jsonParseError)
+    error = new Error(`unexpected response from API, cannot parse error response. Received status: ${res.status}`)
   }
   throw error
 }
