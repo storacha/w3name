@@ -5,7 +5,6 @@ import { HTTPError } from './errors'
 import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
 import * as swaggerConfig from './swaggerConfig'
 
-
 const router = Router()
 
 router.options('*', corsOptions)
