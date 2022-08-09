@@ -1,5 +1,6 @@
 <h1 align="center">⁂<br/>w3name</h1>
-<p align="center">The JavaScript API client for <a href="https://github.com/web3-storage/w3name">W3Name</a></p>
+<p align="center">The JavaScript API client for <a href="https://web3.storage/products/w3name/">W3Name</a></p>
+
 
 ## Getting started
 
@@ -14,6 +15,8 @@ or yarn:
 ```bash
 yarn add w3name
 ```
+
+See [the getting started docs][w3storage-docs-w3name-getting-started] for more information.
 
 ## Usage
 
@@ -167,3 +170,4 @@ const revision = Revision.decode(bytes)
 
 [w3storage-docs-content-addressing]: https://web3.storage/docs/concepts/content-addressing/
 [w3name-client-api-docs]: http://example.com/FIXME/replace-this-link-once-the-typedocs-are-published
+[w3storage-docs-w3name-getting-started]: https://web3.storage/docs/how-tos/w3name/#getting-started
