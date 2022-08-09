@@ -53,6 +53,7 @@ const defaultService = new W3NameService()
  * or updating records. To create or update a record, use the {@link WritableName} subclass.
  */
 export class Name {
+  /** @internal */
   _pubKey: PublicKey
 
   constructor (pubKey: PublicKey) {
@@ -88,6 +89,7 @@ export class Name {
  * To load a `WritableName` from a saved binary representation, see {@link from}.
  */
 export class WritableName extends Name {
+  /** @internal */
   _privKey: PrivateKey
 
   constructor (privKey: PrivateKey) {
@@ -196,9 +198,16 @@ export async function increment (revision: Revision, value: string): Promise<Rev
  * A representation of a IPNS record that may be initial or revised.
  */
 export class Revision {
+   /** @internal */
   _name: Name
+
+  /** @internal */
   _value: string
+
+  /** @internal */
   _sequence: bigint
+
+  /** @internal */
   _validity: string
 
   constructor (name: Name, value: string, sequence: bigint, validity: string) {

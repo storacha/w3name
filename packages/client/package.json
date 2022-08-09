@@ -62,7 +62,7 @@
     "lint": "aegir lint",
     "test": "run-p -r test:all",
     "test:all": "npm run build && API_PORT=1337 aegir test --target node",
-    "typedoc": "typedoc src/index.ts --out generated-docs",
+    "typedoc": "typedoc",
     "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs",
     "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish"
   },
