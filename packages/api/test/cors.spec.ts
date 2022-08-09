@@ -51,14 +51,6 @@ describe('CORS', () => {
         }
       )
     )
-    // const res = await fetch(new URL('/name/abcd', endpoint), {
-    //   method: 'OPTIONS',
-    //   headers: {
-    //     Origin: 'name.web3.storage',
-    //     'Access-Control-Request-Method': 'whatever',
-    //     'Access-Control-Request-Headers': 'whatever'
-    //   }
-    // })
     assert(res.ok)
     assert.strictEqual(res.status, 204, 'Expected 204 status for OPTIONS request')
     assert.strictEqual(res.headers.get('Access-Control-Allow-Origin'), 'name.web3.storage')
