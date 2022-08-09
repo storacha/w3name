@@ -18,9 +18,11 @@ yarn add w3name
 
 See [the getting started docs][w3storage-docs-w3name-getting-started] for more information.
 
+You can also find full API reference documentation for the client at https://web3-storage.github.io/w3name
+
 ## Usage
 
-The `w3name` package exposes several "top-level" or module-scoped functions like `create`, `resolve`, and `publish`, along with a few classes like `Revision` and `Name` that are returned from and accepted by the API functions.
+The `w3name` package exposes several "top-level" or module-scoped functions like [`create`][typedoc-create], [`resolve`][typedoc-resolve], and [`publish`][typedoc-publish], along with a few classes like [`Revision`][typedoc-Revision] and [`Name`][typedoc-Name] that are returned from and accepted by the API functions.
 
 In the examples below, the module is imported as `Name` using the ES module import syntax:
 
@@ -51,13 +53,13 @@ Below are some examples of the main use cases for the w3name library.
 
 #### Create and Publish
 
-The `create` function creates a new keypair, returing a `WritableName` object that can publish signed records to the w3name service.
+The [`create`][typedoc-create] function creates a new keypair, returing a [`WritableName`][typedoc-WritableName] object that can publish signed records to the w3name service.
 
-Once you've created a `WritableName`, you can create the initial `Revision`, which contains the value that you want to publish, along with some internal data like a sequence number to keep track of revisions.
+Once you've created a [`WritableName`][typedoc-WritableName], you can create the initial [`Revision`][typedoc-Revision], which contains the value that you want to publish, along with some internal data like a sequence number to keep track of revisions.
 
-When creating the initial revision for a name, use the `v0` function. Subsequent revisions will use the `increment` function, as described in the [update](#update) section below.
+When creating the initial revision for a name, use the [`v0`][typedoc-v0] function. Subsequent revisions will use the [`increment`][typedoc-increment] function, as described in the [update](#update) section below.
 
-With a name and a revision in hand, you're ready to call `publish`, which signs the revision with your key and submits it to the w3name service.
+With a name and a revision in hand, you're ready to call [`publish`][typedoc-publish], which signs the revision with your key and submits it to the w3name service.
 
 ```js
 import * as Name from 'w3name'
@@ -78,9 +80,9 @@ await Name.publish(revision, name.key)
 
 #### Resolve
 
-The `resolve` function retrieves the latest value for a name by sending a request to the w3name service.
+The [`resolve`][typedoc-resolve] function retrieves the latest value for a name by sending a request to the w3name service.
 
-In the example below, we use the `parse` function to convert a string-encoded name into a `Name` object. Note that the `Name` returned by `parse` is not writable, unlike the `WritableName`s returned by `create`. As such, you can use `parse`d names to retrieve and verify values, but they are unable to create and update records.
+In the example below, we use the [`parse`][typedoc-parse] function to convert a string-encoded name into a [`Name`][typedoc-Name] object. Note that the [`Name`][typedoc-Name] returned by [`parse`][typedoc-parse] is not writable, unlike the [`WritableName`][typedoc-WritableName]s returned by [`create`][typedoc-create]. As such, you can use [`parse`][typedoc-parse]d names to retrieve and verify values, but they are unable to create and update records.
 
 ```js
 import * as Name from 'w3name'
@@ -97,7 +99,7 @@ console.log('Resolved value:', revision.value)
 
 Updating records involves creating a new _revision_ from the previous one.
 
-When creating the initial revision, we used the `v0` function. All subsequent revisions must use the `increment` function, which accepts a `Revision` object describing the current state, and returns a new `Revision` with the new value and an incremented sequence number. Attempting to publish a new `Revision` with a sequence number thats less than or equal to the current value will result in an error.
+When creating the initial revision, we used the [`v0`][typedoc-v0] function. All subsequent revisions must use the [`increment`][typedoc-increment] function, which accepts a [`Revision`][typedoc-Revision] object describing the current state, and returns a new [`Revision`][typedoc-Revision] with the new value and an incremented sequence number. Attempting to publish a new [`Revision`][typedoc-Revision] with a sequence number thats less than or equal to the current value will result in an error.
 
 ```js
 import * as Name from 'w3name'
@@ -122,9 +124,9 @@ await Name.publish(nextRevision, name.key)
 
 The private key used to sign IPNS records should be saved if a revision needs to be created in the future.
 
-The `WritableName` object returned by the `create` function has a `key` property containing the private signing key. Using `key.bytes`, we can obtain a `Uint8Array` filled with a binary representation of the private key, which can be saved to a safe location.
+The [`WritableName`][typedoc-WritableName] object returned by the [`create`][typedoc-create] function has a `key` property containing the private signing key. Using `key.bytes`, we can obtain a `Uint8Array` filled with a binary representation of the private key, which can be saved to a safe location.
 
-Later, you can use the `from` function to convert from the binary representation to a `WritableName` object that can be used for signing and publication.
+Later, you can use the [`from`][typedoc-from] function to convert from the binary representation to a [`WritableName`][typedoc-WritableName] object that can be used for signing and publication.
 
 ```js
 import * as Name from 'w3name'
@@ -170,3 +172,15 @@ const revision = Revision.decode(bytes)
 
 [w3storage-docs-content-addressing]: https://web3.storage/docs/concepts/content-addressing/
 [w3storage-docs-w3name-getting-started]: https://web3.storage/docs/how-tos/w3name/#getting-started
+
+[typedoc-create]: https://web3-storage.github.io/w3name/functions/create.html
+[typedoc-from]: https://web3-storage.github.io/w3name/functions/from.html
+[typedoc-increment]: https://web3-storage.github.io/w3name/functions/increment.html
+[typedoc-parse]: https://web3-storage.github.io/w3name/functions/parse.html
+[typedoc-publish]: https://web3-storage.github.io/w3name/functions/publish.html
+[typedoc-resolve]: https://web3-storage.github.io/w3name/functions/resolve.html
+[typedoc-v0]: https://web3-storage.github.io/w3name/functions/v0.html
+
+[typedoc-Name]: https://web3-storage.github.io/w3name/classes/Name.html
+[typedoc-WritableName]: https://web3-storage.github.io/w3name/classes/WritableName.html
+[typedoc-Revision]: https://web3-storage.github.io/w3name/classes/Revision.html

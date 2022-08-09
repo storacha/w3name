@@ -41,6 +41,8 @@ await Name.publish(revision, name.key)
 
 See https://github.com/web3-storage/w3name/blob/main/packages/client/README.md for a guide to using the js client for the first time.
 
+Full API reference doc for the JS client are available at https://web3-storage.github.io/w3name
+
 You can also find a [how-to guide for working with the JS client](https://web3.storage/docs/how-tos/w3name/) included in the [Web3.Storage](https://web3.storage) documentation.
 
 ### cURL
