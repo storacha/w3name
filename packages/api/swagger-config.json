@@ -1,0 +1,226 @@
+{
+  "openapi":"3.0.2",
+  "info":{
+     "title":"W3Name API",
+     "description":"This documentation describes the HTTP API for [**W3name**](https://name.web3.storage), which allows you to build applications to create and manage [IPNS records](https://docs.ipfs.tech/concepts/ipns/).\n\nYou can also interact with this API using client libraries. See [**W3Name Client package**](https://www.npmjs.com/package/w3name) for more information on using a client library.\n\n## API endpoint URL\n\nThe main public API endpoint URL for W3Name is `https://name.web3.storage`. All endpoints described in this document should be made relative to this root URL. For example, to post to the `/name/:key` endpoint, send your request to `https://name.web3.storage/name/:key`.",
+     "version":"1.0"
+  },
+  "servers":[
+     {
+        "url":"https://name.web3.storage"
+     }
+  ],
+  "tags":[
+     {
+        "name":"W3Name HTTP API"
+     }
+  ],
+  "paths":{
+     "/name/{key}":{
+        "post":{
+           "tags":[
+              "W3Name HTTP API"
+           ],
+           "summary":"Upload a record",
+           "description":"Upload a name record\n\nNote that only one reecord can be uploaded at a time.",
+           "operationId":"post-name",
+           "requestBody":{
+              "required":true,
+              "content":{
+                 "text/plain":{
+                    "schema":{
+                       "type":"string",
+                       "format":"binary"
+                    }
+                 },
+                 "application/octet-stream":{
+                    "schema":{
+                       "type":"string",
+                       "format":"binary"
+                    }
+                 }
+              }
+           },
+           "parameters":[
+              {
+                 "name":"key",
+                 "in":"path",
+                 "required":true,
+                 "schema":{
+                    "$ref":"#/components/schemas/Key"
+                 }
+              }
+           ],
+           "responses":{
+              "200":{
+                 "description":"OK",
+                 "content":{
+                    "application/json":{
+                       "schema":{
+                          "$ref":"#/components/schemas/Record"
+                       }
+                    }
+                 }
+              },
+              "400":{
+                 "$ref":"#/components/responses/badRequest"
+              },
+              "401":{
+                 "$ref":"#/components/responses/unauthorized"
+              },
+              "403":{
+                 "$ref":"#/components/responses/forbidden"
+              },
+              "5XX":{
+                 "$ref":"#/components/responses/internalServerError"
+              }
+           }
+        },
+        "get":{
+           "tags":[
+              "W3Name HTTP API"
+           ],
+           "summary":"Retrieve a record",
+           "description":"Retrieve an IPNS Record.",
+           "operationId":"get-record",
+           "security":[
+
+           ],
+           "parameters":[
+              {
+                 "name":"key",
+                 "in":"path",
+                 "required":true,
+                 "schema":{
+                    "$ref":"#/components/schemas/Key"
+                 }
+              }
+           ],
+           "responses":{
+              "200":{
+                 "description":"OK",
+                 "content":{
+                    "application/json":{
+                       "schema":{
+                          "$ref":"#/components/schemas/Record"
+                       }
+                    }
+                 }
+              },
+              "400":{
+                 "$ref":"#/components/responses/badRequest"
+              },
+              "5XX":{
+                 "$ref":"#/components/responses/internalServerError"
+              }
+           }
+        }
+     }
+  },
+  "components":{
+     "schemas":{
+        "Record":{
+           "type":"string",
+           "example":"CkEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRsaGk3ZGlqamNpcXB1aRJAjJy/lm/jZH1sxmHCiM4FGXYsqUB/SgBHoTFIE5edwc+qy+pCDgZJbh1k7we7MvA1gzpepLCyzfWWa7KKzWAkARgAIh4yMDIzLTA3LTA1VDExOjE5OjA3LjM3NzAwMDAwMFooADDg8oe+64XNBUJAGpFQ13lB9M/XiWLbQKi/XZRk7MlPWNWFJHemPaPXkzce0ZWltbn7T1VN2pSONpfJWa5eSR5LgPggm5Zzzb6OAEqYAaVjVFRMGwALNC63wflgZVZhbHVlWEEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRsaGk3ZGlqamNpcXB1aWhTZXF1ZW5jZQBoVmFsaWRpdHlYHjIwMjMtMDctMDVUMTE6MTk6MDcuMzc3MDAwMDAwWmxWYWxpZGl0eVR5cGUAbafkreidivzimqfqtoqxkrpge6bjyhlvxqs3rhe73owtmdulaxr5do5in7u",
+           "description":"an IPNS Record."
+        },
+        "Key":{
+           "type":"string",
+           "example":"k51qzi5uqu5dgsc1bvsuk1x84bptdvp8cupbnnbqxpxzd629gadpci3kpcm311",
+           "description":"a public key for a given record."
+        },
+        "ErrorResponse":{
+           "type":"object",
+           "properties":{
+              "name":{
+                 "type":"string"
+              },
+              "message":{
+                 "type":"string"
+              }
+           }
+        },
+        "UnauthorizedErrorResponse":{
+           "type":"object",
+           "properties":{
+              "name":{
+                 "type":"string",
+                 "default":"HTTP Error"
+              },
+              "message":{
+                 "type":"string",
+                 "default":"Unauthorized"
+              }
+           }
+        },
+        "ForbiddenErrorResponse":{
+           "type":"object",
+           "properties":{
+              "name":{
+                 "type":"string",
+                 "default":"HTTP Error"
+              },
+              "message":{
+                 "type":"string",
+                 "enum":[
+                    "Token is not valid",
+                    "Session expired"
+                 ]
+              }
+           }
+        }
+     },
+     "responses":{
+        "unauthorized":{
+           "description":"Unauthorized",
+           "content":{
+              "application/json":{
+                 "schema":{
+                    "$ref":"#/components/schemas/UnauthorizedErrorResponse"
+                 }
+              }
+           }
+        },
+        "forbidden":{
+           "description":"Forbidden",
+           "content":{
+              "application/json":{
+                 "schema":{
+                    "$ref":"#/components/schemas/ForbiddenErrorResponse"
+                 }
+              }
+           }
+        },
+        "notFound":{
+           "description":"Not Found",
+           "content":{
+              "application/json":{
+                 "schema":{
+                    "$ref":"#/components/schemas/ErrorResponse"
+                 }
+              }
+           }
+        },
+        "internalServerError":{
+           "description":"Internal Server Error",
+           "content":{
+              "application/json":{
+                 "schema":{
+                    "$ref":"#/components/schemas/ErrorResponse"
+                 }
+              }
+           }
+        },
+        "badRequest":{
+           "description":"Bad Request",
+           "content":{
+              "application/json":{
+                 "schema":{
+                    "$ref":"#/components/schemas/ErrorResponse"
+                 }
+              }
+           }
+        }
+     }
+  }
+}

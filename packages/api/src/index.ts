@@ -1,13 +1,19 @@
 import { Router } from 'itty-router'
-import { jsonResponse, notFound } from './utils/json-response'
+import { jsonResponse, notFound } from './utils/response-types'
 import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
+import * as swaggerConfig from './swaggerConfig'
 
 const router = Router()
 
 router.get('/name/:key', nameGet)
 router.get('/name/:key/watch', nameWatchGet)
 router.post('/name/:key', namePost)
+// Open API spec
+router.get('/swagger.json', swaggerConfig.toJSON)
+router.get('/swagger.yaml', swaggerConfig.toYAML)
+router.get('/swagger.yml', swaggerConfig.toYAML)
+
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
 router.all('*', () => notFound())
 

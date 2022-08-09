@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { jsonResponse } from './utils/json-response'
+import { jsonResponse } from './utils/response-types'
 import fetch from '@web-std/fetch'
 
 export interface IPNSRecordData {
