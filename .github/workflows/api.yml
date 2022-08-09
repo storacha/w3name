@@ -7,8 +7,12 @@ on:
       - 'packages/api/**'
       - '.github/workflows/api.yml'
   pull_request:
-    branches:
-      - main
+    types:
+      - opened
+      # Triggered when a pull request's head branch is updated.
+      # For example, when the head branch is updated from the base branch, when new commits are pushed to the head branch, or when the base branch is changed.
+      - synchronize
+
     paths:
       - 'packages/api/**'
       - '.github/workflows/api.yml'
@@ -21,10 +25,75 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
+      # Only install the deps directly listed... dont do workspace magic.
+      # Running install from the root gets you all the deps for all the packages.
+      # which can easily mask missing deps if another modules also depends on it.
       - uses: bahmutov/npm-install@v1
-        with:
-          working-directory: packages/api
       - run: npm run lint --workspace packages/api
       - run: npm run build --workspace packages/api
       - run: npm test --workspace packages/api
 
+  deploy-staging:
+    name: Deploy Staging API
+    # When there's a push to 'main', deploy it to staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - uses: bahmutov/npm-install@v1
+      - name: Publish api worker
+        uses: cloudflare/wrangler-action@2.0.0
+        env:
+          ENV: 'staging' # inform the build process what the env is
+          # Sentry is not yet set up
+          # SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
+          # SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: 'packages/api'
+          environment: 'staging'
+      - name: Test publish a record to staging
+        run: |
+          npm run build -w packages/client
+          ./packages/client/bin/do-staging-test-publish.js
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v3
+        id: tag-release
+        with:
+          path: packages/api
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+          monorepo-tags: true
+          package-name: api
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Other Changes","hidden":false}]'
+      - uses: actions/checkout@v2
+        if: ${{ steps.tag-release.outputs.releases_created }}
+      - uses: actions/setup-node@v2
+        if: ${{ steps.tag-release.outputs.releases_created }}
+        with:
+          node-version: '16'
+          registry-url: https://registry.npmjs.org/
+      - uses: bahmutov/npm-install@v1
+        if: ${{ steps.tag-release.outputs.releases_created }}
+      # --- API deploy steps -------------------------------------------------
+      - name: API - Deploy to Cloudflare
+        if: ${{ steps.tag-release.outputs.releases_created }}
+        uses: cloudflare/wrangler-action@2.0.0
+        env:
+          ENV: 'production' # inform the build process what the env is
+          # Sentry is not yet set up
+          # SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
+          # SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: 'packages/api'
+          environment: 'production'

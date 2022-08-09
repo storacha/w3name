@@ -10,6 +10,7 @@ import * as ipns from 'ipns'
 import * as uint8arrays from 'uint8arrays'
 import assert from 'assert/strict'
 import pDefer from 'p-defer'
+import { endpoint } from './scripts/constants.js'
 
 interface GetKeyResponse {
   value: string
@@ -17,8 +18,6 @@ interface GetKeyResponse {
 }
 
 let mf: Miniflare
-
-const endpoint = 'http://127.0.0.1:8787'
 
 async function publishRecord (key: string, record: Uint8Array): Promise<Response> {
   return await mf.dispatchFetch(
@@ -72,6 +71,7 @@ describe('GET /name/:key', () => {
     const body: {message: string} = await response.json()
     assert.equal(response.status, 400)
     assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+    assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
   it('returns an error for a non-existing key', async () => {
@@ -82,6 +82,7 @@ describe('GET /name/:key', () => {
     const body: {message: string} = await response.json()
     assert.equal(response.status, 404)
     assert.ok(body.message.includes(`record not found for key: ${key}`))
+    assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 })
 
@@ -96,6 +97,7 @@ describe('POST/GET /name/:key', () => {
 
     assert.equal(response.status, 400)
     assert.ok(body.message.includes('invalid key'))
+    assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
   it('returns an error for a key with an invalid code', async () => {
@@ -109,6 +111,7 @@ describe('POST/GET /name/:key', () => {
 
     assert.equal(response.status, 400)
     assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+    assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
   it.skip('returns an error when there is a public key mismatch', async () => {
@@ -129,6 +132,7 @@ describe('POST/GET /name/:key', () => {
 
     assert.equal(response.status, 400)
     assert.equal(body.message, 'invalid ipns entry: record has expired')
+    assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
   it('publishes value for key', async () => {
