@@ -2,14 +2,16 @@ import { Router } from 'itty-router'
 import { jsonResponse, notFound } from './utils/json-response'
 import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
+import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
 
 const router = Router()
 
-router.get('/name/:key', nameGet)
-router.get('/name/:key/watch', nameWatchGet)
-router.post('/name/:key', namePost)
+router.options('*', corsOptions)
+router.get('/name/:key', withCorsHeaders(nameGet))
+router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
+router.post('/name/:key', withCorsHeaders(namePost))
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
-router.all('*', () => notFound())
+router.all('*', (request: Request): Response => addCorsHeaders(request, notFound()))
 
 export interface Env {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -35,7 +37,10 @@ export default {
       return await router.handle(request, env, ctx)
     } catch (error: any) {
       if (error instanceof HTTPError) {
-        return jsonResponse(JSON.stringify({ message: error.message }), error.status)
+        return addCorsHeaders(
+          request,
+          jsonResponse(JSON.stringify({ message: error.message }), error.status)
+        )
       } else {
         let message: string
 
@@ -48,7 +53,10 @@ export default {
         }
 
         const httpError = new HTTPError(message, 500)
-        return jsonResponse(JSON.stringify({ message: httpError }), httpError.status)
+        return addCorsHeaders(
+          request,
+          jsonResponse(JSON.stringify({ message: httpError.message }), httpError.status)
+        )
       }
     }
   }

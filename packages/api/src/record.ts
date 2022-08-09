@@ -112,12 +112,22 @@ export class IPNSRecord {
   async alarm () {
     const now = new Date()
 
+    // For safety, we set the alarm as our first order of business, so that an error in
+    // any subsequent code doesn't prevent the alarm from being set, as that would then
+    // make our record lost in abyss, only to be rebroadcast if/when it's updated via
+    // `fetch`.
     if (this.env.REBROADCAST_INTERVAL_MS > 0) {
       await this.state.storage.setAlarm(this.rebroadcastScheduledTime)
     }
 
     const data = await this.getIPNSRecordData()
 
+    if (new Date(data.validity) < now) {
+      // The record has expired, so there's no need to keep on republishing it.
+      // If it gets updated (via `fetch`) then that will restart the alarm process.
+      await this.state.storage.deleteAlarm()
+      return
+    }
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await fetch(this.publisherEndpointURL, {
@@ -137,7 +147,10 @@ export class IPNSRecord {
   }
 
   async getIPNSRecordData (): Promise<IPNSRecordData> {
-    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'hasV2Sig', 'seqno', 'validity'])
+    // Using noCache as it is important to always get the latest record
+    const map: Map<string, any> = await this.state.storage.get(
+      ['key', 'record', 'hasV2Sig', 'seqno', 'validity'], { noCache: true }
+    )
 
     // Values will be set to undefined if the record was not created prior to fetching it
     const data: IPNSRecordData = {
