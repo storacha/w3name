@@ -51,6 +51,8 @@ const defaultService = new W3NameService()
  *
  * Note that `Name` contains only the public verification key and does not allow publishing
  * or updating records. To create or update a record, use the {@link WritableName} subclass.
+ * 
+ * To convert from a string representation of a name to a `Name` object use the {@link parse} function.
  */
 export class Name {
   /** @internal */
