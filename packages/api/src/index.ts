@@ -52,10 +52,9 @@ export default {
           message = 'Uncaught error'
         }
 
-        const httpError = new HTTPError(message, 500)
         return addCorsHeaders(
           request,
-          jsonResponse(JSON.stringify({ message: httpError.message }), httpError.status)
+          jsonResponse(JSON.stringify({ message }), 500)
         )
       }
     }

@@ -69,8 +69,8 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
     if (error instanceof HTTPError) {
       throw (error)
     } else {
-      const errorString = error instanceof Object
-        ? JSON.stringify(error)
+      const errorString = error instanceof Error
+        ? error.message
         : 'unknown error'
       throw new HTTPError(`Unable to retrieve name. ${errorString}`, 500)
     }

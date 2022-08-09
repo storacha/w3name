@@ -246,11 +246,10 @@ export async function resolve (name: Name, service: W3NameService = defaultServi
 async function maybeHandleError (resPromise: Promise<globalThis.Response>): Promise<globalThis.Response> {
   const res = await resPromise
   if (res.ok) return res
-  const err = new Error(`unexpected status: ${res.status}`)
+  const error = new Error(`unexpected status: ${res.status}`)
   try {
-    Object.assign(err, await res.json())
-  } catch {
-    throw err
+    Object.assign(error, await res.json())
+  } finally {
+    throw error
   }
-  throw err
 }
