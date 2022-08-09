@@ -47,7 +47,7 @@ w3name and other IPNS implementations allow you to create _mutable_ references t
 
 A "name" in the context of `w3name` is an identifier for a public key. The creator of the name can use their private key to publish records that will be returned when anyone fetches the latest value of the name. Because the name contains the verification key material, anyone can verify that the returned value was signed with the correct key and has not been tampered with since publication.
 
-Below are some examples of the main use cases for the w3name library. For more details, see the [library reference documentation][w3name-client-api-docs].
+Below are some examples of the main use cases for the w3name library. 
 
 #### Create and Publish
 
@@ -169,5 +169,4 @@ const revision = Revision.decode(bytes)
 ```
 
 [w3storage-docs-content-addressing]: https://web3.storage/docs/concepts/content-addressing/
-[w3name-client-api-docs]: http://example.com/FIXME/replace-this-link-once-the-typedocs-are-published
 [w3storage-docs-w3name-getting-started]: https://web3.storage/docs/how-tos/w3name/#getting-started
