@@ -249,7 +249,8 @@ async function maybeHandleError (resPromise: Promise<globalThis.Response>): Prom
   const error = new Error(`unexpected status: ${res.status}`)
   try {
     Object.assign(error, await res.json())
-  } finally {
-    throw error
+  } catch (jsonParseError) {
+    Object.assign(error, jsonParseError)
   }
+  throw error
 }
