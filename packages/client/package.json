@@ -62,8 +62,9 @@
     "lint": "aegir lint",
     "test": "run-p -r test:all",
     "test:all": "npm run build && API_PORT=1337 aegir test --target node",
-    "typedoc": "npx typedoc src/index.ts --out generated-docs",
-    "publish": "npm run lint && npm run test && npm run build && npm publish"
+    "typedoc": "typedoc src/index.ts --out generated-docs",
+    "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs",
+    "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish"
   },
   "dependencies": {
     "@web-std/fetch": "^4.1.0",
@@ -75,6 +76,7 @@
   "devDependencies": {
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
+    "gh-pages": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "typedoc": "^0.23.10",
     "uint8arrays": "^3.0.0"
