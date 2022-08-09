@@ -1,17 +1,31 @@
 <h1 align="center">⁂<br/>w3name</h1>
 <p align="center">Content addressing for a dynamic web.</p>
 
-## Usage
+## About
 
-w3name is a service and client library that implements IPNS, which is a protocol that uses public key cryptography to allow for updatable naming in an atomically verifiable way. This means the service is trustless, since all updates can be verified to have come from the associated keypair.
+w3name is a service and client library that implements [IPNS](https://docs.ipfs.io/concepts/ipns/), which is a protocol that uses public key cryptography to allow for updatable naming in an atomically verifiable way. 
 
+Naming is famously one of the few hard problems in computer science, the exact number of which vary depending on the computer scientist you're speaking with and their predisposition to off-by-one errors.
 
-### Website
-TODO: Add website readme here!
+Naming can be especially difficult in distributed and decentralized systems, where you can't assume that everyone has the same view of the network, and there may not be any centralized "naming authorities" to resolve conflicts.
+
+IPNS works by using public key cryptography to allow "self-issued" names which don't require any coodination or central authorities. The caveat is that the definition of "name" is somewhat constrained compared to general-purpose key/value storage systems. 
+
+A "name" in the IPNS context is an identifier for a public key, or in some cases, an encoding of the public key itself. 
+
+To associate a value with the name, the holder of the corresponding private key creates a record containing the value and signs it with their private key. They then publish that record to an IPNS name service, such as the IPFS DHT or the w3name service.
+
+Anyone can query the service using the name and retrive the latest value, including everything needed to verify that the value was signed by the correct key and has not been altered since publication.
+
+<!-- TODO: include website readme once it has some content -->
 
 ### JS Client
 
-Use npm to install the [`w3name`]() module into your JS project, create an new w3name key with `Name.create()`, add a revision with `Name.v0({name}, {CID})` and publish the revision with `Name.publish({revision}, {key})`
+The `w3name` JavaScript client library provides a simple interface to the service API, as well as everything you need to create signing keys and records.
+
+The snippet below shows how to create an new w3name key with `Name.create()`, add a revision with `Name.v0({name}, {CID})` and publish the revision with `Name.publish({revision}, {key})`
+
+To use the library in your project, use npm or yarn to install the [`w3name`](https://www.npmjs.com/package/w3name) module.
 
 **node.js**
 ```js
@@ -27,12 +41,37 @@ await Name.publish(revision, name.key)
 
 See https://github.com/web3-storage/w3name/blob/main/packages/client/README.md for a guide to using the js client for the first time.
 
+You can also find a [how-to guide for working with the JS client](https://web3.storage/docs/how-tos/w3name/) included in the [Web3.Storage](https://web3.storage) documentation.
+
 ### cURL
 
-TODO: Add cURL instructions here!
+You can easily get the current value for any name by sending an HTTP request to `https://name.web3.storage/name/:key`, where `:key` is the name string. This will return a JSON object with the following shape:
 
-**See https://github.com/web3-storage/w3name/tree/main/packages/api for our complete documentation 📖🔍**
+```json
+{
+  "value": "the current value, as a string",
+  "record": "the full IPNS record for the current value, encoded to a binary form and base64pad encoded"
+}
+```
 
+Try pasting this into a terminal with `curl` installed:
+
+```shell
+curl https://name.web3.storage/name/k51qzi5uqu5dlcuzv5xhg1zqn48gobcvn2mx13uoig7zfj8rz6zvqdxsugka9z
+```
+
+You should see output similar to this:
+
+```json
+{
+  "value": "/ipfs/bafkreigbpn5osrexvl56ogyp5kivof2tmknkssk5odebqqeu23a22bcntu",
+  "record": "long base64 string, omitted for brevity..."
+}
+```
+
+**See https://github.com/web3-storage/w3name/tree/main/packages/api for documentation on other available API endpoints 📖🔍**
+
+<!-- TODO: add link to swagger api docs once published -->
 
 ## Building w3name
 
