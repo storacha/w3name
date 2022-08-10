@@ -1,8 +1,9 @@
 import { Router } from 'itty-router'
-import { jsonResponse, notFound } from './utils/json-response'
+import { jsonResponse, notFound } from './utils/response-types'
 import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
 import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
+import * as swaggerConfig from './swaggerConfig'
 
 const router = Router()
 
@@ -10,6 +11,12 @@ router.options('*', corsOptions)
 router.get('/name/:key', withCorsHeaders(nameGet))
 router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
 router.post('/name/:key', withCorsHeaders(namePost))
+
+// Open API spec
+router.get('/swagger.json', swaggerConfig.toJSON)
+router.get('/swagger.yaml', swaggerConfig.toYAML)
+router.get('/swagger.yml', swaggerConfig.toYAML)
+
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
 router.all('*', (request: Request): Response => addCorsHeaders(request, notFound()))
 
