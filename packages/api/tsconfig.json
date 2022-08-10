@@ -9,5 +9,6 @@
     "src",
     "test",
     "swagger-config.json",
+    "package.json"
   ]
 }
