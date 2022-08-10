@@ -53,12 +53,15 @@
     "libp2p-crypto": "^0.21.2",
     "p-defer": "^4.0.0",
     "sinon": "^14.0.0",
-    "yaml": "^2.1.1"
+    "yaml": "^2.1.1",
+    "toucan-js": "^2.6.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.13.0",
+    "@sentry/cli": "^2.5.0",
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
+    "git-rev-sync": "^3.0.2",
     "miniflare": "^2.6.0"
   },
   "eslintConfig": {
