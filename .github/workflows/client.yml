@@ -28,8 +28,10 @@ jobs:
       - run: npm run lint --workspace packages/client
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
+  typedoc:
+    needs: test
+    steps:
       # generate API docs using typdoc and upload to web3.storage
-      # TODO: publish to gh-pages branch on release
       - run: npm run typedoc --workspace packages/client
       - uses: web3-storage/add-to-web3@v2
         id: web3
@@ -37,4 +39,12 @@ jobs:
           web3_token: ${{ secrets.WEB3_STORAGE_KEY }}
           path_to_add: 'packages/client/generated-docs'
       - run: echo added typedoc output to web3.storage. cid -- ${{ steps.web3.outputs.cid }}
-      - run: echo typedoc URL -- ${{ steps.web3.outputs.url }}
+      - run: echo typedoc URL -- https://${{ steps.web3.outputs.cid }}.nftstorage.link
+      - uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: 'API docs'
+          description: 'Preview of generated client API docs'
+          state: 'success'
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
+          target_url: "https://${{ steps.web3.outputs.cid }}.nftstorage.link"
