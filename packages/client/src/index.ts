@@ -280,8 +280,11 @@ export class Revision {
 /**
  * Publish a name {@link Revision} to W3name.
  *
- * ⚠️ Name records are not _yet_ published to or updated from the IPFS network.
- * Working with name records simply updates the w3name cache of data.
+ * Names should be {@link resolve}-able immediately via the w3name service, and will be
+ * provided to the IPFS DHT network. 
+ * 
+ * Note that it may take a few seconds for the record to propagate and become available via
+ * the IPFS DHT network and IPFS <-> HTTP gateways.
  */
 export async function publish (revision: Revision, key: PrivateKey, service: W3NameService = defaultService) {
   const url = new URL(`name/${revision.name.toString()}`, service.endpoint)
