@@ -281,8 +281,8 @@ export class Revision {
  * Publish a name {@link Revision} to W3name.
  *
  * Names should be {@link resolve}-able immediately via the w3name service, and will be
- * provided to the IPFS DHT network. 
- * 
+ * provided to the IPFS DHT network.
+ *
  * Note that it may take a few seconds for the record to propagate and become available via
  * the IPFS DHT network and IPFS <-> HTTP gateways.
  */
