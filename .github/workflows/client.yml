@@ -31,9 +31,12 @@ jobs:
   typedoc:
     runs-on: ubuntu-latest
     name: API docs
-    needs: test
     steps:
-      # generate API docs using typdoc and upload to web3.storage
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - uses: bahmutov/npm-install@v1 
       - run: npm run typedoc --workspace packages/client
       - uses: web3-storage/add-to-web3@v2
         id: web3
