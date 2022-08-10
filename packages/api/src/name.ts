@@ -125,7 +125,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
     const postRequest = new Request(request.url, { method: 'PUT', body: JSON.stringify(recordData) })
 
     try {
-      const objPostResponse = await obj.fetch(postRequest)
+      const objPostResponse: Response = await obj.fetch(postRequest)
 
       if (objPostResponse.ok) {
         ctx.waitUntil((async () => {

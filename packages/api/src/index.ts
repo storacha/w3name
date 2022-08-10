@@ -26,7 +26,7 @@ router.all(
 )
 
 export default {
-  async fetch(
+  async fetch (
     request: Request,
     env: Env,
     ctx: ExecutionContext
