@@ -29,6 +29,8 @@ jobs:
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
   typedoc:
+    runs-on: ubuntu-latest
+    name: API docs
     needs: test
     steps:
       # generate API docs using typdoc and upload to web3.storage
