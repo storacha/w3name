@@ -13,7 +13,7 @@ const buildMetadataFromHeaders = (headers: globalThis.Headers) => {
 };
 
 interface ILoggingOptions {
-  skipForSentry: Array<Error>;
+  skipForSentry?: Array<Error>;
   sentry: any;
   debug?: boolean;
   token?: string;
@@ -194,6 +194,7 @@ export class Logging {
       };
       if (
         this.opts.sentry &&
+        skipForSentry &&
         !skipForSentry.some((cls) => message instanceof Error)
       ) {
         this.opts.sentry.captureException(message);
