@@ -10,7 +10,7 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { validate as ipnsValidate } from 'ipns/validator'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
-import type { Env } from '.'
+import type { Env } from './env'
 import type { IPNSRecordData } from './record'
 
 const libp2pKeyCode = 0x72

@@ -44,6 +44,7 @@ export class Logging {
 
     const cf = request.cf
     let rCf
+    /* eslint-disable-next-line */
     if (cf) {
       const { tlsClientAuth, tlsExportedAuthenticator, ...rest } = cf
       rCf = rest
@@ -103,19 +104,19 @@ export class Logging {
     if (this.logEventsBatch.length > 0) {
       const batchInFlight = [...this.logEventsBatch]
       this.logEventsBatch = []
-      const rHost = batchInFlight[0].metadata.request.headers.host
+      const rHost: string = batchInFlight[0].metadata.request.headers.host
       const body = JSON.stringify(batchInFlight)
       const request = {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.opts?.token}`,
+          Authorization: `Bearer ${this.opts?.token ?? ''}`,
           'Content-Type': 'application/json',
           'User-Agent': `Cloudflare Worker via ${rHost}`
         },
         body
       }
       const resp = await fetch(logtailApiURL, request)
-      if (this.opts?.debug) {
+      if (this.opts?.debug != null) {
         console.info(
           `[${this._date()}]`,
           `${batchInFlight.length} logs pushed with status ${resp.status}.`
@@ -137,7 +138,7 @@ export class Logging {
       )
     }
     this._finished = true
-    if (this.opts?.debug) {
+    if (this.opts?.debug != null) {
       response.headers.set('Server-Timing', this._timersString())
     }
     // Automatically stop the timer of the request
@@ -194,13 +195,13 @@ export class Logging {
         message: message.message
       }
       if (
-        this.opts.sentry &&
+        this.opts.sentry != null &&
         (skipForSentry != null) &&
         !skipForSentry.some((cls) => message instanceof Error)
       ) {
         this.opts.sentry.captureException(message)
       }
-      if (this.opts?.debug) {
+      if (this.opts?.debug != null) {
         console[level](`[${dt}]`, message)
       }
     } else {
@@ -208,7 +209,7 @@ export class Logging {
         ...log,
         message
       }
-      if (this.opts?.debug) {
+      if (this.opts?.debug != null) {
         console[level](`[${dt}]`, log.message, context)
       }
     }
@@ -255,7 +256,7 @@ export class Logging {
    * @param {string} [description]
    */
   time (name: string, description?: string) {
-    if (this._times.get(name)) {
+    if (this._times.get(name) != null) {
       return console.warn(`A timer named ${name} has already been started`)
     }
     this._times.set(name, {
@@ -273,7 +274,7 @@ export class Logging {
    */
   timeEnd (name: string) {
     const timeObj = this._times.get(name)
-    if (!timeObj) {
+    if (timeObj == null) {
       return console.warn(`No such name ${name}`)
     }
     this._times.delete(name)
@@ -287,7 +288,7 @@ export class Logging {
       duration
     })
 
-    if (this.opts?.debug) {
+    if (this.opts?.debug != null) {
       console.log(`[${this._date()}]`, `${name}: ${duration} ms`)
     }
     return timeObj
@@ -296,9 +297,9 @@ export class Logging {
   _timersString () {
     const result = []
     for (const key of this._timesOrder) {
-      const { name, duration, description } = this._times.get(key)
+      const { name, duration, description }: { name: string, duration: string, description: string } = this._times.get(key)
       result.push(
-        description
+        description === ''
           ? `${name}desc='${description}'dur=${duration}`
           : `${name}dur=${duration}`
       )
