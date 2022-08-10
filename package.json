@@ -12,8 +12,6 @@
   "scripts": {
     "start": "npm run dev -w packages/api"
   },
-  "devDependencies": {
-  },
   "engines": {
     "node": "16.x",
     "npm": ">=7.x"
