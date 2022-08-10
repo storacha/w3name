@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3name/compare/api-v1.0.0...api-v1.1.0) (2022-08-10)
+
+
+### Features
+
+* avoid trying to republish expired records ([#52](https://github.com/web3-storage/w3name/issues/52)) ([b04338a](https://github.com/web3-storage/w3name/commit/b04338a8b7a35ba6c6488a6d7ef632855cba32b4))
+* open api spec ([#54](https://github.com/web3-storage/w3name/issues/54)) ([cd1d59d](https://github.com/web3-storage/w3name/commit/cd1d59d7352634632623f2692a05a2b7c0e7599a))
+
+
+### Other Changes
+
+* appease linter ([2d85373](https://github.com/web3-storage/w3name/commit/2d853731f5d634d2c4a7ce9089fd2632b8b6f7b3))
+* fix spelling mistakes in openAPI schema. ([3df3648](https://github.com/web3-storage/w3name/commit/3df36480fbb7a8fb94410dee87ecdcdb0ad35b94))
+* no error swallowing ([#45](https://github.com/web3-storage/w3name/issues/45)) ([d74d9f9](https://github.com/web3-storage/w3name/commit/d74d9f9566d2641421db1095fbb969929d14f4ff))
+* remove commented out code ([ee32f75](https://github.com/web3-storage/w3name/commit/ee32f75730000e911d5f122223b3770da7810325))
+* remove unnecessary CORS headers ([5a72858](https://github.com/web3-storage/w3name/commit/5a728582161d6204ad9b81e0d1d09a33c4f8f1dc))
+
 ## 1.0.0 (2022-08-05)
 
 
