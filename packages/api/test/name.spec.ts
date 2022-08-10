@@ -60,7 +60,7 @@ describe('GET /name/:key', () => {
     const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
     const body: {message: string} = await response.json()
     assert.equal(response.status, 400)
-    assert.ok(body.message.includes('invalid key'))
+    assert.ok(body.message.includes('Invalid key'))
   })
 
   it('returns an error for a key with an invalid code', async () => {
@@ -70,7 +70,7 @@ describe('GET /name/:key', () => {
     const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
     const body: {message: string} = await response.json()
     assert.equal(response.status, 400)
-    assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+    assert.equal(body.message, 'Invalid key, expected: 114 codec code but got: 140')
     assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
@@ -96,7 +96,7 @@ describe('POST/GET /name/:key', () => {
     const body: {message: string} = await response.json()
 
     assert.equal(response.status, 400)
-    assert.ok(body.message.includes('invalid key'))
+    assert.ok(body.message.includes('Invalid key'))
     assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 
@@ -110,7 +110,7 @@ describe('POST/GET /name/:key', () => {
     const body: {message: string} = await response.json()
 
     assert.equal(response.status, 400)
-    assert.equal(body.message, 'invalid key, expected: 114 codec code but got: 140')
+    assert.equal(body.message, 'Invalid key, expected: 114 codec code but got: 140')
     assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
   })
 

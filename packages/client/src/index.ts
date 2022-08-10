@@ -102,7 +102,7 @@ export async function create () {
 export function parse (name: string) {
   const keyCid = CID.parse(name, base36)
   if (keyCid.code !== libp2pKeyCode) {
-    throw new Error(`invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
+    throw new Error(`Invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
   }
   const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
   return new Name(pubKey)
@@ -246,9 +246,12 @@ export async function resolve (name: Name, service: W3NameService = defaultServi
 async function maybeHandleError (resPromise: Promise<globalThis.Response>): Promise<globalThis.Response> {
   const res = await resPromise
   if (res.ok) return res
-  const err = new Error(`unexpected status: ${res.status}`)
+  let error
   try {
-    Object.assign(err, await res.json())
-  } catch {}
-  throw err
+    const parsedError = await res.json()
+    error = new Error(parsedError.message)
+  } catch (jsonParseError) {
+    error = new Error(`unexpected response from API, cannot parse error response. Received status: ${res.status}`)
+  }
+  throw error
 }

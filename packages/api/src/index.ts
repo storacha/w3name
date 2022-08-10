@@ -41,9 +41,23 @@ export default {
           request,
           jsonResponse(JSON.stringify({ message: error.message }), error.status)
         )
+      } else {
+        let message: string
+
+        if (typeof error === 'string') {
+          message = error
+        } else if (error instanceof Object) {
+          message = JSON.stringify(error)
+        } else {
+          message = 'Uncaught error'
+        }
+
+        return addCorsHeaders(
+          request,
+          jsonResponse(JSON.stringify({ message }), 500)
+        )
       }
     }
-    return new Response()
   }
 }
 

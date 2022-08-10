@@ -142,7 +142,6 @@ export class IPNSRecord {
         await this.state.storage.put('lastRebroadcast', now.toISOString())
       }
     } catch (error) {
-      // Log error
       throw error
     }
   }

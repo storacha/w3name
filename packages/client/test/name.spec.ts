@@ -45,7 +45,7 @@ describe('Name', () => {
       it('throws when parsing a non libp2p-key codec name', () => {
         // base36 - cidv1 - dag-pb
         const invalidName = 'k2jmtxx8tc9pv6b9sj5wm71mheawu849x2bzkjuecpwizjwjeufiadl6'
-        assert.throws(() => Name.parse(invalidName), /invalid key/)
+        assert.throws(() => Name.parse(invalidName), /Invalid key/)
       })
 
       it('creates name from private key', async () => {
@@ -158,7 +158,7 @@ describe('Name', () => {
 
         assert.unreachable()
       } catch (err: any) {
-        assert.equal(err.message, 'unexpected status: 500')
+        assert.equal(err.message, 'unexpected response from API, cannot parse error response. Received status: 500')
       }
     })
   })
