@@ -22,7 +22,7 @@
               "W3Name HTTP API"
            ],
            "summary":"Upload a record",
-           "description":"Upload a name record\n\nNote that only one reecord can be uploaded at a time.",
+           "description":"Upload a name record\n\nNote that only one record can be uploaded at a time.",
            "operationId":"post-name",
            "requestBody":{
               "required":true,
@@ -64,12 +64,6 @@
               },
               "400":{
                  "$ref":"#/components/responses/badRequest"
-              },
-              "401":{
-                 "$ref":"#/components/responses/unauthorized"
-              },
-              "403":{
-                 "$ref":"#/components/responses/forbidden"
               },
               "5XX":{
                  "$ref":"#/components/responses/internalServerError"
@@ -139,58 +133,9 @@
                  "type":"string"
               }
            }
-        },
-        "UnauthorizedErrorResponse":{
-           "type":"object",
-           "properties":{
-              "name":{
-                 "type":"string",
-                 "default":"HTTP Error"
-              },
-              "message":{
-                 "type":"string",
-                 "default":"Unauthorized"
-              }
-           }
-        },
-        "ForbiddenErrorResponse":{
-           "type":"object",
-           "properties":{
-              "name":{
-                 "type":"string",
-                 "default":"HTTP Error"
-              },
-              "message":{
-                 "type":"string",
-                 "enum":[
-                    "Token is not valid",
-                    "Session expired"
-                 ]
-              }
-           }
         }
      },
      "responses":{
-        "unauthorized":{
-           "description":"Unauthorized",
-           "content":{
-              "application/json":{
-                 "schema":{
-                    "$ref":"#/components/schemas/UnauthorizedErrorResponse"
-                 }
-              }
-           }
-        },
-        "forbidden":{
-           "description":"Forbidden",
-           "content":{
-              "application/json":{
-                 "schema":{
-                    "$ref":"#/components/schemas/ForbiddenErrorResponse"
-                 }
-              }
-           }
-        },
         "notFound":{
            "description":"Not Found",
            "content":{
