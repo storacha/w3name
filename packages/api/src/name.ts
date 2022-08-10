@@ -139,10 +139,9 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
             }
           })
 
-          if (response.ok !== true) {
-            throw new Error(`Error when publishing to the IPNS Publisher endpoint`)
+          if (!response.ok) {
+            throw new Error('Error when publishing to the IPNS Publisher endpoint')
           }
-
         })())
         return jsonResponse(JSON.stringify({ id: key }), 202)
       } else {
