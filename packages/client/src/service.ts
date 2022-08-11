@@ -19,6 +19,9 @@ function createRateLimiter () {
   return async () => await throttle(() => {})
 }
 
+/**
+ * W3NameService coordinates access to the W3name API.
+ */
 export default class W3NameService implements PublicService {
   endpoint: URL
   waitForRateLimit: RateLimiter

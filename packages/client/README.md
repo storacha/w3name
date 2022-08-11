@@ -6,13 +6,13 @@
 
 Install the package using npm
 
-```bash
+```shell
 npm install w3name
 ```
 
 or yarn:
 
-```bash
+```shell
 yarn add w3name
 ```
 

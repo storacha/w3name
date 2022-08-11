@@ -28,4 +28,28 @@ jobs:
       - run: npm run lint --workspace packages/client
       - run: npm run build --workspace packages/client
       - run: npm test --workspace packages/client
-
+  typedoc:
+    runs-on: ubuntu-latest
+    name: API docs
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - uses: bahmutov/npm-install@v1 
+      - run: npm run typedoc --workspace packages/client
+      - uses: web3-storage/add-to-web3@v2
+        id: web3
+        with:
+          web3_token: ${{ secrets.WEB3_STORAGE_KEY }}
+          path_to_add: 'packages/client/generated-docs'
+      - run: echo added typedoc output to web3.storage. cid -- ${{ steps.web3.outputs.cid }}
+      - run: echo typedoc URL -- https://${{ steps.web3.outputs.cid }}.ipfs.nftstorage.link
+      - uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: 'API docs'
+          description: 'Preview of generated client API docs'
+          state: 'success'
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
+          target_url: "https://${{ steps.web3.outputs.cid }}.ipfs.nftstorage.link"
