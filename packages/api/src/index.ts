@@ -13,9 +13,9 @@ router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
 router.post('/name/:key', withCorsHeaders(namePost))
 
 // Open API spec
-router.get('/schema.json', swaggerConfig.toJSON)
-router.get('/schema.yaml', swaggerConfig.toYAML)
-router.get('/schema.yml', swaggerConfig.toYAML)
+router.get('/schema.json', withCorsHeaders(swaggerConfig.toJSON))
+router.get('/schema.yaml', withCorsHeaders(swaggerConfig.toYAML))
+router.get('/schema.yml', withCorsHeaders(swaggerConfig.toYAML))
 
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
 router.all('*', (request: Request): Response => addCorsHeaders(request, notFound()))
