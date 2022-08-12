@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/web3-storage/w3name/compare/api-v1.1.0...api-v1.1.1) (2022-08-12)
+
+
+### Bug Fixes
+
+* add cors headers for shema responses. ([#59](https://github.com/web3-storage/w3name/issues/59)) ([07b97ff](https://github.com/web3-storage/w3name/commit/07b97ff1f10db8eb83b2076eb4319f1c48b97715))
+
 ## [1.1.0](https://github.com/web3-storage/w3name/compare/api-v1.0.0...api-v1.1.0) (2022-08-10)
 
 
