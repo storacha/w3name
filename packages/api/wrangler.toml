@@ -16,6 +16,12 @@ new_classes = ["NameRoom0", "IPNSRecord"]
     { name = "IPNS_RECORD", class_name = "IPNSRecord" }
   ]
 
+
+[vars]
+REBROADCAST_INTERVAL_MS = "600000"
+PUBLISHER_ENDPOINT_URL = "http://127.0.0.1:8000"
+PUBLISHER_AUTH_SECRET = "123456"
+
 # Test
 
 [env.test.vars]
