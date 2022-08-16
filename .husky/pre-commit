@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint -w packages/api && npm run lint -w packages/client
+npm run lint-staged
