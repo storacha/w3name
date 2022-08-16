@@ -63,12 +63,13 @@ jobs:
   typedoc:
     name: API docs
     runs-on: ubuntu-latest
+    needs: release
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - uses: bahmutov/npm-install@v1 
+      - uses: bahmutov/npm-install@v1
       - run: npm run typedoc --workspace packages/client
       - uses: web3-storage/add-to-web3@v2
         id: web3
@@ -85,3 +86,5 @@ jobs:
           state: 'success'
           sha: ${{github.event.pull_request.head.sha || github.sha}}
           target_url: "https://${{ steps.web3.outputs.cid }}.ipfs.nftstorage.link"
+      - run: gh-pages -d generated-docs
+        if: ${{ steps.tag-release.outputs.releases_created }}
