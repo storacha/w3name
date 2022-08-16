@@ -10,9 +10,11 @@
     "packages/website"
   ],
   "scripts": {
-    "start": "npm run dev -w packages/api"
+    "start": "npm run dev -w packages/api",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "husky": "^8.0.1"
   },
   "engines": {
     "node": "16.x",
