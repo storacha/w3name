@@ -198,7 +198,7 @@ export class Logging {
       if (
         (this.opts.sentry !== undefined) &&
         (skipForSentry !== undefined) &&
-        !skipForSentry.some((cls) => message instanceof Error)
+        !skipForSentry.some((cls: any) => message instanceof cls)
       ) {
         this.opts.sentry.captureException(message)
       }
