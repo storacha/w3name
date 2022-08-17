@@ -10,10 +10,20 @@
     "packages/website"
   ],
   "scripts": {
-    "start": "npm run dev -w packages/api"
+    "start": "npm run dev -w packages/api",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
+  },
+  "devDependencies": {
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3"
   },
   "engines": {
     "node": "16.x",
     "npm": ">=7.x"
+  },
+  "lint-staged": {
+    "packages/api/**": ".husky/lint-api.sh",
+    "packages/client/**": ".husky/lint-client.sh"
   }
 }
