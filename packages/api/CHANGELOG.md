@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/web3-storage/w3name/compare/api-v1.1.1...api-v1.1.2) (2022-08-17)
+
+
+### Bug Fixes
+
+* Add correct schemas for openAPI. ([#63](https://github.com/web3-storage/w3name/issues/63)) ([9a8fef6](https://github.com/web3-storage/w3name/commit/9a8fef65aa0876d1e59d63984740aad321748165))
+
 ## [1.1.1](https://github.com/web3-storage/w3name/compare/api-v1.1.0...api-v1.1.1) (2022-08-12)
 
 
