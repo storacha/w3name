@@ -117,7 +117,7 @@
                   "$ref": "#/components/schemas/Key"
                }
             },
-            "description": "The published IPNS Key that will rersolve the record once it has persisted to th DHT."
+            "description": "The published IPNS Key that will rersolve to the record once it has persisted to the DHT."
          },
          "Record": {
             "type": "object",
@@ -131,12 +131,12 @@
                   "example": "CjQvaXBmcy9RbVBxckVISlRleDJDUGJxTlVMQ21iU0ZKVDNib0J3QUFmTWI1VWp2WHRLakVlEkB/s3F4iHVMyA9LOFizt5N4PHiI2APD15wsMa1RXGwmugThVpUjTw+5HHwFt16TI/8AKk/1p8+26hylxMxd3wAIGAAiHjIwMjMtMDgtMDVUMDk6NDk6MjguNDk5MDAwMDAwWigNMODyh77rhc0FQkCdgM1u1AAUsdf4pE7/kNYjl438/g6Ja48Tr2evFSRc6YSMgljaKX8PpQC0JDlZqF2jiKdHRUOaxLHArPo9MW0PSosBpWNUVEwbAAs0LrfB+WBlVmFsdWVYNC9pcGZzL1FtUHFyRUhKVGV4MkNQYnFOVUxDbWJTRkpUM2JvQndBQWZNYjVVanZYdEtqRWVoU2VxdWVuY2UNaFZhbGlkaXR5WB4yMDIzLTA4LTA1VDA5OjQ5OjI4LjQ5OTAwMDAwMFpsVmFsaWRpdHlUeXBlAA=="
                }
             },
-            "description": "an IPNS Record and value."
+            "description": "an IPNS Record."
          },
          "Key": {
             "type": "string",
             "example": "k51qzi5uqu5dgsc1bvsuk1x84bptdvp8cupbnnbqxpxzd629gadpci3kpcm311",
-            "description": "a public key for a given record."
+            "description": "A string representation of a public key, which is the 'name' that can be resolved to a record."
          },
          "ErrorResponse": {
             "type": "object",
