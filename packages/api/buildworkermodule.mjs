@@ -55,7 +55,7 @@ import Sentry from "@sentry/cli";
       });
       await cli.releases.uploadSourceMaps(sentryRelease, {
         // validate: true,
-        include: [path.join(__dirname, "..", "dist")],
+        include: [path.join(__dirname, "dist")],
         ext: ["map", "mjs"],
         dist: git.short(__dirname),
       });
