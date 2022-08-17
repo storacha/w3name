@@ -24,6 +24,6 @@
   },
   "lint-staged": {
     "packages/api/**": ".husky/lint-api.sh",
-    "packages/client/**": "husky/lint-client.sh"
+    "packages/client/**": ".husky/lint-client.sh"
   }
 }
