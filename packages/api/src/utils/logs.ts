@@ -116,7 +116,7 @@ export class Logging {
         body
       }
       const resp = await fetch(logtailApiURL, request)
-      if (this.opts?.debug != null) {
+      if (this.opts?.debug ?? false) {
         console.info(
           `[${this._date()}]`,
           `${batchInFlight.length} logs pushed with status ${resp.status}.`
@@ -138,7 +138,7 @@ export class Logging {
       )
     }
     this._finished = true
-    if (this.opts?.debug != null) {
+    if (this.opts?.debug ?? false) {
       response.headers.set('Server-Timing', this._timersString())
     }
     // Automatically stop the timer of the request
@@ -195,13 +195,13 @@ export class Logging {
         message: message.message
       }
       if (
-        this.opts.sentry != null &&
-        (skipForSentry != null) &&
+        (this.opts.sentry ?? false) &&
+        (skipForSentry !== undefined) &&
         !skipForSentry.some((cls) => message instanceof Error)
       ) {
         this.opts.sentry.captureException(message)
       }
-      if (this.opts?.debug != null) {
+      if (this.opts?.debug ?? false) {
         console[level](`[${dt}]`, message)
       }
     } else {
@@ -209,7 +209,7 @@ export class Logging {
         ...log,
         message
       }
-      if (this.opts?.debug != null) {
+      if (this.opts?.debug ?? false) {
         console[level](`[${dt}]`, log.message, context)
       }
     }
@@ -256,7 +256,7 @@ export class Logging {
    * @param {string} [description]
    */
   time (name: string, description?: string) {
-    if (this._times.get(name) != null) {
+    if (this._times.get(name) !== undefined) {
       return console.warn(`A timer named ${name} has already been started`)
     }
     this._times.set(name, {
@@ -274,7 +274,7 @@ export class Logging {
    */
   timeEnd (name: string) {
     const timeObj = this._times.get(name)
-    if (timeObj == null) {
+    if (timeObj === undefined) {
       return console.warn(`No such name ${name}`)
     }
     this._times.delete(name)
@@ -288,7 +288,7 @@ export class Logging {
       duration
     })
 
-    if (this.opts?.debug != null) {
+    if (this.opts?.debug ?? false) {
       console.log(`[${this._date()}]`, `${name}: ${duration} ms`)
     }
     return timeObj
