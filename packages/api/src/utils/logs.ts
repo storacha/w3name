@@ -1,6 +1,7 @@
 /* eslint-env serviceworker */
 /* eslint-disable no-console */
 import { nanoid } from 'nanoid/non-secure'
+import type Toucan from 'toucan-js'
 
 const logtailApiURL = 'https://in.logtail.com/'
 
@@ -15,7 +16,7 @@ const buildMetadataFromHeaders = (headers: globalThis.Headers) => {
 
 interface ILoggingOptions {
   skipForSentry?: Error[]
-  sentry: any
+  sentry?: Toucan
   debug?: boolean
   token?: string
   version: string
@@ -195,7 +196,7 @@ export class Logging {
         message: message.message
       }
       if (
-        (this.opts.sentry ?? false) &&
+        (this.opts.sentry !== undefined) &&
         (skipForSentry !== undefined) &&
         !skipForSentry.some((cls) => message instanceof Error)
       ) {
