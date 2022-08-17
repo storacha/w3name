@@ -299,7 +299,7 @@ export class Logging {
     for (const key of this._timesOrder) {
       const { name, duration, description }: { name: string, duration: string, description: string } = this._times.get(key)
       result.push(
-        description === ''
+        description !== ''
           ? `${name}desc='${description}'dur=${duration}`
           : `${name}dur=${duration}`
       )
