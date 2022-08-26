@@ -68,6 +68,6 @@
     "noPropertyAccessFromIndexSignature": false
   },
   "include": [
-    "src", "test"
+    "src/**/*"
   ]
 }

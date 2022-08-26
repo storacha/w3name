@@ -39,13 +39,13 @@
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/index.min.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./service": {
       "types": "./dist/src/service.d.ts",
-      "import": "./dist/src/service.js",
-      "require": "./dist/index.min.js"
+      "import": "./dist/service.mjs",
+      "require": "./dist/service.cjs"
     }
   },
   "module": "dist/index.mjs",
