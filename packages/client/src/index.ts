@@ -34,7 +34,7 @@ import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
 import * as cbor from 'cborg'
-import W3NameService from './service.js'
+import W3NameService from './service'
 import fetch from '@web-std/fetch'
 
 const libp2pKeyCode = 0x72

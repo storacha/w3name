@@ -63,6 +63,7 @@
     "lint": "aegir lint",
     "test": "run-p -r test:all",
     "test:all": "npm run build && API_PORT=1337 aegir test --target node",
+    "test:ts": "mocha -r ts-node/register --loader=ts-node/esm test/name.spec.ts",
     "typedoc": "typedoc",
     "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs",
     "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish",
@@ -90,7 +91,9 @@
     "rollup": "^2.78.1",
     "rollup-plugin-multi-input": "^1.3.1",
     "rollup-plugin-terser": "^7.0.2",
+    "ts-node": "^10.9.1",
     "typedoc": "^0.23.10",
+    "typings": "^2.1.1",
     "uint8arrays": "^3.0.0"
   }
 }
