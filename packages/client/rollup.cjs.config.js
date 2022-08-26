@@ -9,8 +9,8 @@ export default {
   output: [
     {
       inlineDynamicImports: true,
-      file: 'dist/bundle.esm.min.js',
-      format: 'esm',
+      file: 'dist/bundle.cjs.min.js',
+      format: 'cjs',
       plugins: [terser()],
       sourcemap: true
     }

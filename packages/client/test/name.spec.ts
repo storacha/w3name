@@ -145,7 +145,9 @@ describe('Name', () => {
 
         assert.unreachable()
       } catch (err: any) {
-        assert.equal(err.message, 'throw an error for the tests')
+        if (err instanceof Error) {
+          assert.equal(err.message, 'throw an error for the tests')
+        }
       }
     })
 
@@ -158,7 +160,9 @@ describe('Name', () => {
 
         assert.unreachable()
       } catch (err: any) {
-        assert.equal(err.message, 'unexpected response from API, cannot parse error response. Received status: 500')
+        if (err instanceof Error) {
+          assert.equal(err.message, 'unexpected response from API, cannot parse error response. Received status: 500')
+        }
       }
     })
   })
