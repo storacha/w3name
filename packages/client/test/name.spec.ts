@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 
 import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
