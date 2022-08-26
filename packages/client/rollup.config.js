@@ -1,20 +1,26 @@
 // @ts-ignore
-import multiInput from 'rollup-plugin-multi-input'
+import { terser } from 'rollup-plugin-terser'
+import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
+import commonjs from '@rollup/plugin-commonjs'
 
-const config = [
-  ['src', 'dist'],
-  // ['test', 'dist/test']
-].map(([base, dest]) => ({
-  input: [`${base}/**/*.{ts,js}`],
-  output: {
-    dir: dest,
-    preserveModules: true,
-    sourcemap: true,
-    format: 'cjs',
-    entryFileNames: '[name].cjs',
-    exports: "auto"
-  },
-  plugins: [multiInput({ relative: base }), typescript()]
-}))
-export default config
+export default {
+  input: 'src/index.ts',
+  output: [
+    {
+      inlineDynamicImports: true,
+      file: 'dist/bundle.esm.min.js',
+      format: 'esm',
+      plugins: [terser()],
+      sourcemap: true
+    }
+  ],
+  plugins: [
+    commonjs(),
+    resolve({
+      preferBuiltins: false,
+      browser: true
+    }),
+    typescript()
+  ]
+}
