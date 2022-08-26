@@ -47,7 +47,6 @@
       "require": "./dist/service.cjs"
     }
   },
-  "module": "dist/index.mjs",
   "typesVersions": {
     "*": {
       "index": [
@@ -59,12 +58,13 @@
     }
   },
   "scripts": {
-    "build": "run-s build:*",
+    "build": "npm run clean && run-s build:*",
     "build:cjs": "rollup --config rollup.cjs.config.js",
     "build:esm": "rollup --config rollup.esm.config.js",
     "lint": "aegir lint",
     "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register test/name.spec.ts",
+    "clean": "del dist",
     "typedoc": "typedoc",
     "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs"
   },
@@ -80,6 +80,7 @@
     "@rollup/plugin-typescript": "^8.4.0",
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
+    "del-cli": "^5.0.0",
     "gh-pages": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.78.1",
