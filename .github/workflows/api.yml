@@ -59,7 +59,7 @@ jobs:
       - name: Test publish a record to staging
         run: |
           npm run build -w packages/client
-          ./packages/client/bin/do-staging-test-publish.js
+          ./packages/client/bin/do-staging-test-publish.mjs
 
   release:
     name: Release
