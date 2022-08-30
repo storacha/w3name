@@ -34,12 +34,12 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./service": {
-      "types": "./dist/src/service.d.ts",
+      "types": "./dist/service.d.ts",
       "import": "./dist/service.mjs",
       "require": "./dist/service.cjs"
     }
@@ -47,10 +47,10 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/src/index.d.ts"
+        "dist/index.d.ts"
       ],
       "service": [
-        "dist/src/service.d.ts"
+        "dist/service.d.ts"
       ]
     }
   },

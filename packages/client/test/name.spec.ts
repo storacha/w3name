@@ -8,7 +8,7 @@ import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
 import * as Name from '../src/index'
 import W3NameService from '../src/service'
-import server from './mocks/api.js'
+import server from './mocks/api'
 
 const libp2pKeyCode = 0x72
 

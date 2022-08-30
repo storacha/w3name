@@ -7,12 +7,12 @@ const db = new Map()
 
 // Make our HTTP server
 const server = http.createServer((req, res) => {
-  if (!req.url) {
+  if (req.url === undefined) {
     throw Error('No url passed to mock server')
   }
 
   const reqUrl = req.url
-  if (reqUrl?.startsWith('/name/')) {
+  if (reqUrl?.startsWith('/name/') === true) {
     const key = reqUrl.split('/').at(-1)
 
     if (req.method === 'POST') {
