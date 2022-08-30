@@ -20,9 +20,6 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "aegir": {
-    "tsRepo": true
-  },
   "ts-standard": {
     "ignore": [
       "/dist/"
@@ -31,7 +28,6 @@
   "directories": {
     "test": "test"
   },
-  "type": "module",
   "files": [
     "src",
     "dist"
@@ -48,7 +44,6 @@
       "require": "./dist/service.cjs"
     }
   },
-  "module": "dist/index.mjs",
   "typesVersions": {
     "*": {
       "index": [
@@ -60,15 +55,13 @@
     }
   },
   "scripts": {
-    "build": "run-s build:*",
+    "build": "npm run clean && run-s build:*",
     "build:cjs": "rollup --config rollup.cjs.config.js",
     "build:esm": "rollup --config rollup.esm.config.js",
-    "build:tsc": "tsc --build",
-    "lint": "aegir lint",
+    "lint": "ts-standard",
     "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish",
-    "test": "run-p -r test:all",
-    "test:all": "npm run build && API_PORT=1337 aegir test --target node",
-    "test:ts": "mocha -r ts-node/register --loader=ts-node/esm test/name.spec.ts",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register test/name.spec.ts",
+    "clean": "del dist",
     "typedoc": "typedoc",
     "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs"
   },
@@ -78,12 +71,13 @@
     "ipns": "^0.16.0",
     "libp2p-crypto": "^0.21.2",
     "throttled-queue": "^2.1.4",
+    "ts-standard": "^11.0.0",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.4.0",
     "@types/mocha": "^9.1.1",
-    "aegir": "^37.3.0",
+    "del-cli": "^5.0.0",
     "gh-pages": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.78.1",

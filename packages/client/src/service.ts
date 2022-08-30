@@ -12,9 +12,9 @@ export interface PublicService {
  * RateLimiter returns a promise that resolves when it is safe to send a request
  * that does not exceed the rate limit.
  */
-export interface RateLimiter { (): Promise<void> }
+export type RateLimiter = () => Promise<void>
 
-function createRateLimiter () {
+function createRateLimiter (): RateLimiter {
   const throttle = throttledQueue(RATE_LIMIT_REQUESTS, RATE_LIMIT_PERIOD)
   return async () => await throttle(() => {})
 }
