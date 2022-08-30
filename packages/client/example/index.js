@@ -1,6 +1,6 @@
 import * as Name from 'w3name'
 
-async function createName() {
+async function createName () {
   const name = await Name.create()
   console.log('Name:', name.toString())
   // e.g. k51qzi5uqu5di9agapykyjh3tqrf7i14a7fjq46oo0f6dxiimj62knq13059lt

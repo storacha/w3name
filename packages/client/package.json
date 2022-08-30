@@ -20,9 +20,6 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "aegir": {
-    "tsRepo": true
-  },
   "ts-standard": {
     "ignore": [
       "/dist/"
@@ -61,7 +58,7 @@
     "build": "npm run clean && run-s build:*",
     "build:cjs": "rollup --config rollup.cjs.config.js",
     "build:esm": "rollup --config rollup.esm.config.js",
-    "lint": "aegir lint",
+    "lint": "ts-standard",
     "publish": "npm run lint && npm run test && npm run build && npm publish && npm run typedoc:publish",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register test/name.spec.ts",
     "clean": "del dist",
@@ -74,12 +71,12 @@
     "ipns": "^0.16.0",
     "libp2p-crypto": "^0.21.2",
     "throttled-queue": "^2.1.4",
+    "ts-standard": "^11.0.0",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.4.0",
     "@types/mocha": "^9.1.1",
-    "aegir": "^37.3.0",
     "del-cli": "^5.0.0",
     "gh-pages": "^4.0.0",
     "npm-run-all": "^4.1.5",
