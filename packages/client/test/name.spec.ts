@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks */
 
 import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
@@ -7,9 +6,9 @@ import { identity } from 'multiformats/hashes/identity'
 import { keys } from 'libp2p-crypto'
 import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
-import W3NameService from '../src/service.js'
-import * as Name from '../src/index.js'
-import server from './mocks/api.js'
+import * as Name from '../src/index'
+import W3NameService from '../src/service'
+import server from './mocks/api'
 
 const libp2pKeyCode = 0x72
 
@@ -145,7 +144,9 @@ describe('Name', () => {
 
         assert.unreachable()
       } catch (err: any) {
-        assert.equal(err.message, 'throw an error for the tests')
+        if (err instanceof Error) {
+          assert.equal(err.message, 'throw an error for the tests')
+        }
       }
     })
 
@@ -158,7 +159,9 @@ describe('Name', () => {
 
         assert.unreachable()
       } catch (err: any) {
-        assert.equal(err.message, 'unexpected response from API, cannot parse error response. Received status: 500')
+        if (err instanceof Error) {
+          assert.equal(err.message, 'unexpected response from API, cannot parse error response. Received status: 500')
+        }
       }
     })
   })

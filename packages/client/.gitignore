@@ -1,2 +1,5 @@
 dist
 coverage
+*.tsbuildinfo
+typings
+generated-docs
