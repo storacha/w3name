@@ -6,10 +6,22 @@
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "outDir": "dist",
-    "strict": true,
     "allowJs": true,
     "checkJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+
+    // Type Checking
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "strict": true,
+
+    // Interop Constraints
+    "forceConsistentCasingInFileNames": true,
+
+    // Completeness
+    "skipLibCheck": true,
   },
   "include": [
     "src/**/*"
