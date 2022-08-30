@@ -4,9 +4,11 @@ import { nameGet, nameWatchGet, namePost } from './name'
 import { HTTPError } from './errors'
 import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
 import * as swaggerConfig from './swaggerConfig'
+import { Env, envAll } from './env'
 
 const router = Router()
 
+router.all('*', envAll)
 router.options('*', corsOptions)
 router.get('/name/:key', withCorsHeaders(nameGet))
 router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
@@ -18,20 +20,10 @@ router.get('/schema.yaml', withCorsHeaders(swaggerConfig.toYAML))
 router.get('/schema.yml', withCorsHeaders(swaggerConfig.toYAML))
 
 router.get('/', () => jsonResponse(JSON.stringify({ message: '⁂ w3name' })))
-router.all('*', (request: Request): Response => addCorsHeaders(request, notFound()))
-
-export interface Env {
-  // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-  // MY_KV_NAMESPACE: KVNamespace;
-  //
-  // Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-  // MY_DURABLE_OBJECT: DurableObjectNamespace;
-  //
-  // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-  // MY_BUCKET: R2Bucket;
-  NAME_ROOM: DurableObjectNamespace
-  IPNS_RECORD: DurableObjectNamespace
-}
+router.all(
+  '*',
+  (request: Request): Response => addCorsHeaders(request, notFound())
+)
 
 export default {
   async fetch (
@@ -39,12 +31,13 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
+    let response
     try {
       env = { ...env } // new env object for every request (it is shared otherwise)!
-      return await router.handle(request, env, ctx)
+      response = await router.handle(request, env, ctx)
     } catch (error: any) {
       if (error instanceof HTTPError) {
-        return addCorsHeaders(
+        response = addCorsHeaders(
           request,
           jsonResponse(JSON.stringify({ message: error.message }), error.status)
         )
@@ -65,6 +58,8 @@ export default {
         )
       }
     }
+    await env.log.end(response)
+    return response
   }
 }
 
