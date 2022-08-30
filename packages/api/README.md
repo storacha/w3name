@@ -21,7 +21,7 @@ On success, returns an object of the form:
 }
 ```
 
-Will return a `404` status code if the requested key has not been published in the W3Name service. Note that keys published through other IPNS implementations will return a `404` from this endpoint, as it does not consult the IPFS DHT.
+Will return a `404` status code if the requested key has not been published in the w3name service. Note that keys published through other IPNS implementations will return a `404` from this endpoint, as it does not consult the IPFS DHT.
 
 ### POST `/name/:key` - set the current value for a name
 

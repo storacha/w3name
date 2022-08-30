@@ -106,7 +106,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
       throw new HTTPError('embedded public key mismatch', 400)
     }
 
-    const recordData = {
+    const recordData: IPNSRecordData = {
       key, // base36 "libp2p-key" encoding of the public key
       record, // the serialized IPNS record - base64 encoded
       hasV2Sig: Boolean(entry.signatureV2),
@@ -131,6 +131,17 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
         ctx.waitUntil((async () => {
           await NameRoom.broadcast(request, env.NAME_ROOM, key, broadcastData)
           await NameRoom.broadcast(request, env.NAME_ROOM, '*', broadcastData)
+          const response = await fetch(env.PUBLISHER_ENDPOINT_URL, {
+            method: 'POST',
+            body: JSON.stringify(recordData),
+            headers: {
+              Authorization: env.PUBLISHER_AUTH_SECRET
+            }
+          })
+
+          if (!response.ok) {
+            throw new Error('Error when publishing to the IPNS Publisher endpoint')
+          }
         })())
         return jsonResponse(JSON.stringify({ id: key }), 202)
       } else {

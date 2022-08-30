@@ -34,13 +34,13 @@ import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
 import * as cbor from 'cborg'
-import W3NameService from './service.js'
+import W3NameService from './service'
 import fetch from '@web-std/fetch'
 
 const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
-const defaultValidity = () => new Date(Date.now() + ONE_YEAR).toISOString()
+const defaultValidity = (): string => new Date(Date.now() + ONE_YEAR).toISOString()
 
 const defaultService = new W3NameService()
 /**
@@ -68,7 +68,7 @@ export class Name {
   /**
    * A binary representation of the IPNS verification key.
    */
-  get bytes () {
+  get bytes (): Uint8Array {
     const digest = Digest.create(identity.code, this._pubKey.bytes)
     return CID.createV1(libp2pKeyCode, digest).bytes
   }
@@ -76,7 +76,7 @@ export class Name {
   /**
    * @returns the string representation of the IPNS verification key (e.g. `k51qzi5uqu5di9agapykyjh3tqrf7i14a7fjq46oo0f6dxiimj62knq13059lt`)
    */
-  toString () {
+  toString (): string {
     const digest = Digest.create(identity.code, this._pubKey.bytes)
     return CID.createV1(libp2pKeyCode, digest).toString(base36)
   }
@@ -108,7 +108,7 @@ export class WritableName extends Name {
    * To save a key for later loading with {@link from}, write the
    * contents of `key.bytes` somewhere safe.
    */
-  get key () {
+  get key (): PrivateKey {
     return this._privKey
   }
 }
@@ -117,7 +117,7 @@ export class WritableName extends Name {
  * Create a new name with associated signing key that can be used to create and
  * publish IPNS record revisions.
  */
-export async function create () {
+export async function create (): Promise<WritableName> {
   const privKey = await keys.generateKeyPair('Ed25519', 2048)
   return new WritableName(privKey)
 }
@@ -128,7 +128,7 @@ export async function create () {
  * Note that this returns a read-only {@link Name}, which can be used to {@link resolve} values
  * but cannot {@link publish} them.
  */
-export function parse (name: string) {
+export function parse (name: string): Name {
   const keyCid = CID.parse(name, base36)
   if (keyCid.code !== libp2pKeyCode) {
     throw new Error(`Invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
@@ -169,7 +169,7 @@ export function parse (name: string) {
  * ```
  *
  */
-export async function from (key: Uint8Array) {
+export async function from (key: Uint8Array): Promise<WritableName> {
   const privKey = await keys.unmarshalPrivateKey(key)
   return new WritableName(privKey)
 }
@@ -181,7 +181,7 @@ export async function from (key: Uint8Array) {
  * Note that the returned {@link Revision} object must be {@link publish}ed before it
  * can be {@link resolve}d using the service.
  */
-export async function v0 (name: Name, value: string) {
+export async function v0 (name: Name, value: string): Promise<Revision> {
   return new Revision(name, value, 0n, defaultValidity())
 }
 
@@ -229,22 +229,22 @@ export class Revision {
     this._validity = validity
   }
 
-  get name () {
+  get name (): Name {
     return this._name
   }
 
-  get value () {
+  get value (): string {
     return this._value
   }
 
-  get sequence () {
+  get sequence (): bigint {
     return this._sequence
   }
 
   /**
    * RFC3339 date string.
    */
-  get validity () {
+  get validity (): string {
     return this._validity
   }
 
@@ -254,7 +254,7 @@ export class Revision {
    * Note: if `revision.name` is a `WritableName` then signing key data will be
    * lost. i.e. the private key is not encoded.
    */
-  static encode (revision: Revision) {
+  static encode (revision: Revision): Uint8Array {
     return cbor.encode({
       name: revision._name.toString(),
       value: revision._value,
@@ -270,7 +270,7 @@ export class Revision {
    * @returns a {@link Revision} object
    * @throws if `bytes` does not contain a valid encoded `Revision`
    */
-  static decode (bytes: Uint8Array) {
+  static decode (bytes: Uint8Array): Revision {
     const raw = cbor.decode(bytes)
     const name = parse(raw.name)
     return new Revision(name, raw.value, BigInt(raw.sequence), raw.validity)
@@ -286,7 +286,7 @@ export class Revision {
  * Note that it may take a few seconds for the record to propagate and become available via
  * the IPFS DHT network and IPFS <-> HTTP gateways.
  */
-export async function publish (revision: Revision, key: PrivateKey, service: W3NameService = defaultService) {
+export async function publish (revision: Revision, key: PrivateKey, service: W3NameService = defaultService): Promise<void> {
   const url = new URL(`name/${revision.name.toString()}`, service.endpoint)
   const entry = await ipns.create(
     key,

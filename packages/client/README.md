@@ -1,5 +1,5 @@
 <h1 align="center">⁂<br/>w3name</h1>
-<p align="center">The JavaScript API client for <a href="https://web3.storage/products/w3name/">W3Name</a></p>
+<p align="center">The JavaScript API client for <a href="https://web3.storage/products/w3name/">w3name</a></p>
 
 
 ## Getting started

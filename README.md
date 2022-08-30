@@ -124,9 +124,9 @@ Each workspace has its own suite of testing tools, which you can learn more abou
 
 ## Learn more
 
-To learn more about the w3name service, or find detailed documentation for the JS client library and API, please head over to TODO: Add website url
+To learn more about the w3name service, or find detailed documentation for the JS client library and API, please head over to [Web3.Storage documentation](https://web3.storage/docs/how-tos/w3name/).
 
 
 <p align="center">
-  <a href="">⁂</a>
+  <a href="https://web3.storage/products/w3name/">⁂</a>
 </p>
