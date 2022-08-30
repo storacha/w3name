@@ -49,9 +49,8 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         env:
           ENV: 'staging' # inform the build process what the env is
-          # Sentry is not yet set up
-          # SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
-          # SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
         with:
           apiToken: ${{ secrets.CF_TOKEN }}
           workingDirectory: 'packages/api'
@@ -90,9 +89,8 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         env:
           ENV: 'production' # inform the build process what the env is
-          # Sentry is not yet set up
-          # SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
-          # SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN}}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD}}
         with:
           apiToken: ${{ secrets.CF_TOKEN }}
           workingDirectory: 'packages/api'
