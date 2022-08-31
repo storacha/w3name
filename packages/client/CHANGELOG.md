@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/web3-storage/w3name/compare/w3name-v1.0.5...w3name-v1.0.6) (2022-08-31)
+
+
+### Bug Fixes
+
+* refactor package publish ([05cf64c](https://github.com/web3-storage/w3name/commit/05cf64c9de17577890fb36eadf6f741bb7dd23b8))
+
 ## 1.0.5 (2022-08-31)
 
 
