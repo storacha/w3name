@@ -60,11 +60,9 @@
     "build:esm": "rollup --config rollup.esm.config.js",
     "lint": "ts-standard",
     "prepare": "run-s lint test build",
-    "postpublish": "npm run typedoc:publish",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha -r ts-node/register test/name.spec.ts",
     "clean": "del dist",
-    "typedoc": "typedoc",
-    "typedoc:publish": "npm run typedoc && gh-pages -d generated-docs"
+    "typedoc": "typedoc"
   },
   "dependencies": {
     "@web-std/fetch": "^4.1.0",
