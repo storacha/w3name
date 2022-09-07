@@ -1,6 +1,6 @@
 import { Router } from 'itty-router'
 import { jsonResponse, notFound } from './utils/response-types'
-import { nameGet, nameWatchGet, namePost } from './name'
+import { nameGet, nameWatchGet, namePost, raiseErrorGet } from './name'
 import { HTTPError } from './errors'
 import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
 import * as swaggerConfig from './swaggerConfig'
@@ -13,6 +13,7 @@ router.options('*', corsOptions)
 router.get('/name/:key', withCorsHeaders(nameGet))
 router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
 router.post('/name/:key', withCorsHeaders(namePost))
+router.get('/raise-error', withCorsHeaders(raiseErrorGet))
 
 // Open API spec
 router.get('/schema.json', withCorsHeaders(swaggerConfig.toJSON))
@@ -36,25 +37,17 @@ export default {
       env = { ...env } // new env object for every request (it is shared otherwise)!
       response = await router.handle(request, env, ctx)
     } catch (error: any) {
+      env.log.error(error, ctx)
+
       if (error instanceof HTTPError) {
         response = addCorsHeaders(
           request,
           jsonResponse(JSON.stringify({ message: error.message }), error.status)
         )
       } else {
-        let message: string
-
-        if (typeof error === 'string') {
-          message = error
-        } else if (error instanceof Object) {
-          message = JSON.stringify(error)
-        } else {
-          message = 'Uncaught error'
-        }
-
-        return addCorsHeaders(
+        response = addCorsHeaders(
           request,
-          jsonResponse(JSON.stringify({ message }), 500)
+          jsonResponse(JSON.stringify({ message: error.message }), 500)
         )
       }
     }

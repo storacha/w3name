@@ -172,3 +172,13 @@ export async function nameWatchGet (request: Request, env: Env): Promise<Respons
 
   return await NameRoom.join(request, env.NAME_ROOM, key)
 }
+
+export async function raiseErrorGet (request: Request, env: Env): Promise<Response> {
+  const url: URL = new URL(request.url)
+
+  if (url.searchParams.get('http') !== undefined) {
+    throw new HTTPError('testing http error reporting')
+  }
+
+  throw new Error('testing error reporting')
+}

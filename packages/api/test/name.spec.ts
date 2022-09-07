@@ -144,7 +144,7 @@ describe('POST/GET /name/:key', () => {
 
     assert(publishRes.ok)
 
-    const { id } = await publishRes.json()
+    const { id }: { id: string } = await publishRes.json()
 
     assert.strictEqual(id, key)
 
