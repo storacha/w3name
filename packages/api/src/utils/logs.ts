@@ -187,7 +187,7 @@ export class Logging {
 
     // This array of errors not to send to Sentry could be configurable in the
     // constructor if we want to keep this Logging class more generic
-    const skipForSentry = this.opts.skipForSentry
+    const skipForSentry = this.opts.skipForSentry === undefined ? [] : this.opts.skipForSentry
 
     if (message instanceof Error) {
       log = {
