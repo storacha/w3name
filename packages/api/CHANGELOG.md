@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/web3-storage/w3name/compare/api-v1.1.2...api-v1.2.0) (2022-09-08)
+
+
+### Features
+
+* add sentry logging ([#56](https://github.com/web3-storage/w3name/issues/56)) ([ac08154](https://github.com/web3-storage/w3name/commit/ac08154805bcc19e8ee4de0ec7e8e3e0af8db382))
+
+
+### Bug Fixes
+
+* refactor error reporting ([#85](https://github.com/web3-storage/w3name/issues/85)) ([7badd01](https://github.com/web3-storage/w3name/commit/7badd01e0d1c24b297abeec3c67429352ffd2b0f))
+* typos and naming convention ([2a18a87](https://github.com/web3-storage/w3name/commit/2a18a87db56fe0df1cf9f2cdf97b00a2d9deae61))
+
 ## [1.1.2](https://github.com/web3-storage/w3name/compare/api-v1.1.1...api-v1.1.2) (2022-08-17)
 
 
