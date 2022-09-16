@@ -86,7 +86,7 @@ export class Name {
  * WritableName is a {@link Name} that has a signing key associated with it such that
  * new IPNS record {@link Revision}s can be created and signed for it.
  *
- * New `WritablName`s can be generated using the {@link create} function.
+ * New `WritableName`s can be generated using the {@link create} function.
  *
  * To load a `WritableName` from a saved binary representation, see {@link from}.
  */
@@ -249,7 +249,7 @@ export class Revision {
   }
 
   /**
-   * Encodes a `Revison` to a binary representation and returns it as a `Uint8Array`.
+   * Encodes a `Revision` to a binary representation and returns it as a `Uint8Array`.
    *
    * Note: if `revision.name` is a `WritableName` then signing key data will be
    * lost. i.e. the private key is not encoded.
@@ -264,9 +264,9 @@ export class Revision {
   }
 
   /**
-   * Decodes a `Revison` from a binary representation.
+   * Decodes a `Revision` from a binary representation.
    *
-   * @param bytes - a `Uint8Array` containing a binary encoding of a `Revison`, as produced by {@link #encode}.
+   * @param bytes - a `Uint8Array` containing a binary encoding of a `Revision`, as produced by {@link #encode}.
    * @returns a {@link Revision} object
    * @throws if `bytes` does not contain a valid encoded `Revision`
    */
