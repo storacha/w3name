@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/web3-storage/w3name/compare/api-v1.2.0...api-v1.2.1) (2022-09-16)
+
+
+### Bug Fixes
+
+* Add more context on w3name http usage. Document revision payload. ([#88](https://github.com/web3-storage/w3name/issues/88)) ([45d578b](https://github.com/web3-storage/w3name/commit/45d578bb8d7e2c577adffa975fce326e144ea118))
+
 ## [1.2.0](https://github.com/web3-storage/w3name/compare/api-v1.1.2...api-v1.2.0) (2022-09-08)
 
 
