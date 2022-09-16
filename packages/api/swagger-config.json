@@ -2,7 +2,7 @@
    "openapi": "3.0.2",
    "info": {
       "title": "w3name API",
-      "description": "This documentation describes the HTTP API for [**w3name**](https://name.web3.storage), which allows you to build applications that create and manage [IPNS records](https://docs.ipfs.tech/concepts/ipns/).\n\nYou can also interact with this API using client libraries. See the [**w3name Client package**](https://www.npmjs.com/package/w3name) for more information on using a client library.\n\n## API endpoint URL\n\nThe main public API endpoint URL for w3name is `https://name.web3.storage`. All endpoints described in this document should be made relative to this root URL. For example, to post to the `/name/:key` endpoint, send your request to `https://name.web3.storage/name/:key`.",
+      "description": "This documentation describes how to use our HTTP API for w3name.\n\nThis API will allow you to build applications that create and manage IPNS records. IPNS is short for InterPlanetary Name System and adds a new layer to the powerful content addressing that IPFS provides. w3name is a service that provides secure, stable identifiers for content addressable and mutable data (that changes over time).\n\nWhile you can interact with this API in a simple way using our JS client library, we also provide this API on its own for you to leverage in your application.\n\nThis API will allow you to create, update and retrieve a w3name record. However, in order to do this, you will first need to create key pair. You can do this for example through the IPNS CLI ([documentation here](https://docs.ipfs.tech/concepts/ipns/#example-ipns-setup-with-cli)).\n\n\nOnce the keypair is created you can use the public key in our w3name API payload to create a new w3name record and publish it to the DHT.\n\n\n\n## API endpoint URL\n\nThe main public API endpoint URL for w3name is `https://name.web3.storage`. All endpoints described in this document should be made relative to this root URL. For example, to post to the `/name/:key` endpoint, send your request to `https://name.web3.storage/name/:key`.",
       "version": "1.0"
    },
    "servers": [
@@ -29,13 +29,7 @@
                "content": {
                   "text/plain": {
                      "schema": {
-                        "type": "string"
-                     }
-                  },
-                  "application/octet-stream": {
-                     "schema": {
-                        "type": "string",
-                        "format": "binary"
+                        "$ref": "#/components/schemas/EncodedRevision"
                      }
                   }
                }
@@ -137,6 +131,35 @@
             "type": "string",
             "example": "k51qzi5uqu5dgsc1bvsuk1x84bptdvp8cupbnnbqxpxzd629gadpci3kpcm311",
             "description": "A string representation of a public key, which is the 'name' that can be resolved to a record."
+         },
+         "Revision": {
+            "type": "object",
+            "description": "A revision that can be used to generate a record.",
+            "properties": {
+               "Name": {
+                  "description": "A k5 key pair, this can be generated usinig the [ipns docs](https://docs.ipfs.tech/concepts/ipns/#example-ipns-setup-with-cli)."
+               },
+               "Value": {
+                  "type": "string",
+                  "example": "/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui",
+                  "description": "A IPFS CID."
+               },
+               "Sequence": {
+                  "type": "number",
+                  "example": "0n",
+                  "description": "The sequence number of the revsion, starting at 0n."
+               },
+               "Validity": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2020-07-27T17:32:28Z"
+               }
+            }
+         },
+         "EncodedRevision": {
+            "type": "string",
+            "example": "CkEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRsaGk3ZGlqamNpcXB1aRJAGQcssSxIxvGB+ECbRTtAzM2Q+peLpi8yRfA3wdwdMngfCLWG2gDcMte2CmlLgMaJZaUfmEaPiZIJwTypfcrUDRgAIh4yMDIzLTA4LTE1VDEyOjEyOjA5LjU0MjAwMDAwMFooADCAgI6+64XNBUJAyoMhZMCXN68C3Kx9j4GbdMzI3V6s/zAGk/YBw88ZPHSQSzawl0MskyoppyyjtRY7LIIncX+UoWLuMbCNNkxnCEqYAaVjVFRMGwALNC63w4AAZVZhbHVlWEEvaXBmcy9iYWZrcmVpZW00dHdrcXpzcTJhajRzaGJ5Y2Q0eXZvajJjeDcydmV6aWNsZXRsaGk3ZGlqamNpcXB1aWhTZXF1ZW5jZQBoVmFsaWRpdHlYHjIwMjMtMDgtMTVUMTI6MTI6MDkuNTQyMDAwMDAwWmxWYWxpZGl0eVR5cGUA",
+            "description": "A Uint8Array encoded representation of a [record]('#/components/schemas/Record')"
          },
          "ErrorResponse": {
             "type": "object",
