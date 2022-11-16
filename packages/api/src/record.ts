@@ -62,16 +62,7 @@ export class IPNSRecord {
   async fetch (request: Request) {
     // Make sure we set an alarm for the next rebroadcast
     const currentAlarm = await this.state.storage.getAlarm()
-    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'hasV2Sig', 'seqno', 'validity'])
-
-    // Values will be set to undefined if the record was not created prior to fetching it
-    const record: IPNSRecordData = {
-      key: map.get('key'),
-      record: map.get('record'),
-      hasV2Sig: map.get('hasV2Sig'),
-      seqno: map.get('seqno'),
-      validity: map.get('validity')
-    }
+    const record = await this.getIPNSRecordData()
 
     if (currentAlarm === null) {
       await this.state.storage.setAlarm(this.rebroadcastScheduledTime)
@@ -100,13 +91,11 @@ export class IPNSRecord {
       return jsonResponse(JSON.stringify(data), 200)
     }
 
-    const data = await this.getIPNSRecordData()
-
-    if (data.key === undefined || data.record === undefined) {
+    if (record.key === undefined || record.record === undefined) {
       return jsonResponse(JSON.stringify({}), 404)
     }
 
-    return jsonResponse(JSON.stringify(data), 200)
+    return jsonResponse(JSON.stringify(record), 200)
   }
 
   async alarm () {
