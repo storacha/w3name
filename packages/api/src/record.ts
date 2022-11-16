@@ -10,6 +10,14 @@ export interface IPNSRecordData {
   validity: string
 }
 
+interface IPNSRecordMeta {
+  created: boolean
+}
+
+export interface IPNSRecordDataWithMeta extends IPNSRecordData {
+  meta: IPNSRecordMeta
+}
+
 const REBROADCAST_INTERVAL_MS = 12 * 60 * 60 * 1000
 const PUBLISHER_ENDPOINT_URL = 'http://localhost:8000'
 const PUBLISHER_AUTH_SECRET = '123456'

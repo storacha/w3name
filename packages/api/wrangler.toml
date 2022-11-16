@@ -13,7 +13,8 @@ new_classes = ["NameRoom0", "IPNSRecord"]
 [durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
+    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
 
@@ -32,7 +33,8 @@ PUBLISHER_AUTH_SECRET = "123456"
 [env.test.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
+    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
 # Staging
@@ -60,7 +62,8 @@ vars = { ENV = "production", REBROADCAST_INTERVAL_MS = "86400000" }
 [env.production.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
+    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
 # The necessary secrets are:

@@ -10,8 +10,9 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { validate as ipnsValidate } from 'ipns/validator'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
+import { incrementCreationCounter } from './metrics'
 import type { Env } from './env'
-import type { IPNSRecordData } from './record'
+import type { IPNSRecordData, IPNSRecordDataWithMeta } from './record'
 
 const libp2pKeyCode = 0x72
 
@@ -126,6 +127,12 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 
     try {
       const objPostResponse: Response = await obj.fetch(postRequest)
+      const ipnsRecord: IPNSRecordDataWithMeta = await objPostResponse.json()
+      const created: boolean = ipnsRecord.meta.created
+
+      if (created) {
+        incrementCreationCounter(env)
+      }
 
       if (objPostResponse.ok) {
         ctx.waitUntil((async () => {
