@@ -10,6 +10,7 @@
 
 import type { Env } from './env'
 import type { MessageBatch } from './queue-types'
+import { jsonResponse } from './utils/response-types'
 
 /** Defines the set of statistics which we store in the MetricsStore Durable Object. */
 class GlobalMetrics {
@@ -70,7 +71,11 @@ export class MetricsStore {
   }
 
   async fetch (request: Request) {
-    if (request.method === 'PUT' && request.url === '/update') {
+    if (request.method === 'GET') {
+      const keys = Object.keys(new GlobalMetrics())
+      const metrics: Map<string, number | undefined> = await this.state.storage.get(keys)
+      return jsonResponse(JSON.stringify(metrics))
+    } else if (request.method === 'PUT' && request.url === '/update') {
       const updates: GlobalMetrics = await request.json()
       const keys = Object.keys(updates)
       const metrics: Map<string, number | undefined> = await this.state.storage.get(keys)
@@ -86,6 +91,27 @@ export class MetricsStore {
         metrics.set(key, value)
       })
       await this.state.storage.put(Object.fromEntries(metrics))
+      return new Response()
     }
   }
+}
+
+/**
+ * Retrieves metrics from the Durable Object and serves them in the appropriate format for
+ * Prometheus to consume.
+ */
+export async function serveMetrics (_request: Request, env: Env) {
+  const objId = env.METRICS_STORE.idFromName(METRICS_STORE_ID)
+  const obj = env.METRICS_STORE.get(objId)
+  const retrievalRequest = new Request('/', { method: 'GET' })
+  const retrievalResponse = await obj.fetch(retrievalRequest)
+  const metrics: GlobalMetrics = await retrievalResponse.json()
+
+  const prometheusData = [
+    '# HELP w3name_name_creation_total Total names created.',
+    '# TYPE w3name_name_creation_total counter',
+    `w3name_name_creation_total ${metrics.recordsCreated}`
+    // More metrics will be added here
+  ].join('\n')
+  return new Response(prometheusData)
 }

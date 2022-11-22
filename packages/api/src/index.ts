@@ -1,5 +1,6 @@
 import { Router } from 'itty-router'
 import { jsonResponse, notFound } from './utils/response-types'
+import { serveMetrics } from './metrics'
 import { nameGet, nameWatchGet, namePost, raiseErrorGet } from './name'
 import { HTTPError } from './errors'
 import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
@@ -14,6 +15,7 @@ router.get('/name/:key', withCorsHeaders(nameGet))
 router.get('/name/:key/watch', withCorsHeaders(nameWatchGet))
 router.post('/name/:key', withCorsHeaders(namePost))
 router.get('/raise-error', withCorsHeaders(raiseErrorGet))
+router.get('/metrics', serveMetrics)
 
 // Open API spec
 router.get('/schema.json', withCorsHeaders(swaggerConfig.toJSON))
