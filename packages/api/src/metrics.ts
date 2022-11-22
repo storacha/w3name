@@ -1,13 +1,15 @@
+/**
+ * This module provides functionality for passing statistics to an external Prometheus instance, so
+ * that those stats can then be viewed in Grafana.
+ *
+ * Some of the stats are stored in a single Durable Object. So to avoid contention on that object,
+ * we use a Cloudflare Queue to send the updates to, and then we consume those updates from the
+ * queue in batches so that we can apply potentially thousands of increments in a single operation,
+ * thereby avoiding contention on the singleton Durable Object.
+ */
+
 import type { Env } from './env'
-
-// This module provides functionality for passing statistics to an external Prometheus instance, so
-// that those stats can then be viewed in Grafana.
-
-// Some of the stats are stored in a single Durable Object. So to avoid contention on that object,
-// we store an in-memory cache of the updates and then write them to the DO every few seconds.
-// There is a small chance that the CF Worker instance could be killed before the commit to the DO
-// happens, but hopefully that's rare, and is probably a price worth paying for the vast
-// scalability improvement.
+import type { MessageBatch } from './queue-types'
 
 /** Defines the set of statistics which we store in the MetricsStore Durable Object. */
 class GlobalMetrics {
@@ -15,45 +17,48 @@ class GlobalMetrics {
   recordsCreated: number = 0
 }
 
-/** A cache of updates to be applied to the MetricsStore Durable Object. */
-let UPDATES_CACHE = new GlobalMetrics()
-let CACHE_COMMIT_TIMEOUT: NodeJS.Timer | null = null
-const CACHE_COMMIT_INTERVAL_MS = 5000
-
 // There is only one MetricsStore DO, so we hard-code its ID.
 const METRICS_STORE_ID = '1'
 
 /**
  * This should be called each time a name record is *created*.
  */
-export function incrementCreationCounter (env: Env) {
-  // console.error('incrementCreationCounter')
-  UPDATES_CACHE.recordsCreated++
-  if (CACHE_COMMIT_TIMEOUT === null) {
-    // Rather than using setTimeout here, we should possibly use the ctx.waitUntil() facility.
-    // Although I'm not sure how we'd do our batching of updates with that aproach, so maybe some
-    // combination of the two.
-    // See also the comments in commitCacheToDb about awaiting the `fetch` call.
-    CACHE_COMMIT_TIMEOUT = setTimeout(commitCacheToDb, CACHE_COMMIT_INTERVAL_MS, env)
-  }
+export function incrementCreationCounter (env: Env, ctx: ExecutionContext) {
+  const update = new GlobalMetrics()
+  update.recordsCreated = 1
+  ctx.waitUntil(env.METRICS_QUEUE.send(update))
 }
 
-function commitCacheToDb (env: Env) {
-  // Grab the current set of pending updates and reset the cache
-  const updates = UPDATES_CACHE
-  UPDATES_CACHE = new GlobalMetrics()
-  CACHE_COMMIT_TIMEOUT = null
-  const objId = env.METRICS_STORE.idFromName(METRICS_STORE_ID)
-  const obj = env.METRICS_STORE.get(objId)
-  const request = new Request('/update', { method: 'PUT', body: JSON.stringify(updates) })
-  // We should possibly `await` this, but in the current setup we can't await it because we would
-  // have to make this function async, which then won't allow it to be called by setTimeout.
-  void obj.fetch(request)
+/**
+ * This is the handler which Cloudflare sends our queue messages to.
+ */
+export async function metricsQueueConsumer (batch: MessageBatch<GlobalMetrics>, env: Env) {
+  // Combine the updates into a single update to be applied to the Durable Object.
+  const consolidatedUpdate = new GlobalMetrics()
+  for (const message of batch.messages) {
+    const update = message.body
+    Object.keys(update).forEach((key) => {
+      // This is currently only built to work with metrics which are numbers, which might not be
+      // the case for all future properties that we add.
+      const value: number = update[key as keyof GlobalMetrics]
+      if (value !== 0) {
+        consolidatedUpdate[key as keyof GlobalMetrics] += value
+      }
+    })
+    // Now apply the consolidated updates to the Durable Object
+    const objId = env.METRICS_STORE.idFromName(METRICS_STORE_ID)
+    const obj = env.METRICS_STORE.get(objId)
+    const request = new Request(
+      '/update',
+      { method: 'PUT', body: JSON.stringify(consolidatedUpdate) }
+    )
+    await obj.fetch(request)
+  }
 }
 
 /**
  * Singleton Durable Object for storing global metrics which can't be inferred directly from the
- * NameRecord Durable Objects (or anything else).
+ * NameRecord Durable Objects (or anything else), and hence need their own storage.
  */
 export class MetricsStore {
   state: DurableObjectState

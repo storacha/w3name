@@ -59,3 +59,4 @@ export default {
 export { NameRoom as NameRoom0 } from './broadcast'
 export { IPNSRecord } from './record'
 export { MetricsStore } from './metrics'
+export { queue } from './queue'
