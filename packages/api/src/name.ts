@@ -129,7 +129,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
       const objPostResponse: Response = await obj.fetch(postRequest)
 
       if (objPostResponse.status === 201) {
-        incrementCreationCounter(env)
+        incrementCreationCounter(env, ctx)
       }
 
       if (objPostResponse.ok) {

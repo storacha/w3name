@@ -8,10 +8,11 @@
 
 import type { Env } from './env'
 import { metricsQueueConsumer } from './metrics'
+import type { MessageBatch } from './queue-types'
 
 export async function queue (batch: MessageBatch<any>, env: Env) {
   if (batch.queue === 'metrics-updates') {
     await metricsQueueConsumer(batch, env)
   }
-  throw Error(`Unknown message batch queue: '${String(batch.queue)}'.`)
+  throw Error(`No consumer function is defined for queue: '${String(batch.queue)}'.`)
 }

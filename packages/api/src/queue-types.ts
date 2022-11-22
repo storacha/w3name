@@ -9,6 +9,8 @@
  * we should be able to just update that package and delete this.
  */
 
+// This code is copied verbatim from the cloudflare/workerd GH code, and is temporary, hence
+// ignoring eslint compaints.
 /* eslint-disable
   @typescript-eslint/member-delimiter-style,
   @typescript-eslint/array-type,
