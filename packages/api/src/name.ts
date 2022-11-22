@@ -12,7 +12,7 @@ import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
 import { incrementCreationCounter } from './metrics'
 import type { Env } from './env'
-import type { IPNSRecordData, IPNSRecordDataWithMeta } from './record'
+import type { IPNSRecordData } from './record'
 
 const libp2pKeyCode = 0x72
 
@@ -127,10 +127,8 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 
     try {
       const objPostResponse: Response = await obj.fetch(postRequest)
-      const ipnsRecord: IPNSRecordDataWithMeta = await objPostResponse.json()
-      const created: boolean = ipnsRecord.meta.created
 
-      if (created) {
+      if (objPostResponse.status === 201) {
         incrementCreationCounter(env)
       }
 

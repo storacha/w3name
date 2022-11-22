@@ -10,14 +10,6 @@ export interface IPNSRecordData {
   validity: string
 }
 
-interface IPNSRecordMeta {
-  created: boolean
-}
-
-export interface IPNSRecordDataWithMeta extends IPNSRecordData {
-  meta: IPNSRecordMeta
-}
-
 const REBROADCAST_INTERVAL_MS = 12 * 60 * 60 * 1000
 const PUBLISHER_ENDPOINT_URL = 'http://localhost:8000'
 const PUBLISHER_AUTH_SECRET = '123456'
@@ -88,10 +80,7 @@ export class IPNSRecord {
         hasV2Sig: payload.hasV2Sig,
         seqno: payload.seqno,
         validity: payload.validity,
-        lastRebroadcast: now.toISOString(),
-        meta: {
-          created: !recordExists
-        }
+        lastRebroadcast: now.toISOString()
       }
 
       if (recordExists && !canOverwrite(record, data)) {
@@ -100,7 +89,8 @@ export class IPNSRecord {
 
       await this.state.storage.put(data)
 
-      return jsonResponse(JSON.stringify(data), 200)
+      const status = recordExists ? 200 : 201
+      return jsonResponse(JSON.stringify(data), status)
     }
 
     if (!recordExists || record.record === undefined) {
