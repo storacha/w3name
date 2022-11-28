@@ -35,3 +35,22 @@ describe('Name creation', () => {
     await mf.dispose() // Otherwise the test hangs
   })
 })
+
+describe('Metrics serving for Prometheus', () => {
+  it('serves metrics data', async () => {
+    const mf = new Miniflare({
+      envPath: true,
+      packagePath: true,
+      wranglerConfigPath: true,
+      wranglerConfigEnv: 'test',
+      modules: true
+    })
+    const response = await mf.dispatchFetch(new URL('/metrics', endpoint))
+    const body: string = await response.text()
+    assert.ok(response.ok)
+    assert.match(body, /# HELP w3name_name_creation_total Total names created/)
+    assert.match(body, /# TYPE w3name_name_creation_total counter/)
+    assert.match(body, /w3name_name_creation_total \d+/)
+    await mf.dispose()
+  })
+})

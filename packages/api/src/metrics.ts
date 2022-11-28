@@ -31,7 +31,7 @@ export function incrementCreationCounter (env: Env, ctx: ExecutionContext) {
 }
 
 /**
- * This is the handler which Cloudflare sends our queue messages to.
+ * This is the handler which messages from our Cloudflare queue are routed to.
  */
 export async function metricsQueueConsumer (batch: MessageBatch<GlobalMetrics>, env: Env) {
   // Combine the updates into a single update to be applied to the Durable Object.
@@ -72,27 +72,45 @@ export class MetricsStore {
 
   async fetch (request: Request) {
     if (request.method === 'GET') {
-      const keys = Object.keys(new GlobalMetrics())
-      const metrics: Map<string, number | undefined> = await this.state.storage.get(keys)
+      const metrics = await this.getData()
       return jsonResponse(JSON.stringify(metrics))
     } else if (request.method === 'PUT' && request.url === '/update') {
       const updates: GlobalMetrics = await request.json()
       const keys = Object.keys(updates)
-      const metrics: Map<string, number | undefined> = await this.state.storage.get(keys)
+      const metrics = await this.getData()
       keys.forEach((key) => {
         // This assumes that the metrics are all numbers. We might need to make this more
         // sophisticated in the future.
-        let value = metrics.get(key)
-        if (value === undefined) {
-          value = updates[key as keyof GlobalMetrics]
-        } else {
-          value += updates[key as keyof GlobalMetrics]
-        }
-        metrics.set(key, value)
+        metrics[key as keyof GlobalMetrics] += updates[key as keyof GlobalMetrics]
       })
-      await this.state.storage.put(Object.fromEntries(metrics))
+      // await this.state.storage.put(metrics)
+      await this.putData(metrics)
       return new Response()
     }
+  }
+
+  /** Fetch the values which are stored in this DO as a GlobalMetrics, ensuring to init all missing
+   * values to zero (or appropriate default) to avoid `undefined` values.
+   */
+  private async getData (): Promise<GlobalMetrics> {
+    const metrics = new GlobalMetrics() // Let this take care of initialising values
+    const keys = Object.keys(metrics)
+    const values: Map<string, number | undefined> = await this.state.storage.get(keys)
+    values.forEach((value, key) => {
+      if (value !== undefined) {
+        metrics[key as keyof GlobalMetrics] = value
+      }
+    })
+    return metrics
+  }
+
+  /** Given a GlobalMetrics object, save its values to the DO. */
+  private async putData (metrics: GlobalMetrics): Promise<void> {
+    const map = new Map()
+    Object.keys(metrics).forEach((key) => {
+      map.set(key, metrics[key as keyof GlobalMetrics])
+    })
+    await this.state.storage.put(Object.fromEntries(map))
   }
 }
 
@@ -100,10 +118,10 @@ export class MetricsStore {
  * Retrieves metrics from the Durable Object and serves them in the appropriate format for
  * Prometheus to consume.
  */
-export async function serveMetrics (_request: Request, env: Env) {
+export async function serveMetrics (request: Request, env: Env) {
   const objId = env.METRICS_STORE.idFromName(METRICS_STORE_ID)
   const obj = env.METRICS_STORE.get(objId)
-  const retrievalRequest = new Request('/', { method: 'GET' })
+  const retrievalRequest = new Request(new URL('/', 'http://whatever'), { method: 'GET' })
   const retrievalResponse = await obj.fetch(retrievalRequest)
   const metrics: GlobalMetrics = await retrievalResponse.json()
 
