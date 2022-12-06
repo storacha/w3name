@@ -14,23 +14,14 @@ new_classes = ["NameRoom0", "IPNSRecord"]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
     { name = "IPNS_RECORD", class_name = "IPNSRecord" },
-    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
-[[queues.producers]]
-queue = "metrics-updates"
-binding = "METRICS_QUEUE"
+[[unsafe.bindings]]
+# Currently, Analytics Engine only supports one binding per worker, so all of the different "tables"
+# of metrics are stored in this one dataset.
+type = "analytics_engine"
+name = "W3NAME_METRICS"
 
-[[queues.consumers]]
-  queue = "metrics-updates"
-  # The maximum number of messages allowed in each batch. This can be pretty large, as we're just
-  # adding the values from the messages together.
-  max_batch_size = 1000
-  # The maximum number of seconds to wait until a batch is full. This should be fairly frequent so
-  # that we're updating the stats at least as often as Prometheus is fetching them from us.
-  max_batch_timeout = 5
-  max_retries = 10
-  dead_letter_queue = "metrics-updates-dlq"
 
 [vars]
 REBROADCAST_INTERVAL_MS = "600000"
@@ -48,7 +39,6 @@ PUBLISHER_AUTH_SECRET = "123456"
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
     { name = "IPNS_RECORD", class_name = "IPNSRecord" },
-    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
 # Staging
@@ -77,7 +67,6 @@ vars = { ENV = "production", REBROADCAST_INTERVAL_MS = "86400000" }
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
     { name = "IPNS_RECORD", class_name = "IPNSRecord" },
-    { name = "METRICS_STORE", class_name = "MetricsStore" }
   ]
 
 # The necessary secrets are:

@@ -1,13 +1,12 @@
 import Toucan from 'toucan-js'
 import pkg from '../package.json'
 import { Logging } from './utils/logs'
-import type { Queue } from './queue-types'
+import type { AnalyticsEngineDataset } from './analytics-types'
 
 export interface Env {
   NAME_ROOM: DurableObjectNamespace
   IPNS_RECORD: DurableObjectNamespace
-  METRICS_STORE: DurableObjectNamespace
-  readonly METRICS_QUEUE: Queue
+  W3NAME_METRICS: AnalyticsEngineDataset
   REBROADCAST_INTERVAL_MS: number
   PUBLISHER_AUTH_SECRET: string
   PUBLISHER_ENDPOINT_URL: string
