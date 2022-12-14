@@ -62,16 +62,8 @@ export class IPNSRecord {
   async fetch (request: Request) {
     // Make sure we set an alarm for the next rebroadcast
     const currentAlarm = await this.state.storage.getAlarm()
-    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'hasV2Sig', 'seqno', 'validity'])
-
-    // Values will be set to undefined if the record was not created prior to fetching it
-    const record: IPNSRecordData = {
-      key: map.get('key'),
-      record: map.get('record'),
-      hasV2Sig: map.get('hasV2Sig'),
-      seqno: map.get('seqno'),
-      validity: map.get('validity')
-    }
+    const record = await this.getIPNSRecordData()
+    const recordExists = record.key !== undefined
 
     if (currentAlarm === null) {
       await this.state.storage.setAlarm(this.rebroadcastScheduledTime)
@@ -91,22 +83,21 @@ export class IPNSRecord {
         lastRebroadcast: now.toISOString()
       }
 
-      if (record.key !== undefined && !canOverwrite(record, data)) {
+      if (recordExists && !canOverwrite(record, data)) {
         return jsonResponse(JSON.stringify({ message: 'invalid record: the record is outdated.' }), 400)
       }
 
       await this.state.storage.put(data)
 
-      return jsonResponse(JSON.stringify(data), 200)
+      const status = recordExists ? 200 : 201
+      return jsonResponse(JSON.stringify(data), status)
     }
 
-    const data = await this.getIPNSRecordData()
-
-    if (data.key === undefined || data.record === undefined) {
+    if (!recordExists || record.record === undefined) {
       return jsonResponse(JSON.stringify({}), 404)
     }
 
-    return jsonResponse(JSON.stringify(data), 200)
+    return jsonResponse(JSON.stringify(record), 200)
   }
 
   async alarm () {

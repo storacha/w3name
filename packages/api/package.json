@@ -41,7 +41,7 @@
   "module": "dist/index.mjs",
   "scripts": {
     "build": "node buildworkermodule.mjs; aegir build",
-    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
+    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node -- --experimental-specifier-resolution=node",
     "lint": "aegir lint",
     "dev": "miniflare --modules --live-reload"
   },
@@ -62,7 +62,7 @@
     "@types/mocha": "^9.1.1",
     "aegir": "^37.3.0",
     "git-rev-sync": "^3.0.2",
-    "miniflare": "^2.6.0"
+    "miniflare": "^2.11.0"
   },
   "eslintConfig": {
     "extends": "ipfs",

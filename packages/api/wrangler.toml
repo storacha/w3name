@@ -13,8 +13,14 @@ new_classes = ["NameRoom0", "IPNSRecord"]
 [durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
   ]
+
+[[unsafe.bindings]]
+# Currently, Analytics Engine only supports one binding per worker, so all of the different "tables"
+# of metrics are stored in this one dataset.
+type = "analytics_engine"
+name = "W3NAME_METRICS"
 
 
 [vars]
@@ -32,7 +38,7 @@ PUBLISHER_AUTH_SECRET = "123456"
 [env.test.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
   ]
 
 # Staging
@@ -60,7 +66,7 @@ vars = { ENV = "production", REBROADCAST_INTERVAL_MS = "86400000" }
 [env.production.durable_objects]
   bindings = [
     { name = "NAME_ROOM", class_name = "NameRoom0" },
-    { name = "IPNS_RECORD", class_name = "IPNSRecord" }
+    { name = "IPNS_RECORD", class_name = "IPNSRecord" },
   ]
 
 # The necessary secrets are:
