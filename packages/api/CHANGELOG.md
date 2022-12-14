@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/web3-storage/w3name/compare/api-v1.2.1...api-v1.2.2) (2022-12-14)
+
+
+### Bug Fixes
+
+* use esbuild global values correctly ([0becd58](https://github.com/web3-storage/w3name/commit/0becd5804e0efe0f5cdab4935618be009f55be67))
+* use esbuild global values correctly ([#95](https://github.com/web3-storage/w3name/issues/95)) ([3725983](https://github.com/web3-storage/w3name/commit/37259833d5b9e9f06495934eaf553a09e7c4bdbc))
+
 ## [1.2.1](https://github.com/web3-storage/w3name/compare/api-v1.2.0...api-v1.2.1) (2022-09-16)
 
 
