@@ -37,7 +37,7 @@ export function envAll (req: Request, env: Env, ctx: ExecutionContext) {
         })
       },
       environment: env.ENV,
-      release: env.SENTRY_RELEASE,
+      release: SENTRY_RELEASE,
       pkg
     })
     : undefined
@@ -50,8 +50,8 @@ export function envAll (req: Request, env: Env, ctx: ExecutionContext) {
     token: env.LOGTAIL_TOKEN,
     debug: env.DEBUG === 'true',
     sentry: env.sentry,
-    version: env.VERSION,
-    branch: env.BRANCH,
-    commithash: env.COMMITHASH
+    version: VERSION,
+    branch: BRANCH,
+    commithash: COMMITHASH
   })
 }

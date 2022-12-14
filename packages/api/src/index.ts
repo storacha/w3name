@@ -6,6 +6,14 @@ import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
 import * as swaggerConfig from './swaggerConfig'
 import { Env, envAll } from './env'
 
+declare global {
+  // These must be defined as parameters to esbuild.build() in buildworkermodule.js
+  var BRANCH: string
+  var COMMITHASH: string
+  var SENTRY_RELEASE: string
+  var VERSION: string
+}
+
 const router = Router()
 
 router.all('*', envAll)
