@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.7](https://github.com/web3-storage/w3name/compare/w3name-v1.0.6...w3name-v1.0.7) (2022-09-16)
+
+
+### Bug Fixes
+
+* Add more context on w3name http usage. Document revision payload. ([#88](https://github.com/web3-storage/w3name/issues/88)) ([45d578b](https://github.com/web3-storage/w3name/commit/45d578bb8d7e2c577adffa975fce326e144ea118))
+
+
+### Other Changes
+
+* remove post publish task ([#81](https://github.com/web3-storage/w3name/issues/81)) ([50b7a20](https://github.com/web3-storage/w3name/commit/50b7a2048dd9a5eb609dd817b7e9dd3fd29bc180))
+
 ## [1.0.6](https://github.com/web3-storage/w3name/compare/w3name-v1.0.5...w3name-v1.0.6) (2022-08-31)
 
 
