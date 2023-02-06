@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8](https://github.com/web3-storage/w3name/compare/w3name-v1.0.7...w3name-v1.0.8) (2023-02-06)
+
+
+### Bug Fixes
+
+* move ts-standard to devDependencies ([#98](https://github.com/web3-storage/w3name/issues/98)) ([13b74a3](https://github.com/web3-storage/w3name/commit/13b74a35eec46c5521eb054208a4da857fe28307))
+
 ## [1.0.7](https://github.com/web3-storage/w3name/compare/w3name-v1.0.6...w3name-v1.0.7) (2022-09-16)
 
 
