@@ -45,6 +45,8 @@ Full API reference doc for the JS client are available at https://web3-storage.g
 
 You can also find a [how-to guide for working with the JS client](https://web3.storage/docs/how-tos/w3name/) included in the [Web3.Storage](https://web3.storage) documentation.
 
+There is a rate limit of 30 requests per 10 seconds per IP.
+
 ### cURL
 
 You can easily get the current value for any name by sending an HTTP request to `https://name.web3.storage/name/:key`, where `:key` is the name string. This will return a JSON object with the following shape:
@@ -70,6 +72,8 @@ You should see output similar to this:
   "record": "long base64 string, omitted for brevity..."
 }
 ```
+
+There is a rate limit of 30 requests per 10 seconds per IP.
 
 **See https://github.com/web3-storage/w3name/tree/main/packages/api for documentation on other available API endpoints 📖🔍**
 
