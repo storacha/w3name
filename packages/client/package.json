@@ -69,6 +69,7 @@
     "cborg": "^1.9.4",
     "ipns": "^0.16.0",
     "libp2p-crypto": "^0.21.2",
+    "multiformats": "^12.1.3",
     "throttled-queue": "^2.1.4",
     "uint8arrays": "^3.0.0"
   },
