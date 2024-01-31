@@ -162,7 +162,7 @@ const revision = await Name.v0(name, value)
 
 // Store the record to a file for use later
 // Note: Revision.encode does NOT encode signing key data
-await fs.promises.writeFile('ipns.revision', Revision.encode(rev))
+await fs.promises.writeFile('ipns.revision', Revision.encode(revision))
 
 // ...later
 
