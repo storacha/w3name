@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/storacha/w3name/compare/api-v1.2.3...api-v1.2.4) (2024-12-17)
+
+
+### Fixes
+
+* formatting ([d65c73b](https://github.com/storacha/w3name/commit/d65c73beae5c6d4f0d49afc88c39b82817b85ca3))
+
 ## [1.2.3](https://github.com/storacha/w3name/compare/api-v1.2.2...api-v1.2.3) (2024-12-17)
 
 
