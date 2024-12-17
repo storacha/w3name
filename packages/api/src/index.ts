@@ -8,10 +8,10 @@ import { Env, envAll } from './env'
 
 declare global {
   // These must be defined as parameters to esbuild.build() in buildworkermodule.js
-  var BRANCH: string
-  var COMMITHASH: string
-  var SENTRY_RELEASE: string
-  var VERSION: string
+  const BRANCH: string
+  const COMMITHASH: string
+  const SENTRY_RELEASE: string
+  const VERSION: string
 }
 
 const router = Router()
@@ -45,7 +45,9 @@ export default {
       env = { ...env } // new env object for every request (it is shared otherwise)!
       response = await router.handle(request, env, ctx)
     } catch (error: any) {
-      env.log.error(error, ctx)
+      // eslint-disable-next-line no-console
+      console.error(error)
+      env.sentry?.captureException(error)
 
       if (error instanceof HTTPError) {
         response = addCorsHeaders(
@@ -59,7 +61,6 @@ export default {
         )
       }
     }
-    await env.log.end(response)
     return response
   }
 }

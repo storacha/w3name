@@ -66,6 +66,5 @@ vars = { ENV = "production", REBROADCAST_INTERVAL_MS = "86400000" }
 # The necessary secrets are:
 # - PUBLISHER_ENDPOINT_URL
 # - PUBLISHER_AUTH_SECRET
-# - LOGTAIL_TOKEN
 # - SENTRY_DSN
 # Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
