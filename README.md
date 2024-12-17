@@ -39,7 +39,7 @@ const revision = await Name.v0(name, value)
 await Name.publish(revision, name.key)
 ```
 
-See https://github.com/web3-storage/w3name/blob/main/packages/client/README.md for a guide to using the js client for the first time.
+See https://github.com/storacha/w3name/blob/main/packages/client/README.md for a guide to using the js client for the first time.
 
 Full API reference doc for the JS client are available at https://web3-storage.github.io/w3name
 
@@ -75,7 +75,7 @@ You should see output similar to this:
 
 There is a rate limit of 30 requests per 10 seconds per IP.
 
-**See https://github.com/web3-storage/w3name/tree/main/packages/api for documentation on other available API endpoints 📖🔍**
+**See https://github.com/storacha/w3name/tree/main/packages/api for documentation on other available API endpoints 📖🔍**
 
 <!-- TODO: add link to swagger api docs once published -->
 

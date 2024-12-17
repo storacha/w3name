@@ -8,13 +8,13 @@
   },
   "private": true,
   "license": "Apache-2.0 OR MIT",
-  "homepage": "https://github.com/web3-storage/w3name#readme",
+  "homepage": "https://github.com/storacha/w3name#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/web3-storage/w3name.git"
+    "url": "git+https://github.com/storacha/w3name.git"
   },
   "bugs": {
-    "url": "https://github.com/web3-storage/w3name/issues"
+    "url": "https://github.com/storacha/w3name/issues"
   },
   "keywords": [
     "w3name",
