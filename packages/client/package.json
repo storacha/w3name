@@ -4,13 +4,13 @@
   "description": "The JavaScript API client w3name",
   "author": "",
   "license": "Apache-2.0 OR MIT",
-  "homepage": "https://github.com/web3-storage/w3name#readme",
+  "homepage": "https://github.com/storacha/w3name#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3name/tree/main/packages/client"
+    "url": "https://github.com/storacha/w3name/tree/main/packages/client"
   },
   "bugs": {
-    "url": "https://github.com/web3-storage/w3name/issues"
+    "url": "https://github.com/storacha/w3name/issues"
   },
   "keywords": [
     "w3name",
