@@ -1,6 +1,6 @@
 # w3name API
 
-The HTTP interface implemented as a Cloudflare Worker
+The HTTP interface implemented as a Cloudflare Worker.
 
 ## API endpoints
 
