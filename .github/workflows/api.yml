@@ -64,6 +64,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: googleapis/release-please-action@v4
         id: tag-release
