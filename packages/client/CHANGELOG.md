@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/storacha/w3name/compare/w3name-v1.0.8...w3name-v1.0.9) (2024-12-17)
+
+
+### Fixes
+
+* remove logtail logging ([#106](https://github.com/storacha/w3name/issues/106)) ([eca3704](https://github.com/storacha/w3name/commit/eca37042156673fca43757bb96cb006d343ef4b2))
+
 ## [1.0.8](https://github.com/web3-storage/w3name/compare/w3name-v1.0.7...w3name-v1.0.8) (2023-02-06)
 
 
