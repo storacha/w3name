@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         id: tag-release
         with:
           path: packages/api
@@ -75,17 +75,17 @@ jobs:
           package-name: api
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Other Changes","hidden":false}]'
       - uses: actions/checkout@v2
-        if: ${{ steps.tag-release.outputs.releases_created }}
+        if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
       - uses: actions/setup-node@v2
-        if: ${{ steps.tag-release.outputs.releases_created }}
+        if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
         with:
           node-version: '16'
           registry-url: https://registry.npmjs.org/
       - uses: bahmutov/npm-install@v1
-        if: ${{ steps.tag-release.outputs.releases_created }}
+        if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
       # --- API deploy steps -------------------------------------------------
       - name: API - Deploy to Cloudflare
-        if: ${{ steps.tag-release.outputs.releases_created }}
+        if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
         uses: cloudflare/wrangler-action@2.0.0
         env:
           ENV: 'production' # inform the build process what the env is
