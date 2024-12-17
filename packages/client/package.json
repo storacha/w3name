@@ -69,6 +69,7 @@
     "cborg": "^1.9.4",
     "ipns": "^0.16.0",
     "libp2p-crypto": "^0.21.2",
+    "multiformats": "^9.9.0",
     "throttled-queue": "^2.1.4",
     "uint8arrays": "^3.0.0"
   },
@@ -84,7 +85,6 @@
     "ts-node": "^10.9.1",
     "ts-standard": "^12.0.2",
     "typedoc": "^0.23.10",
-    "typings": "^2.1.1",
-    "uint8arrays": "^3.0.0"
+    "typings": "^2.1.1"
   }
 }
