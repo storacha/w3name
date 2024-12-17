@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/storacha/w3name/compare/api-v1.2.2...api-v1.2.3) (2024-12-17)
+
+
+### Fixes
+
+* remove logtail logging ([#106](https://github.com/storacha/w3name/issues/106)) ([eca3704](https://github.com/storacha/w3name/commit/eca37042156673fca43757bb96cb006d343ef4b2))
+
 ## [1.2.2](https://github.com/web3-storage/w3name/compare/api-v1.2.1...api-v1.2.2) (2022-12-14)
 
 
