@@ -139,7 +139,7 @@ export class IPNSRecord {
       })
 
       // Do not try republish if client error - it won't succeed.
-      if (response.status == 400) {
+      if (response.status === 400) {
         await this.state.storage.deleteAlarm()
         return
       }
