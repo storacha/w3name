@@ -45,7 +45,9 @@ before((done) => {
   done()
 })
 
-after(async () => mf.dispose())
+after(async () => {
+  await mf.dispose()
+})
 
 describe('GET /', () => {
   it('renders index', async () => {

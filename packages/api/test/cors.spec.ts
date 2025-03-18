@@ -19,7 +19,9 @@ before((done) => {
   done()
 })
 
-after(async () => mf.dispose())
+after(async () => {
+  await mf.dispose()
+})
 
 describe('CORS', () => {
   it('sets CORS headers on 404', async () => {
