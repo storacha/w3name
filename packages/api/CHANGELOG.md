@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.5](https://github.com/storacha/w3name/compare/api-v1.2.4...api-v1.2.5) (2025-03-18)
+
+
+### Fixes
+
+* dispose miniflare ([181e4e5](https://github.com/storacha/w3name/commit/181e4e56c0f51b5cc20bd2dced298969e50d8a58))
+* do not republish if client error ([054a213](https://github.com/storacha/w3name/commit/054a213ea8d1ec7310bbac5c9d42ef878a6f4102))
+* triple equals ([dbb2ee4](https://github.com/storacha/w3name/commit/dbb2ee4a0086af0a9a0b806feac7bc31d669c200))
+
+
+### Other Changes
+
+* appease linter ([9bf159a](https://github.com/storacha/w3name/commit/9bf159a30fcdbad8cc66de8994bee57ab7501eb5))
+* appease linter ([918822d](https://github.com/storacha/w3name/commit/918822d61ba15ced7e82f8a2841ae98b80928094))
+
 ## [1.2.4](https://github.com/storacha/w3name/compare/api-v1.2.3...api-v1.2.4) (2024-12-17)
 
 
