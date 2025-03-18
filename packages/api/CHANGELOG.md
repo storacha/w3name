@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/storacha/w3name/compare/api-v1.2.5...api-v1.2.6) (2025-03-18)
+
+
+### Fixes
+
+* trigger release ([b5273a9](https://github.com/storacha/w3name/commit/b5273a9a994c8d55feb8ee1832ab8a150d3c8e4f))
+
 ## [1.2.5](https://github.com/storacha/w3name/compare/api-v1.2.4...api-v1.2.5) (2025-03-18)
 
 
