@@ -1,3 +1,4 @@
+import { PreciseDate } from '@google-cloud/precise-date'
 import type { Env } from './env'
 import { jsonResponse } from './utils/response-types'
 import fetch from '@web-std/fetch'
@@ -122,7 +123,7 @@ export class IPNSRecord {
 
     const data = await this.getIPNSRecordData()
 
-    if (new Date(data.validity) < now) {
+    if (new PreciseDate(data.validity).getTime() < Date.now()) {
       // The record has expired, so there's no need to keep on republishing it.
       // If it gets updated (via `fetch`) then that will restart the alarm process.
       await this.state.storage.deleteAlarm()
