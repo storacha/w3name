@@ -19,6 +19,8 @@ before((done) => {
   done()
 })
 
+after(() => mf.dispose())
+
 describe('CORS', () => {
   it('sets CORS headers on 404', async () => {
     // const res = await fetch(new URL('nope', endpoint))

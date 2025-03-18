@@ -35,6 +35,7 @@ describe('Rebroadcast alarm', () => {
   })
 
   after(() => {
+    mf.dispose()
     server.close()
   })
 

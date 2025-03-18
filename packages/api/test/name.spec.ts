@@ -45,6 +45,8 @@ before((done) => {
   done()
 })
 
+after(() => mf.dispose())
+
 describe('GET /', () => {
   it('renders index', async () => {
     const response = await mf.dispatchFetch(endpoint)
