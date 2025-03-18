@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/storacha/w3name/compare/api-v1.2.6...api-v1.2.7) (2025-03-18)
+
+
+### Fixes
+
+* validity is a string encoded bigint ([64323f4](https://github.com/storacha/w3name/commit/64323f4efb70b9ab70e31809a06bde5b2ef22692))
+
 ## [1.2.6](https://github.com/storacha/w3name/compare/api-v1.2.5...api-v1.2.6) (2025-03-18)
 
 
