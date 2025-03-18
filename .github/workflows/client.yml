@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 22
       - uses: bahmutov/npm-install@v1
       - run: npm run lint --workspace packages/client
       - run: npm run build --workspace packages/client
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-node@v2
         if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
         with:
-          node-version: '16'
+          node-version: 22
           registry-url: https://registry.npmjs.org/
       - uses: bahmutov/npm-install@v1
         if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 22
       - uses: bahmutov/npm-install@v1
       - run: npm run typedoc --workspace packages/client
       - run: gh-pages -d generated-docs
