@@ -31,7 +31,7 @@ async function publishRecord (key: string, record: Uint8Array): Promise<Response
   ) as any
 }
 
-before((done) => {
+before(() => {
   mf = new Miniflare({
     envPath: true,
     packagePath: true,
@@ -42,7 +42,6 @@ before((done) => {
       REBROADCAST_INTERVAL_MS: 0
     }
   })
-  done()
 })
 
 after(async () => {

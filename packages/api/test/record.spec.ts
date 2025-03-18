@@ -20,7 +20,7 @@ async function delayed (x: any): Promise<any> {
 }
 
 describe('Rebroadcast alarm', () => {
-  before((done) => {
+  before(() => {
     mf = new Miniflare({
       envPath: true,
       packagePath: true,
@@ -30,8 +30,6 @@ describe('Rebroadcast alarm', () => {
     })
 
     server.listen(8000, '127.0.0.1')
-
-    done()
   })
 
   after(async () => {
