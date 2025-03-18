@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.10](https://github.com/storacha/w3name/compare/w3name-v1.0.9...w3name-v1.0.10) (2025-03-18)
+
+
+### Other Changes
+
+* update repo URLs ([5c611cd](https://github.com/storacha/w3name/commit/5c611cd9b0d01ca7bc8882812bdd6dbc16b766df))
+
 ## [1.0.9](https://github.com/storacha/w3name/compare/w3name-v1.0.8...w3name-v1.0.9) (2024-12-17)
 
 
