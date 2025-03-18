@@ -34,9 +34,9 @@ describe('Rebroadcast alarm', () => {
     done()
   })
 
-  after(() => {
-    mf.dispose()
+  after(async () => {
     server.close()
+    await mf.dispose()
   })
 
   it('sets an alarm on a new instance', async () => {
