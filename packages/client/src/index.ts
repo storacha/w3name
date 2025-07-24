@@ -177,11 +177,6 @@ export async function from (key: Uint8Array): Promise<WritableName> {
   return new WritableName(privKey)
 }
 
-export interface IncrementOptions extends RevisionOptions {
-  /** TTL in nanoseconds, Default: 5m */
-  ttl?: bigint
-}
-
 /**
  * Create an initial version of the IPNS record for the passed {@link Name}, set to the
  * passed value.
