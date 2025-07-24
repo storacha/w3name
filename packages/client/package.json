@@ -60,6 +60,7 @@
     "build:cjs": "rollup --config rollup.cjs.config.js",
     "build:esm": "rollup --config rollup.esm.config.js",
     "lint": "ts-standard",
+    "prepare": "run-s lint test build",
     "test": "mocha test/name.spec.ts",
     "clean": "del dist",
     "typedoc": "typedoc"
