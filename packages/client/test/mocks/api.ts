@@ -27,8 +27,8 @@ const server = http.createServer((req, res) => {
     }
 
     if (req.method === 'GET') {
-      let record
-      let entry
+      let record: Uint8Array
+      let entry: ipns.IPNSRecord
       // Retrieve saved data from the mocked db.
       switch (key) {
         // Mock a JSON Error to ensure it's handled by the client.
@@ -52,10 +52,10 @@ const server = http.createServer((req, res) => {
         // Return the stored key from the mocked db.
         default:
           record = uint8arrays.fromString(db.get(key), 'base64pad')
-          entry = ipns.unmarshal(record)
+          entry = ipns.unmarshalIPNSRecord(record)
           res.write(
             JSON.stringify({
-              value: uint8arrays.toString(entry.value, 'base64pad'),
+              value: uint8arrays.toString(uint8arrays.fromString(entry.value), 'base64pad'),
               record: db.get(key)
             })
           )
