@@ -70,5 +70,5 @@ jobs:
           node-version: 22
       - uses: bahmutov/npm-install@v1
       - run: npm run typedoc --workspace packages/client
-      - run: gh-pages -d generated-docs
+      - run: gh-pages -d packages/client/generated-docs
         if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
