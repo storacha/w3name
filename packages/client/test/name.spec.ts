@@ -14,17 +14,17 @@ const libp2pKeyCode = 0x72
 
 describe('Name', () => {
   describe('create', () => {
-    it.only('creates a new name', async () => {
+    it('creates a new name', async () => {
       const name = await Name.create()
       let cid: CID = CID.parse(name.toString(), base36)
       assert.not.throws(() => { cid = CID.parse(name.toString(), base36) })
       assert.equal(cid.code, libp2pKeyCode)
       assert.equal(cid.multihash.code, identity.code)
-      assert.not.throws(() => keys.publicKeyFromRaw(Digest.decode(cid.multihash.bytes).bytes))
+      assert.not.throws(() => keys.publicKeyFromProtobuf(Digest.decode(cid.multihash.bytes).bytes))
       assert.not.throws(() => { cid = CID.decode(name.bytes) })
       assert.equal(cid.code, libp2pKeyCode)
       assert.equal(cid.multihash.code, identity.code)
-      assert.not.throws(() => keys.publicKeyFromRaw(Digest.decode(cid.multihash.bytes).bytes))
+      assert.not.throws(() => keys.publicKeyFromProtobuf(Digest.decode(cid.multihash.bytes).bytes))
     })
 
     describe('parsing', () => {

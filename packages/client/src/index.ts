@@ -25,13 +25,11 @@
  * @module
  */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { generateKeyPair, publicKeyFromRaw, privateKeyFromRaw } from '@libp2p/crypto/keys'
+import { generateKeyPair, publicKeyFromProtobuf, privateKeyFromProtobuf } from '@libp2p/crypto/keys'
 import { PrivateKey, PublicKey } from '@libp2p/interface'
 import { Link } from 'multiformats'
-import { identity } from 'multiformats/hashes/identity'
 import { base36 } from 'multiformats/bases/base36'
+import { base64pad } from 'multiformats/bases/base64'
 import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
@@ -42,10 +40,10 @@ import W3NameService from './service.js'
 const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
-const defaultValidity = (): string => new Date(Date.now() + ONE_YEAR).toISOString()
-const defaultTTL = 5n * 60n * 1000n
-
+const defaultValidity = (): RFC3339DateString => new Date(Date.now() + ONE_YEAR).toISOString()
+const defaultTTL = 5n * 60n * 1000n * 1000000n // 5 minutes in nanoseconds
 const defaultService = new W3NameService()
+
 /**
  * Name is an IPNS key ID.
  *
@@ -69,8 +67,7 @@ export class Name {
      * @private
      */
     this._pubKey = pubKey
-    const digest = Digest.create(identity.code, pubKey.raw)
-    this._cid = CID.createV1(libp2pKeyCode, digest)
+    this._cid = pubKey.toCID()
   }
 
   /**
@@ -139,7 +136,7 @@ export function parse (name: string): Name {
   if (keyCid.code !== libp2pKeyCode) {
     throw new Error(`Invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
   }
-  const pubKey = publicKeyFromRaw(Digest.decode(keyCid.multihash.bytes).bytes)
+  const pubKey = publicKeyFromProtobuf(Digest.decode(keyCid.multihash.bytes).bytes)
   return new Name(pubKey)
 }
 
@@ -176,8 +173,13 @@ export function parse (name: string): Name {
  *
  */
 export async function from (key: Uint8Array): Promise<WritableName> {
-  const privKey = privateKeyFromRaw(key)
+  const privKey = privateKeyFromProtobuf(key)
   return new WritableName(privKey)
+}
+
+export interface IncrementOptions extends RevisionOptions {
+  /** TTL in nanoseconds, Default: 5m */
+  ttl?: bigint
 }
 
 /**
@@ -201,6 +203,8 @@ export async function increment (revision: Revision, value: string): Promise<Rev
   const seqno = revision.sequence + 1n
   return new Revision(revision.name, value, seqno, defaultValidity())
 }
+
+export type RFC3339DateString = string
 
 export interface RevisionOptions {
   /** TTL in nanoseconds, Default: 5m */
@@ -226,7 +230,7 @@ export class Revision {
   /** @internal */
   _ttl: bigint | undefined
 
-  constructor (name: Name, value: string, sequence: bigint, validity: string, options?: RevisionOptions) {
+  constructor (name: Name, value: string, sequence: bigint, validity: RFC3339DateString, options?: RevisionOptions) {
     this._name = name
 
     if (typeof value !== 'string') {
@@ -266,7 +270,7 @@ export class Revision {
   /**
    * RFC3339 date string.
    */
-  get validity (): string {
+  get validity (): RFC3339DateString {
     return this._validity
   }
 
@@ -324,9 +328,10 @@ export async function publish (revision: Revision, key: PrivateKey, service: W3N
     { ttlNs: revision.ttl }
   )
   await service.waitForRateLimit()
+
   await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
-    body: uint8ArrayToString(ipns.marshalIPNSRecord(entry), 'base64pad')
+    body: base64pad.baseEncode(ipns.marshalIPNSRecord(entry))
   }))
 }
 
@@ -343,10 +348,10 @@ export async function resolve (name: Name, service: W3NameService = defaultServi
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
 
-  const bytes = uint8ArrayFromString(record, 'base64pad')
+  const bytes = base64pad.baseDecode(record)
   const entry = ipns.unmarshalIPNSRecord(bytes)
   const keyCid = CID.decode(name.bytes)
-  const pubKey = publicKeyFromRaw(Digest.decode(keyCid.multihash.bytes).bytes)
+  const pubKey = publicKeyFromProtobuf(Digest.decode(keyCid.multihash.bytes).bytes)
 
   await validate(pubKey, bytes)
 
