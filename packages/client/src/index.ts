@@ -291,7 +291,7 @@ export class Revision {
       value: revision._value,
       sequence: revision._sequence,
       validity: revision._validity,
-      ...(revision._ttl != null ? { ttl: revision._ttl } : {}),
+      ...(revision._ttl != null ? { ttl: revision._ttl } : {})
     })
   }
 
