@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/storacha/w3name/compare/w3name-v1.0.9...w3name-v1.1.0) (2025-07-29)
+
+
+### Features
+
+* TTL ([#116](https://github.com/storacha/w3name/issues/116)) ([da3c80f](https://github.com/storacha/w3name/commit/da3c80fc0cf9661a86bab277c8ff8b5df376a8b1))
+
+
+### Other Changes
+
+* update repo URLs ([5c611cd](https://github.com/storacha/w3name/commit/5c611cd9b0d01ca7bc8882812bdd6dbc16b766df))
+
 ## [1.0.9](https://github.com/storacha/w3name/compare/w3name-v1.0.8...w3name-v1.0.9) (2024-12-17)
 
 
