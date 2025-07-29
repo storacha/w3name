@@ -1,4 +1,4 @@
-import throttledQueue from 'throttled-queue'
+import { throttledQueue } from 'throttled-queue'
 
 const RATE_LIMIT_REQUESTS = 30
 const RATE_LIMIT_PERIOD = 10 * 1000
@@ -15,7 +15,7 @@ export interface PublicService {
 export type RateLimiter = () => Promise<void>
 
 function createRateLimiter (): RateLimiter {
-  const throttle = throttledQueue(RATE_LIMIT_REQUESTS, RATE_LIMIT_PERIOD)
+  const throttle = throttledQueue({ maxPerInterval: RATE_LIMIT_REQUESTS, interval: RATE_LIMIT_PERIOD })
   return async () => await throttle(() => {})
 }
 

@@ -3,12 +3,12 @@ import { CID } from 'multiformats'
 import * as assert from 'uvu/assert'
 import { base36 } from 'multiformats/bases/base36'
 import { identity } from 'multiformats/hashes/identity'
-import { keys } from 'libp2p-crypto'
+import * as keys from '@libp2p/crypto/keys'
 import * as Digest from 'multiformats/hashes/digest'
 import * as uint8arrays from 'uint8arrays'
-import * as Name from '../src/index'
-import W3NameService from '../src/service'
-import server from './mocks/api'
+import * as Name from '../src/index.js'
+import W3NameService from '../src/service.js'
+import server from './mocks/api.js'
 
 const libp2pKeyCode = 0x72
 
@@ -20,11 +20,11 @@ describe('Name', () => {
       assert.not.throws(() => { cid = CID.parse(name.toString(), base36) })
       assert.equal(cid.code, libp2pKeyCode)
       assert.equal(cid.multihash.code, identity.code)
-      assert.not.throws(() => keys.unmarshalPublicKey(Digest.decode(cid.multihash.bytes).bytes))
+      assert.not.throws(() => keys.publicKeyFromProtobuf(Digest.decode(cid.multihash.bytes).bytes))
       assert.not.throws(() => { cid = CID.decode(name.bytes) })
       assert.equal(cid.code, libp2pKeyCode)
       assert.equal(cid.multihash.code, identity.code)
-      assert.not.throws(() => keys.unmarshalPublicKey(Digest.decode(cid.multihash.bytes).bytes))
+      assert.not.throws(() => keys.publicKeyFromProtobuf(Digest.decode(cid.multihash.bytes).bytes))
     })
 
     describe('parsing', () => {

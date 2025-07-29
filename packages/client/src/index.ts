@@ -25,24 +25,25 @@
  * @module
  */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { keys, PrivateKey, PublicKey } from 'libp2p-crypto'
-import { identity } from 'multiformats/hashes/identity'
+import { generateKeyPair, publicKeyFromProtobuf, privateKeyFromProtobuf } from '@libp2p/crypto/keys'
+import { PrivateKey, PublicKey } from '@libp2p/interface'
+import { Link } from 'multiformats'
 import { base36 } from 'multiformats/bases/base36'
+import { base64pad } from 'multiformats/bases/base64'
 import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
+import { validate } from 'ipns/validator'
 import * as cbor from 'cborg'
-import W3NameService from './service'
-import fetch from '@web-std/fetch'
+import W3NameService from './service.js'
 
 const libp2pKeyCode = 0x72
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365
 
-const defaultValidity = (): string => new Date(Date.now() + ONE_YEAR).toISOString()
-
+const defaultValidity = (): RFC3339DateString => new Date(Date.now() + ONE_YEAR).toISOString()
+const defaultTTL = 5n * 60n * 1000n * 1000000n // 5 minutes in nanoseconds
 const defaultService = new W3NameService()
+
 /**
  * Name is an IPNS key ID.
  *
@@ -58,27 +59,29 @@ export class Name {
   /** @internal */
   _pubKey: PublicKey
 
+  /** @internal */
+  _cid: Link
+
   constructor (pubKey: PublicKey) {
     /**
      * @private
      */
     this._pubKey = pubKey
+    this._cid = pubKey.toCID()
   }
 
   /**
    * A binary representation of the IPNS verification key.
    */
   get bytes (): Uint8Array {
-    const digest = Digest.create(identity.code, this._pubKey.bytes)
-    return CID.createV1(libp2pKeyCode, digest).bytes
+    return this._cid.bytes
   }
 
   /**
    * @returns the string representation of the IPNS verification key (e.g. `k51qzi5uqu5di9agapykyjh3tqrf7i14a7fjq46oo0f6dxiimj62knq13059lt`)
    */
   toString (): string {
-    const digest = Digest.create(identity.code, this._pubKey.bytes)
-    return CID.createV1(libp2pKeyCode, digest).toString(base36)
+    return this._cid.toString(base36)
   }
 }
 
@@ -95,7 +98,7 @@ export class WritableName extends Name {
   _privKey: PrivateKey
 
   constructor (privKey: PrivateKey) {
-    super(privKey.public)
+    super(privKey.publicKey)
     /**
      * @private
      */
@@ -118,7 +121,7 @@ export class WritableName extends Name {
  * publish IPNS record revisions.
  */
 export async function create (): Promise<WritableName> {
-  const privKey = await keys.generateKeyPair('Ed25519', 2048)
+  const privKey = await generateKeyPair('Ed25519', 2048)
   return new WritableName(privKey)
 }
 
@@ -133,7 +136,7 @@ export function parse (name: string): Name {
   if (keyCid.code !== libp2pKeyCode) {
     throw new Error(`Invalid key, expected ${libp2pKeyCode} codec code but got ${keyCid.code}`)
   }
-  const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
+  const pubKey = publicKeyFromProtobuf(Digest.decode(keyCid.multihash.bytes).bytes)
   return new Name(pubKey)
 }
 
@@ -170,7 +173,7 @@ export function parse (name: string): Name {
  *
  */
 export async function from (key: Uint8Array): Promise<WritableName> {
-  const privKey = await keys.unmarshalPrivateKey(key)
+  const privKey = privateKeyFromProtobuf(key)
   return new WritableName(privKey)
 }
 
@@ -196,6 +199,13 @@ export async function increment (revision: Revision, value: string): Promise<Rev
   return new Revision(revision.name, value, seqno, defaultValidity())
 }
 
+export type RFC3339DateString = string
+
+export interface RevisionOptions {
+  /** TTL in nanoseconds, Default: 5m */
+  ttl?: bigint
+}
+
 /**
  * A representation of a IPNS record that may be initial or revised.
  */
@@ -212,21 +222,32 @@ export class Revision {
   /** @internal */
   _validity: string
 
-  constructor (name: Name, value: string, sequence: bigint, validity: string) {
+  /** @internal */
+  _ttl: bigint | undefined
+
+  constructor (name: Name, value: string, sequence: bigint, validity: RFC3339DateString, options?: RevisionOptions) {
     this._name = name
+
     if (typeof value !== 'string') {
       throw new Error('invalid value')
     }
     this._value = value
+
     if (typeof sequence !== 'bigint') {
       throw new Error('invalid sequence number')
     }
     this._sequence = sequence
-    if (typeof validity !== 'string') {
+
+    if (typeof validity !== 'string' || Number.isNaN(new Date(validity).getTime())) {
       throw new Error('invalid validity')
     }
-    // TODO: validate format
     this._validity = validity
+
+    const ttl = options?.ttl ?? defaultTTL
+    if (typeof ttl !== 'bigint') {
+      throw new Error('invalid TTL')
+    }
+    this._ttl = ttl
   }
 
   get name (): Name {
@@ -244,8 +265,13 @@ export class Revision {
   /**
    * RFC3339 date string.
    */
-  get validity (): string {
+  get validity (): RFC3339DateString {
     return this._validity
+  }
+
+  /** TTL in nanoseconds */
+  get ttl (): bigint | undefined {
+    return this._ttl
   }
 
   /**
@@ -259,7 +285,8 @@ export class Revision {
       name: revision._name.toString(),
       value: revision._value,
       sequence: revision._sequence,
-      validity: revision._validity
+      validity: revision._validity,
+      ...(revision._ttl != null ? { ttl: revision._ttl } : {})
     })
   }
 
@@ -273,7 +300,7 @@ export class Revision {
   static decode (bytes: Uint8Array): Revision {
     const raw = cbor.decode(bytes)
     const name = parse(raw.name)
-    return new Revision(name, raw.value, BigInt(raw.sequence), raw.validity)
+    return new Revision(name, raw.value, BigInt(raw.sequence), raw.validity, { ttl: raw.ttl != null ? BigInt(raw.ttl) : undefined })
   }
 }
 
@@ -288,16 +315,18 @@ export class Revision {
  */
 export async function publish (revision: Revision, key: PrivateKey, service: W3NameService = defaultService): Promise<void> {
   const url = new URL(`name/${revision.name.toString()}`, service.endpoint)
-  const entry = await ipns.create(
+  const entry = await ipns.createIPNSRecord(
     key,
-    uint8ArrayFromString(revision.value),
+    revision.value,
     revision.sequence,
-    new Date(revision.validity).getTime() - Date.now()
+    new Date(revision.validity).getTime() - Date.now(),
+    { ttlNs: revision.ttl }
   )
   await service.waitForRateLimit()
+
   await maybeHandleError(fetch(url.toString(), {
     method: 'POST',
-    body: uint8ArrayToString(ipns.marshal(entry), 'base64pad')
+    body: base64pad.baseEncode(ipns.marshalIPNSRecord(entry))
   }))
 }
 
@@ -314,17 +343,19 @@ export async function resolve (name: Name, service: W3NameService = defaultServi
   const res: globalThis.Response = await maybeHandleError(fetch(url.toString()))
   const { record } = await res.json()
 
-  const entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
+  const bytes = base64pad.baseDecode(record)
+  const entry = ipns.unmarshalIPNSRecord(bytes)
   const keyCid = CID.decode(name.bytes)
-  const pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
+  const pubKey = publicKeyFromProtobuf(Digest.decode(keyCid.multihash.bytes).bytes)
 
-  await ipns.validate(pubKey, entry)
+  await validate(pubKey, bytes)
 
   return new Revision(
     name,
-    uint8ArrayToString(entry.value),
+    entry.value,
     entry.sequence,
-    uint8ArrayToString(entry.validity)
+    entry.validity,
+    { ttl: entry.ttl }
   )
 }
 
