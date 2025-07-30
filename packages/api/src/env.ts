@@ -1,5 +1,4 @@
-import Toucan from 'toucan-js'
-import pkg from '../package.json'
+import { Toucan, requestDataIntegration } from 'toucan-js'
 
 export interface Env {
   NAME_ROOM: DurableObjectNamespace
@@ -23,19 +22,15 @@ export function envAll (req: Request, env: Env, ctx: ExecutionContext) {
       dsn: env.SENTRY_DSN,
       context: ctx,
       request: req,
-      allowedHeaders: ['user-agent', 'x-client'],
-      allowedSearchParams: /(.*)/,
       debug: env.DEBUG === 'true',
-      rewriteFrames: {
-        // strip . from start of the filename ./worker.mjs as set by cloudflare, to make absolute path `/worker.mjs`
-        iteratee: (frame) => ({
-          ...frame,
-          filename: frame?.filename?.substring(1)
-        })
-      },
       environment: env.ENV,
       release: SENTRY_RELEASE,
-      pkg
+      integrations: [
+        requestDataIntegration({
+          allowedHeaders: ['user-agent', 'x-client'],
+          allowedSearchParams: /(.*)/,
+        })
+      ],
     })
     : undefined
 }

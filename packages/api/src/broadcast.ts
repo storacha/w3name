@@ -1,4 +1,4 @@
-import type { Env } from './env'
+import type { Env } from './env.js'
 
 export interface BroadcastData {
   key: string

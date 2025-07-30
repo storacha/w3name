@@ -34,40 +34,42 @@
   ],
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
     }
   },
   "module": "dist/index.mjs",
   "scripts": {
-    "build": "node buildworkermodule.mjs; aegir build",
-    "test": "NODE_OPTIONS=--experimental-vm-modules aegir test --target node",
+    "build": "node buildworkermodule.js",
+    "test": "mocha --experimental-vm-modules -b 'test/*.spec.ts'",
     "lint": "aegir lint",
     "dev": "miniflare --modules --live-reload"
   },
   "dependencies": {
     "@google-cloud/precise-date": "^3.0.0",
-    "@web-std/fetch": "^4.1.0",
-    "ipns": "^1.0.1",
-    "itty-router": "^2.6.1",
-    "libp2p-crypto": "^0.21.2",
-    "p-defer": "^4.0.0",
-    "sinon": "^14.0.0",
-    "toucan-js": "^2.6.1",
+    "@libp2p/crypto": "^5.1.7",
+    "@libp2p/interface": "^2.10.5",
+    "ipns": "^10.1.2",
+    "itty-router": "^5.0.20",
+    "multiformats": "^13.3.7",
+    "p-defer": "^4.0.1",
+    "toucan-js": "^4.1.1",
+    "uint8arrays": "^5.1.0",
     "yaml": "^2.1.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.13.0",
+    "@libp2p/peer-id": "^5.1.8",
     "@sentry/cli": "^2.5.2",
-    "@types/mocha": "^9.1.1",
-    "aegir": "^37.3.0",
+    "@types/git-rev-sync": "^2.0.2",
+    "@types/mocha": "^10.0.10",
+    "@types/sinon": "^17.0.4",
+    "esbuild": "^0.25.8",
     "git-rev-sync": "^3.0.2",
-    "miniflare": "^2.6.0"
-  },
-  "eslintConfig": {
-    "extends": "ipfs",
-    "parserOptions": {
-      "sourceType": "module"
-    }
+    "miniflare": "^2.6.0",
+    "mocha": "^11.7.1",
+    "sinon": "^21.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

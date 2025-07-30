@@ -1,5 +1,5 @@
 /* eslint-env serviceworker */
-import type { RouteHandler } from 'itty-router'
+import type { RequestHandler } from 'itty-router'
 
 /**
  * Handler for CORS OPTIONS requests.
@@ -47,7 +47,7 @@ export function corsOptions (request: Request): Response {
 /**
  * Wraps a handler which adds CORS headers to the responses.
  */
-export function withCorsHeaders (handler: RouteHandler<Request>): RouteHandler<Request> {
+export function withCorsHeaders (handler: RequestHandler<Request>): RequestHandler<Request> {
   return async (request: Request, ...rest: any[]): Promise<Response> => {
     const response = await handler(request, ...rest)
     return addCorsHeaders(request, response)

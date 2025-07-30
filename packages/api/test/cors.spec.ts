@@ -5,7 +5,7 @@ import { endpoint } from './scripts/constants.js'
 
 let mf: Miniflare
 
-before((done) => {
+before(() => {
   mf = new Miniflare({
     envPath: true,
     packagePath: true,
@@ -16,7 +16,6 @@ before((done) => {
       REBROADCAST_INTERVAL_MS: 0
     }
   })
-  done()
 })
 
 after(async () => {

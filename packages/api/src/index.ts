@@ -1,10 +1,10 @@
 import { Router } from 'itty-router'
-import { jsonResponse, notFound } from './utils/response-types'
-import { nameGet, nameWatchGet, namePost, raiseErrorGet } from './name'
-import { HTTPError } from './errors'
-import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors'
-import * as swaggerConfig from './swaggerConfig'
-import { Env, envAll } from './env'
+import { jsonResponse, notFound } from './utils/response-types.js'
+import { nameGet, nameWatchGet, namePost, raiseErrorGet } from './name.js'
+import { HTTPError } from './errors.js'
+import { addCorsHeaders, withCorsHeaders, corsOptions } from './cors.js'
+import * as swaggerConfig from './swaggerConfig.js'
+import { Env, envAll } from './env.js'
 
 declare global {
   // These must be defined as parameters to esbuild.build() in buildworkermodule.js
@@ -43,7 +43,7 @@ export default {
     let response
     try {
       env = { ...env } // new env object for every request (it is shared otherwise)!
-      response = await router.handle(request, env, ctx)
+      response = await router.fetch(request, env, ctx)
     } catch (error: any) {
       // eslint-disable-next-line no-console
       console.error(error)
@@ -65,5 +65,5 @@ export default {
   }
 }
 
-export { NameRoom as NameRoom0 } from './broadcast'
-export { IPNSRecord } from './record'
+export { NameRoom as NameRoom0 } from './broadcast.js'
+export { IPNSRecord } from './record.js'
