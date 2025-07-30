@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/storacha/w3name/compare/w3name-v1.1.0...w3name-v1.1.1) (2025-07-30)
+
+
+### Fixes
+
+* update API ([#117](https://github.com/storacha/w3name/issues/117)) ([e87347e](https://github.com/storacha/w3name/commit/e87347e9acc37c1e7bdb6db42c4efba948f1a901))
+
 ## [1.1.0](https://github.com/storacha/w3name/compare/w3name-v1.0.9...w3name-v1.1.0) (2025-07-29)
 
 
