@@ -124,7 +124,7 @@ await Name.publish(nextRevision, name.key)
 
 The private key used to sign IPNS records should be saved if a revision needs to be created in the future.
 
-The [`WritableName`][typedoc-WritableName] object returned by the [`create`][typedoc-create] function has a `key` property containing the private signing key. Using `key.bytes`, we can obtain a `Uint8Array` filled with a binary representation of the private key, which can be saved to a safe location.
+The [`WritableName`][typedoc-WritableName] object returned by the [`create`][typedoc-create] function has a `key` property containing the private signing key. Using `key.raw`, we can obtain a `Uint8Array` filled with a binary representation of the private key, which can be saved to a safe location.
 
 Later, you can use the [`from`][typedoc-from] function to convert from the binary representation to a [`WritableName`][typedoc-WritableName] object that can be used for signing and publication.
 
@@ -136,7 +136,7 @@ import fs from 'fs'
 const name = await Name.create()
 
 // Store the signing key to a file for use later
-await fs.promises.writeFile('priv.key', name.key.bytes)
+await fs.promises.writeFile('priv.key', name.key.raw)
 
 // ...later
 
