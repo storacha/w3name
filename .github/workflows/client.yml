@@ -62,4 +62,6 @@ jobs:
         if: ${{ fromJson(steps.tag-release.outputs.releases_created) }}
         run: |
           npm run typedoc --workspace packages/client
-          npx gh-pages -d packages/client/generated-docs
+          npx gh-pages -d packages/client/generated-docs -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
