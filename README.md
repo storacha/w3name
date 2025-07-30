@@ -41,9 +41,9 @@ await Name.publish(revision, name.key)
 
 See https://github.com/storacha/w3name/blob/main/packages/client/README.md for a guide to using the js client for the first time.
 
-Full API reference doc for the JS client are available at https://web3-storage.github.io/w3name
+Full API reference doc for the JS client are available at https://storacha.github.io/w3name
 
-You can also find a [how-to guide for working with the JS client](https://web3.storage/docs/how-tos/w3name/) included in the [Web3.Storage](https://web3.storage) documentation.
+You can also find a [how-to guide for working with the JS client](https://docs.storacha.network/how-to/w3name/) included in the [Storacha](https://storacha.network) documentation.
 
 There is a rate limit of 30 requests per 10 seconds per IP.
 
@@ -128,9 +128,9 @@ Each workspace has its own suite of testing tools, which you can learn more abou
 
 ## Learn more
 
-To learn more about the w3name service, or find detailed documentation for the JS client library and API, please head over to [Web3.Storage documentation](https://web3.storage/docs/how-tos/w3name/).
+To learn more about the w3name service, or find detailed documentation for the JS client library and API, please head over to [Storacha documentation](https://docs.storacha.network/how-to/w3name/).
 
 
 <p align="center">
-  <a href="https://web3.storage/products/w3name/">⁂</a>
+  <a href="https://docs.storacha.network/how-to/w3name/">⁂</a>
 </p>

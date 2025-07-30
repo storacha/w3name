@@ -1,5 +1,5 @@
 <h1 align="center">⁂<br/>w3name</h1>
-<p align="center">The JavaScript API client for <a href="https://web3.storage/products/w3name/">w3name</a></p>
+<p align="center">The JavaScript API client for <a href="https://docs.storacha.network/how-to/w3name/">w3name</a></p>
 
 
 ## Getting started
@@ -16,9 +16,9 @@ or yarn:
 yarn add w3name
 ```
 
-See [the getting started docs][w3storage-docs-w3name-getting-started] for more information.
+See [the getting started docs][storacha-docs-w3name-getting-started] for more information.
 
-You can also find full API reference documentation for the client at https://web3-storage.github.io/w3name
+You can also find full API reference documentation for the client at https://storacha.github.io/w3name
 
 ## Usage
 
@@ -41,7 +41,7 @@ import { create, publish } from 'w3name'
 
 w3name is an implementation of IPNS (the InterPlanetary Name System), which was designed to work with IPFS (the InterPlanetary File System). 
 
-IPFS allows you to uniquely identify any piece of data using a cryptographic hash of the data itself. This is known as [content addressing][w3storage-docs-content-addressing], and it's a very powerful and useful idea, especially when building distributed systems that span the planet (and ideally, beyond).
+IPFS allows you to uniquely identify any piece of data using a cryptographic hash of the data itself. This is known as [content addressing][storacha-docs-content-addressing], and it's a very powerful and useful idea, especially when building distributed systems that span the planet (and ideally, beyond).
 
 One of the major constraints of a content-addressed system is that all such addresses are _immutable_, meaning that they can't be changed to refer to something else after they've been created.
 
@@ -170,17 +170,17 @@ const bytes = await fs.promises.readFile('ipns.revision')
 const revision = Revision.decode(bytes)
 ```
 
-[w3storage-docs-content-addressing]: https://web3.storage/docs/concepts/content-addressing/
-[w3storage-docs-w3name-getting-started]: https://web3.storage/docs/how-tos/w3name/#getting-started
+[storacha-docs-content-addressing]: https://docs.storacha.network/concepts/content-addressing/
+[storacha-docs-w3name-getting-started]: https://docs.storacha.network/how-to/w3name/#getting-started
 
-[typedoc-create]: https://web3-storage.github.io/w3name/functions/create.html
-[typedoc-from]: https://web3-storage.github.io/w3name/functions/from.html
-[typedoc-increment]: https://web3-storage.github.io/w3name/functions/increment.html
-[typedoc-parse]: https://web3-storage.github.io/w3name/functions/parse.html
-[typedoc-publish]: https://web3-storage.github.io/w3name/functions/publish.html
-[typedoc-resolve]: https://web3-storage.github.io/w3name/functions/resolve.html
-[typedoc-v0]: https://web3-storage.github.io/w3name/functions/v0.html
+[typedoc-create]: https://storacha.github.io/w3name/functions/create.html
+[typedoc-from]: https://storacha.github.io/w3name/functions/from.html
+[typedoc-increment]: https://storacha.github.io/w3name/functions/increment.html
+[typedoc-parse]: https://storacha.github.io/w3name/functions/parse.html
+[typedoc-publish]: https://storacha.github.io/w3name/functions/publish.html
+[typedoc-resolve]: https://storacha.github.io/w3name/functions/resolve.html
+[typedoc-v0]: https://storacha.github.io/w3name/functions/v0.html
 
-[typedoc-Name]: https://web3-storage.github.io/w3name/classes/Name.html
-[typedoc-WritableName]: https://web3-storage.github.io/w3name/classes/WritableName.html
-[typedoc-Revision]: https://web3-storage.github.io/w3name/classes/Revision.html
+[typedoc-Name]: https://storacha.github.io/w3name/classes/Name.html
+[typedoc-WritableName]: https://storacha.github.io/w3name/classes/WritableName.html
+[typedoc-Revision]: https://storacha.github.io/w3name/classes/Revision.html
