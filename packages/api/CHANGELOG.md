@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.8](https://github.com/storacha/w3name/compare/api-v1.2.7...api-v1.2.8) (2025-07-30)
+
+
+### Fixes
+
+* update API ([#117](https://github.com/storacha/w3name/issues/117)) ([e87347e](https://github.com/storacha/w3name/commit/e87347e9acc37c1e7bdb6db42c4efba948f1a901))
+
 ## [1.2.7](https://github.com/storacha/w3name/compare/api-v1.2.6...api-v1.2.7) (2025-03-18)
 
 
