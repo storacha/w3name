@@ -1,12 +1,10 @@
 import { PreciseDate } from '@google-cloud/precise-date'
-import type { Env } from './env'
-import { jsonResponse } from './utils/response-types'
-import fetch from '@web-std/fetch'
+import type { Env } from './env.js'
+import { jsonResponse } from './utils/response-types.js'
 
 export interface IPNSRecordData {
   key: string
   record: string
-  hasV2Sig: boolean
   seqno: string
   validity: string
 }
@@ -17,14 +15,8 @@ const PUBLISHER_AUTH_SECRET = '123456'
 
 export function canOverwrite (current: IPNSRecordData, candidate: IPNSRecordData): boolean {
   // Logic copied from https://github.com/ipfs/go-ipns/blob/a8379aa25ef287ffab7c5b89bfaad622da7e976d/ipns.go#L325
-
-  if (current.hasV2Sig && !candidate.hasV2Sig) {
-    return false
-  }
-
-  if (candidate.hasV2Sig && !current.hasV2Sig) {
-    return true
-  }
+  // No v1/v2 signature check because IPNS library does not validate v1 only
+  // records, and we validate before calling this.
 
   if (BigInt(candidate.seqno) > BigInt(current.seqno)) {
     return true
@@ -46,7 +38,6 @@ export function canOverwrite (current: IPNSRecordData, candidate: IPNSRecordData
  * The following attributes are kept in the storage:
  * key: base36 "libp2p-key" encoding of the public key
  * record: the serialized IPNS record - base64 encoded
- * hasV2Sig
  * seqno
  * validity
  * lastRebroadcast: the last rebroadcast request (update by the alarm handler)
@@ -60,16 +51,15 @@ export class IPNSRecord {
     this.env = env
   }
 
-  async fetch (request: Request) {
+  async fetch (request: Request): Promise<Response> {
     // Make sure we set an alarm for the next rebroadcast
     const currentAlarm = await this.state.storage.getAlarm()
-    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'hasV2Sig', 'seqno', 'validity'])
+    const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'seqno', 'validity'])
 
     // Values will be set to undefined if the record was not created prior to fetching it
     const record: IPNSRecordData = {
       key: map.get('key'),
       record: map.get('record'),
-      hasV2Sig: map.get('hasV2Sig'),
       seqno: map.get('seqno'),
       validity: map.get('validity')
     }
@@ -86,7 +76,6 @@ export class IPNSRecord {
       const data = {
         key: payload.key,
         record: payload.record,
-        hasV2Sig: payload.hasV2Sig,
         seqno: payload.seqno,
         validity: payload.validity,
         lastRebroadcast: now.toISOString()
@@ -110,7 +99,7 @@ export class IPNSRecord {
     return jsonResponse(JSON.stringify(data), 200)
   }
 
-  async alarm () {
+  async alarm (): Promise<void> {
     const now = new Date()
 
     // For safety, we set the alarm as our first order of business, so that an error in
@@ -129,7 +118,7 @@ export class IPNSRecord {
       await this.state.storage.deleteAlarm()
       return
     }
-    // eslint-disable-next-line no-useless-catch
+
     try {
       const response = await fetch(this.publisherEndpointURL, {
         method: 'POST',
@@ -149,21 +138,20 @@ export class IPNSRecord {
         await this.state.storage.put('lastRebroadcast', now.toISOString())
       }
     } catch (error) {
-      throw error
+      throw new Error(`rebroadcasting ${data.key} to ${this.publisherEndpointURL}`, { cause: error })
     }
   }
 
   async getIPNSRecordData (): Promise<IPNSRecordData> {
     // Using noCache as it is important to always get the latest record
     const map: Map<string, any> = await this.state.storage.get(
-      ['key', 'record', 'hasV2Sig', 'seqno', 'validity'], { noCache: true }
+      ['key', 'record', 'seqno', 'validity'], { noCache: true }
     )
 
     // Values will be set to undefined if the record was not created prior to fetching it
     const data: IPNSRecordData = {
       key: map.get('key'),
       record: map.get('record'),
-      hasV2Sig: map.get('hasV2Sig'),
       seqno: map.get('seqno'),
       validity: map.get('validity')
     }

@@ -1,9 +1,7 @@
 import * as Name from 'w3name'
 import W3NameService from 'w3name/service'
 import assert from 'assert/strict'
-import { Miniflare, Log, LogLevel, Request } from 'miniflare'
-
-const endpoint = 'http://127.0.0.1:8787'
+import { Miniflare, Log, LogLevel } from 'miniflare'
 
 let mf
 let server
@@ -28,7 +26,7 @@ describe('w3name module', () => {
     done()
   })
 
-  it('can publish an resolve a new name', async () => {
+  it('can publish and resolve a new name', async () => {
     const name = await Name.create()
     const value = '/ipfs/bafkreiem4twkqzsq2aj4shbycd4yvoj2cx72vezicletlhi7dijjciqpui'
     const revision = await Name.v0(name, value)

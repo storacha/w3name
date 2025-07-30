@@ -1,17 +1,17 @@
 import { base36 } from 'multiformats/bases/base36'
 import { CID } from 'multiformats/cid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { HTTPError } from './errors'
-import { jsonResponse } from './utils/response-types'
-import { keys, PublicKey } from 'libp2p-crypto'
-import { NameRoom, BroadcastData } from './broadcast'
+import { HTTPError } from './errors.js'
+import { jsonResponse } from './utils/response-types.js'
+import { keys } from '@libp2p/crypto'
+import { PublicKey } from '@libp2p/interface'
+import { NameRoom, BroadcastData } from './broadcast.js'
 import { PreciseDate } from '@google-cloud/precise-date'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { validate as ipnsValidate } from 'ipns/validator'
 import * as Digest from 'multiformats/hashes/digest'
 import * as ipns from 'ipns'
-import type { Env } from './env'
-import type { IPNSRecordData } from './record'
+import type { Env } from './env.js'
+import type { IPNSRecordData } from './record.js'
 
 const libp2pKeyCode = 0x72
 
@@ -57,11 +57,11 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
       throw new HTTPError(`record not found for key: ${key}. Only keys published using the w3name API may be resolved here.`, 404)
     }
 
-    const { value } = ipns.unmarshal(uint8ArrayFromString(rawRecord, 'base64pad'))
+    const { value } = ipns.unmarshalIPNSRecord(uint8ArrayFromString(rawRecord, 'base64pad'))
 
     return jsonResponse(
       JSON.stringify({
-        value: uint8ArrayToString(value),
+        value,
         record: rawRecord
       })
     )
@@ -87,13 +87,14 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
 
   const keyCid = parseAndValidateCID(key)
   const record = await request.text()
-  let entry: ipns.IPNSEntry | undefined
+  let entry: ipns.IPNSRecord | undefined
   let pubKey: PublicKey | undefined
 
   try {
-    entry = ipns.unmarshal(uint8ArrayFromString(record, 'base64pad'))
-    pubKey = keys.unmarshalPublicKey(Digest.decode(keyCid.multihash.bytes).bytes)
-    await ipnsValidate(pubKey, entry)
+    const recordBytes = uint8ArrayFromString(record, 'base64pad')
+    pubKey = keys.publicKeyFromProtobuf(Digest.decode(keyCid.multihash.bytes).bytes)
+    await ipnsValidate(pubKey, recordBytes)
+    entry = ipns.unmarshalIPNSRecord(recordBytes)
   } catch (error: any) {
     if (error instanceof Error) {
       throw new HTTPError(`invalid ipns entry: ${error.message}`, 400)
@@ -102,21 +103,20 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
   }
 
   if (entry !== undefined && pubKey !== undefined) {
-    if (entry.pubKey !== undefined && !keys.unmarshalPublicKey(entry.pubKey).equals(pubKey)) {
+    if (entry.pubKey !== undefined && !keys.publicKeyFromProtobuf(entry.pubKey).equals(pubKey)) {
       throw new HTTPError('embedded public key mismatch', 400)
     }
 
     const recordData: IPNSRecordData = {
       key, // base36 "libp2p-key" encoding of the public key
       record, // the serialized IPNS record - base64 encoded
-      hasV2Sig: Boolean(entry.signatureV2),
       seqno: entry.sequence.toString(),
-      validity: new PreciseDate(uint8ArrayToString(entry.validity)).getFullTime().toString()
+      validity: new PreciseDate(entry.validity).getFullTime().toString()
     }
 
     const broadcastData: BroadcastData = {
       key,
-      value: uint8ArrayToString(entry.value),
+      value: entry.value,
       record
     }
 
@@ -131,16 +131,21 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
         ctx.waitUntil((async () => {
           await NameRoom.broadcast(request, env.NAME_ROOM, key, broadcastData)
           await NameRoom.broadcast(request, env.NAME_ROOM, '*', broadcastData)
-          const response = await fetch(env.PUBLISHER_ENDPOINT_URL, {
-            method: 'POST',
-            body: JSON.stringify(recordData),
-            headers: {
-              Authorization: env.PUBLISHER_AUTH_SECRET
-            }
-          })
 
-          if (!response.ok) {
-            throw new Error('Error when publishing to the IPNS Publisher endpoint')
+          try {
+            const response = await fetch(env.PUBLISHER_ENDPOINT_URL, {
+              method: 'POST',
+              body: JSON.stringify(recordData),
+              headers: {
+                Authorization: env.PUBLISHER_AUTH_SECRET
+              }
+            })
+
+            if (!response.ok) {
+              throw new Error('Error when publishing to the IPNS Publisher endpoint')
+            }
+          } catch (err) {
+            throw new Error(`broadcasting ${recordData.key} to ${env.PUBLISHER_ENDPOINT_URL}`, { cause: err })
           }
         })())
         return jsonResponse(JSON.stringify({ id: key }), 202)
@@ -149,7 +154,7 @@ export async function namePost (request: Request, env: Env, ctx: ExecutionContex
         return objPostResponse
       }
     } catch (error) {
-      throw new Error(`Unable to broadcast: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Unable to broadcast: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 

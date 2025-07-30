@@ -87,6 +87,7 @@
     "ts-standard": "^12.0.2",
     "typedoc": "^0.28.7",
     "typings": "^2.1.1",
-    "uint8arrays": "^5.1.0"
+    "uint8arrays": "^5.1.0",
+    "uvu": "^0.5.6"
   }
 }

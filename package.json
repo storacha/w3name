@@ -2,7 +2,7 @@
   "name": "web3.name",
   "version": "1.0.0",
   "private": true,
-  "license": "(Apache-2.0 AND MIT)",
+  "license": "Apache-2.0 OR MIT",
   "workspaces": [
     "packages/api",
     "packages/client",
