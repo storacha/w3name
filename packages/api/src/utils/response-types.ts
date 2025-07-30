@@ -1,5 +1,5 @@
 export function notFound (message: string = 'Not Found'): Response {
-  return jsonResponse(JSON.stringify({ message: message }), 404)
+  return jsonResponse(JSON.stringify({ message }), 404)
 }
 
 export function jsonResponse (body: string, status: number = 200): Response {

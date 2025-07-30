@@ -51,7 +51,7 @@ export class IPNSRecord {
     this.env = env
   }
 
-  async fetch (request: Request) {
+  async fetch (request: Request): Promise<Response> {
     // Make sure we set an alarm for the next rebroadcast
     const currentAlarm = await this.state.storage.getAlarm()
     const map: Map<string, any> = await this.state.storage.get(['key', 'record', 'seqno', 'validity'])
@@ -99,7 +99,7 @@ export class IPNSRecord {
     return jsonResponse(JSON.stringify(data), 200)
   }
 
-  async alarm () {
+  async alarm (): Promise<void> {
     const now = new Date()
 
     // For safety, we set the alarm as our first order of business, so that an error in

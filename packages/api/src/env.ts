@@ -16,7 +16,7 @@ export interface Env {
   COMMITHASH: string
 }
 
-export function envAll (req: Request, env: Env, ctx: ExecutionContext) {
+export function envAll (req: Request, env: Env, ctx: ExecutionContext): void {
   env.sentry = env.SENTRY_DSN !== null
     ? new Toucan({
       dsn: env.SENTRY_DSN,
@@ -28,9 +28,9 @@ export function envAll (req: Request, env: Env, ctx: ExecutionContext) {
       integrations: [
         requestDataIntegration({
           allowedHeaders: ['user-agent', 'x-client'],
-          allowedSearchParams: /(.*)/,
+          allowedSearchParams: /(.*)/
         })
-      ],
+      ]
     })
     : undefined
 }

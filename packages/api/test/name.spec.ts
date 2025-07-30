@@ -58,7 +58,7 @@ describe('GET /name/:key', () => {
   it('returns an error for an invalid key', async () => {
     const key = '837497jhfd'
     const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
     assert.equal(response.status, 400)
     assert.ok(body.message.includes('Invalid key'))
   })
@@ -68,7 +68,7 @@ describe('GET /name/:key', () => {
     const digest = keyPair.publicKey.toMultihash()
     const key = CID.createV1(140, digest).toString(base36)
     const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
     assert.equal(response.status, 400)
     assert.equal(body.message, 'Invalid key, expected: 114 codec code but got: 140')
     assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
@@ -78,7 +78,7 @@ describe('GET /name/:key', () => {
     const keyPair = await keys.generateKeyPair('Ed25519', 2048)
     const key = keyPair.publicKey.toCID().toString(base36)
     const response = await mf.dispatchFetch(new URL(`name/${key}`, endpoint))
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
     assert.equal(response.status, 404)
     assert.ok(body.message.includes(`record not found for key: ${key}`))
     assert.strictEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
@@ -92,7 +92,7 @@ describe('POST/GET /name/:key', () => {
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
     const record = await createNameRecord(privateKey, value)
     const response = await publishRecord(key, record)
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
 
     assert.equal(response.status, 400)
     assert.ok(body.message.includes('Invalid key'))
@@ -106,7 +106,7 @@ describe('POST/GET /name/:key', () => {
     const value = '/ipfs/bafybeiauyddeo2axgargy56kwxirquxaxso3nobtjtjvoqu552oqciudrm'
     const record = await createNameRecord(keyPair, value)
     const response = await publishRecord(key, record)
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
 
     assert.equal(response.status, 400)
     assert.equal(body.message, 'Invalid key, expected: 114 codec code but got: 140')
@@ -125,7 +125,7 @@ describe('POST/GET /name/:key', () => {
     const entry = await ipns.createIPNSRecord(privateKey, value, 0, 0)
     const record = ipns.marshalIPNSRecord(entry)
     const response = await publishRecord(key, record)
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
 
     assert.equal(response.status, 400)
     assert.equal(body.message, 'invalid ipns entry: record has expired')
@@ -168,7 +168,7 @@ describe('POST/GET /name/:key', () => {
     const entry2 = await ipns.createIPNSRecord(privateKey, value2, 9n, 100000)
 
     const updateResponse = await publishRecord(key, ipns.marshalIPNSRecord(entry2))
-    const body: {message: string} = await updateResponse.json()
+    const body: { message: string } = await updateResponse.json()
 
     assert.equal(updateResponse.status, 400, body.message)
     assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
@@ -184,7 +184,7 @@ describe('POST/GET /name/:key', () => {
     // Given an update with the same signature version, sequence number and a smaller validity
     const entry2 = await ipns.createIPNSRecord(privateKey, value, 1n, 90000)
     const updateResponse = await publishRecord(key, ipns.marshalIPNSRecord(entry2))
-    const body: {message: string} = await updateResponse.json()
+    const body: { message: string } = await updateResponse.json()
 
     assert.equal(updateResponse.status, 400, body.message)
     assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
@@ -199,7 +199,7 @@ describe('POST/GET /name/:key', () => {
 
     // Given an update with the same record
     const updateResponse = await publishRecord(key, ipns.marshalIPNSRecord(entry))
-    const body: {message: string} = await updateResponse.json()
+    const body: { message: string } = await updateResponse.json()
 
     assert.equal(updateResponse.status, 400, body.message)
     assert.ok(body.message.includes('invalid record: the record is outdated'), body.message)
@@ -337,7 +337,7 @@ describe('GET /name/:key/watch', () => {
 describe('Not found', () => {
   it('returns a not found error', async () => {
     const response = await mf.dispatchFetch(new URL('/help', endpoint))
-    const body: {message: string} = await response.json()
+    const body: { message: string } = await response.json()
     assert.equal(response.status, 404)
     assert.equal(body.message, 'Not Found')
   })

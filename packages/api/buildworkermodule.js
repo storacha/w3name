@@ -34,8 +34,8 @@ import Sentry from '@sentry/cli'
         VERSION: JSON.stringify(pkg.version),
         COMMITHASH: JSON.stringify(git.long(__dirname)),
         BRANCH: JSON.stringify(git.branch(__dirname)),
-        global: 'globalThis',
-      },
+        global: 'globalThis'
+      }
     })
 
     // Sentry release and sourcemap upload
@@ -44,20 +44,20 @@ import Sentry from '@sentry/cli'
       const cli = new Sentry(undefined, {
         authToken: process.env.SENTRY_TOKEN,
         org: 'storacha-it',
-        project: 'w3name-api',
+        project: 'w3name-api'
       })
 
       await cli.releases.new(sentryRelease)
       await cli.releases.setCommits(sentryRelease, {
         auto: true,
         ignoreEmpty: true,
-        ignoreMissing: true,
+        ignoreMissing: true
       })
       await cli.releases.uploadSourceMaps(sentryRelease, {
         // validate: true,
         include: [path.join(__dirname, 'dist')],
         ext: ['map', 'mjs'],
-        dist: git.short(__dirname),
+        dist: git.short(__dirname)
       })
       await cli.releases.finalize(sentryRelease)
       await cli.releases.newDeploy(sentryRelease, { env: process.env.ENV })

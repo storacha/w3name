@@ -26,5 +26,5 @@ export async function createNameRecord (privKey: PrivateKey, value: string, seqn
 
 export async function updateNameRecord (privKey: PrivateKey, existingRecord: Uint8Array, newValue: string): Promise<Uint8Array> {
   const existingEntry = ipns.unmarshalIPNSRecord(existingRecord)
-  return createNameRecord(privKey, newValue, existingEntry.sequence + 1n)
+  return await createNameRecord(privKey, newValue, existingEntry.sequence + 1n)
 }
