@@ -165,4 +165,19 @@ describe('Name', () => {
       }
     })
   })
+
+  describe('private key management', () => {
+    it('round trips protobuf encoded key', async () => {
+      const name0 = await Name.create()
+      const skBytes = keys.privateKeyToProtobuf(name0.key)
+      const name1 = await Name.from(skBytes)
+      assert.equal(name1.toString(), name0.toString())
+    })
+
+    it('round trips raw encoded key', async () => {
+      const name0 = await Name.create()
+      const name1 = await Name.from(name0.key.raw)
+      assert.equal(name1.toString(), name0.toString())
+    })
+  })
 })
