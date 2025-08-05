@@ -25,7 +25,7 @@
  * @module
  */
 
-import { generateKeyPair, publicKeyFromProtobuf, privateKeyFromProtobuf } from '@libp2p/crypto/keys'
+import { generateKeyPair, publicKeyFromProtobuf, privateKeyFromProtobuf, privateKeyFromRaw } from '@libp2p/crypto/keys'
 import { PrivateKey, PublicKey } from '@libp2p/interface'
 import { Link } from 'multiformats'
 import { base36 } from 'multiformats/bases/base36'
@@ -109,7 +109,7 @@ export class WritableName extends Name {
    * The private signing key, as a libp2p `PrivateKey` object.
    *
    * To save a key for later loading with {@link from}, write the
-   * contents of `key.bytes` somewhere safe.
+   * contents of `key.raw` somewhere safe.
    */
   get key (): PrivateKey {
     return this._privKey
@@ -149,7 +149,7 @@ export function parse (name: string): Name {
  * even when the name in question is a {@link WritableName}.
  *
  * To save the key for a {@link WritableName} so that it can be used with this
- * function, use `key.bytes`, for example:
+ * function, use `key.raw`, for example:
  *
  * @example
  * ```js
@@ -159,8 +159,8 @@ export function parse (name: string): Name {
  * async function example() {
  *   const myName = await Name.create()
  *
- *   // myName.key.bytes can now be written to disk / database, etc.
- *   await fs.promises.writeFile('myName.key', myName.key.bytes)
+ *   // myName.key.raw can now be written to disk / database, etc.
+ *   await fs.promises.writeFile('myName.key', myName.key.raw)
  *
  *   // let's pretend some time has passed and we want to load the
  *   // key from disk:
@@ -173,7 +173,13 @@ export function parse (name: string): Name {
  *
  */
 export async function from (key: Uint8Array): Promise<WritableName> {
-  const privKey = privateKeyFromProtobuf(key)
+  let privKey: PrivateKey
+  try {
+    privKey = privateKeyFromRaw(key)
+  } catch {
+    // legacy keys where key.bytes used to contain the PB encoded private key
+    privKey = privateKeyFromProtobuf(key)
+  }
   return new WritableName(privKey)
 }
 
