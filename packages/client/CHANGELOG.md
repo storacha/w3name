@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/storacha/w3name/compare/w3name-v1.1.2...w3name-v1.1.3) (2025-08-05)
+
+
+### Fixes
+
+* create name from raw encoded key ([#121](https://github.com/storacha/w3name/issues/121)) ([46e9d4c](https://github.com/storacha/w3name/commit/46e9d4ca548a4100102369a45537eef6838026ec))
+
 ## [1.1.2](https://github.com/storacha/w3name/compare/w3name-v1.1.1...w3name-v1.1.2) (2025-07-30)
 
 
