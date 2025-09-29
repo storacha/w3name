@@ -1,6 +1,7 @@
 import { base36 } from 'multiformats/bases/base36'
 import { CID } from 'multiformats/cid'
-import { createNameKeypair, createNameRecord, updateNameRecord, NameKeyPair } from './helpers.js'
+import { createNameKeypair, createNameRecord, updateNameRecord } from './helpers.js'
+import type { NameKeyPair } from './helpers.js'
 import { keys } from '@libp2p/crypto'
 import { Miniflare, Request } from 'miniflare'
 import * as ipns from 'ipns'
