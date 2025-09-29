@@ -72,6 +72,11 @@ export async function nameGet (request: Request, env: Env): Promise<Response> {
       const errorString = error instanceof Error
         ? error.message
         : 'unknown error'
+      // This error is thrown by ipns.unmarshalIPNSRecord when the value is not a valid content path
+      // it can happen so often that we don't want to throw and send to Sentry as we'll overload our quota
+      if (errorString.includes('Value must be a valid content path starting with /')) {
+        return jsonResponse(JSON.stringify({ message: `record for key ${key} has an invalid value` }), 500)
+      }
       throw new HTTPError(`Unable to retrieve name. ${errorString}`, 500)
     }
   }
