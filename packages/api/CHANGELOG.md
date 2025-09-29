@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.9](https://github.com/storacha/w3name/compare/api-v1.2.8...api-v1.2.9) (2025-09-29)
+
+
+### Fixes
+
+* **api:** don't throw InvalidValueError ([978924d](https://github.com/storacha/w3name/commit/978924d9b075caa69871771803d858161a5c0cc1))
+* **api:** don't throw InvalidValueError ([#123](https://github.com/storacha/w3name/issues/123)) ([186eb32](https://github.com/storacha/w3name/commit/186eb325787d71321e48d1b46950c98122404ab2))
+* **api:** fix tests for node 24 ([17308db](https://github.com/storacha/w3name/commit/17308dbb1c0ed41d0a8bc13da30502a492ddf7cb))
+
 ## [1.2.8](https://github.com/storacha/w3name/compare/api-v1.2.7...api-v1.2.8) (2025-07-30)
 
 
